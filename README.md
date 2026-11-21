@@ -16,3 +16,7 @@ node tools/build-wiki.mjs
 
 The generated site is written to `hyoukan/` and is committed directly; GitHub Pages
 serves it as-is. No build step runs on Pages.
+
+The wiki is a reviewed snapshot of the app. `tools/wiki-sync.json` records the last
+app commit reflected here, and [AGENTS.md](AGENTS.md) documents how to review the
+commits since then and continue from that point.
