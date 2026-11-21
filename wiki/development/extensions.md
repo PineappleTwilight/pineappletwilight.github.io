@@ -209,7 +209,7 @@ The app resolves `apk` against the store's base URL, verifies the download again
 
 ## Delegated sources
 
-An installed extension can be **delegated** to an in-app implementation under the same source id. The main case is Komga: the app's built-in source takes over the Keiyoushi extension's id so library entries, settings, URLs and tracker links carry over. Delegation is enabled under Developer tools and read at source-map build time, so it requires a restart.
+An installed extension can be **delegated** to an in-app implementation under the same source id. The main case is Komga: the app's built-in source takes over an installed Komga extension's id so library entries, settings, URLs and tracker links carry over. Delegation is enabled under Developer tools and read at source-map build time, so it requires a restart.
 
 Delegation is an app-side decision; an extension does not opt in.
 

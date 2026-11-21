@@ -67,7 +67,7 @@ Everything else comes from **extensions**. To install some:
 
 1. Go to **Browse → Extensions**.
 2. Open the store manager (the ⚙ or "Extension stores" row).
-3. Add a repository URL — for example the Keiyoushi repository — and confirm.
+3. Add the URL of a repository you trust and confirm.
 4. Browse the store, install the extensions you want, and grant the install permission the chosen installer needs.
 
 The **Private installer** is recommended: it needs no install permission and verifies each extension against the repository's signing key. **Shizuku** also works without the per-app install prompt. The legacy and package-installer modes go through Android's normal install UI.

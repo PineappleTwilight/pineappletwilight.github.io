@@ -72,7 +72,7 @@ This replaced the old single "show NSFW sources" switch. Existing settings migra
 
 Some installed extensions can be served by Hyoukan's own implementation instead of the extension's code. This is called **delegation** and is enabled under **Settings → Advanced → Developer tools → Enable delegated sources**.
 
-The main case is **Komga**: when the Keiyoushi Komga extension is installed and delegation is on, the app substitutes its built-in Komga source under the extension's source id. Settings, library entries, absolute URLs and tracker links carry over, and EPUB books open in the book reader. The switch is read when the source map is built, so changing it requires a restart.
+The main case is **Komga**: when a Komga extension is installed and delegation is on, the app substitutes its built-in Komga source under the extension's source id. Settings, library entries, absolute URLs and tracker links carry over, and EPUB books open in the book reader. The switch is read when the source map is built, so changing it requires a restart.
 
 Delegation exists because the app's implementation can do things an extension cannot — notably open an EPUB as a book and download it as a file rather than page images.
 
