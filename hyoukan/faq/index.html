@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frequently asked questions · Hyoukan Wiki</title>
+<meta name="description" content="Short answers to the questions that come up most often.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e7490'/%3E%3Cpath d='M32 12l5 14h15l-12 9 4 15-12-9-12 9 4-15-12-9h15z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/hyoukan/assets/wiki.css">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('hyoukan-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  } catch (e) { document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="progress-bar" id="progress-bar" aria-hidden="true"></div>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="/hyoukan/">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><path d="M16 3l3.2 8.1L28 14l-8.8 2.9L16 25l-3.2-8.1L4 14l8.8-2.9z" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">Hyoukan</span><span class="brand-sub">Wiki</span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <button class="search-trigger" id="search-trigger" aria-label="Search the wiki">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <span class="search-label">Search</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+  <a class="icon-btn" href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener" aria-label="Hyoukan on GitHub">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5 4-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg>
+  </a>
+  <button class="icon-btn" id="theme-toggle" aria-label="Switch colour theme">
+    <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+  </button>
+</header>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Wiki navigation">
+      <div class="nav-section">
+  <p class="nav-heading">Overview</p>
+  <ul><li><a href="/hyoukan/">Home</a></li>
+<li><a href="/hyoukan/getting-started/">Getting started</a></li>
+<li><a href="/hyoukan/features/">Feature tour</a></li>
+<li><a href="/hyoukan/faq/" aria-current="page">FAQ</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">User guide</p>
+  <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
+<li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
+<li><a href="/hyoukan/guide/books/">Reading books</a></li>
+<li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
+<li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
+<li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/translation/">AI translation</a></li>
+<li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
+<li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
+<li><a href="/hyoukan/guide/appearance/">Appearance &amp; identity</a></li>
+<li><a href="/hyoukan/guide/connections/">Connections</a></li>
+<li><a href="/hyoukan/guide/privacy/">Privacy &amp; security</a></li>
+<li><a href="/hyoukan/guide/troubleshooting/">Troubleshooting</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Development</p>
+  <ul><li><a href="/hyoukan/development/architecture/">Architecture</a></li>
+<li><a href="/hyoukan/development/reader/">Reader &amp; WebGPU</a></li>
+<li><a href="/hyoukan/development/books-engine/">Book engine</a></li>
+<li><a href="/hyoukan/development/data/">Data &amp; database</a></li>
+<li><a href="/hyoukan/development/extensions/">Extensions &amp; source API</a></li>
+<li><a href="/hyoukan/development/translation-upscaling/">Translation &amp; upscaling</a></li>
+<li><a href="/hyoukan/development/settings/">Settings framework</a></li>
+<li><a href="/hyoukan/development/build/">Build &amp; release</a></li>
+<li><a href="/hyoukan/development/testing/">Testing &amp; conventions</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Reference</p>
+  <ul><li><a href="/hyoukan/reference/settings/">Settings index</a></li>
+<li><a href="/hyoukan/reference/formats/">Files &amp; formats</a></li>
+<li><a href="/hyoukan/reference/glossary/">Glossary</a></li>
+<li><a href="/hyoukan/reference/versions/">Versions &amp; channels</a></li>
+<li><a href="/hyoukan/reference/history/">Project history</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Contributing</p>
+  <ul><li><a href="/hyoukan/contributing/">Contributing</a></li></ul>
+</div>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="version-pill">v1.25.3</span>
+      <span>Updated November 2026</span>
+    </div>
+  </aside>
+
+  <main class="main" id="content">
+    <div class="page">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/hyoukan/">Wiki</a><span aria-hidden="true">/</span><span>Overview</span><span aria-hidden="true">/</span><span aria-current="page">Frequently asked questions</span>
+</nav>
+      <article class="prose">
+        <h1>Frequently asked questions</h1><p class="page-lede">Short answers to the questions that come up most often.</p>
+        <h2 id="the-basics"><a class="anchor" href="#the-basics" aria-label="Link to this section">#</a>The basics</h2>
+<h3 id="what-is-hyoukan"><a class="anchor" href="#what-is-hyoukan" aria-label="Link to this section">#</a>What is Hyoukan?</h3>
+<p>A free, open-source manga and novel reader for Android. It organises a library, fetches chapters through installable extensions or local files, and renders them with either an image reader or an EPUB reader. It does not host or distribute any content.</p>
+<h3 id="is-it-legal"><a class="anchor" href="#is-it-legal" aria-label="Link to this section">#</a>Is it legal?</h3>
+<p>The application is legal open-source software. What you read with it is your responsibility, and the developers have no affiliation with any content provider. The app hosts zero content and ships no sources beyond the local source, E-Hentai/ExHentai and Komga.</p>
+<h3 id="is-it-free-are-there-ads-or-subscriptions"><a class="anchor" href="#is-it-free-are-there-ads-or-subscriptions" aria-label="Link to this section">#</a>Is it free? Are there ads or subscriptions?</h3>
+<p>Yes, free. There are no ads, no subscriptions and no paywalled features. Optional services you connect — trackers, cloud LLM providers, a Komga server — have their own terms.</p>
+<h3 id="does-it-collect-data"><a class="anchor" href="#does-it-collect-data" aria-label="Link to this section">#</a>Does it collect data?</h3>
+<p>By default, no telemetry is compiled in. Builds made with <code>-Pinclude-telemetry</code> include Firebase Crashlytics; the official release APKs do not. Logs stay on the device unless you explicitly share them, and translation/upscaling can run entirely on-device.</p>
+<h3 id="why-is-the-package-id-still-apphouri"><a class="anchor" href="#why-is-the-package-id-still-apphouri" aria-label="Link to this section">#</a>Why is the package ID still <code>app.houri</code>?</h3>
+<p>The project was renamed from Houri to Hyoukan. Changing the Android application ID would break upgrades, backups and every existing library database, so the ID stays as a stable internal identifier. The product name, repository and documentation use Hyoukan.</p>
+<h2 id="compatibility"><a class="anchor" href="#compatibility" aria-label="Link to this section">#</a>Compatibility</h2>
+<h3 id="what-android-version-do-i-need"><a class="anchor" href="#what-android-version-do-i-need" aria-label="Link to this section">#</a>What Android version do I need?</h3>
+<p>Android 8.0 (API 26) or newer. The app targets API 36 and compiles against API 37.</p>
+<h3 id="which-architectures-are-supported"><a class="anchor" href="#which-architectures-are-supported" aria-label="Link to this section">#</a>Which architectures are supported?</h3>
+<p><code>arm64-v8a</code>, <code>armeabi-v7a</code>, <code>x86</code> and <code>x86_64</code>. The WebGPU reader runs on 32-bit too, with a deliberately smaller memory budget. The local LLM runtime is 64-bit only for GPU offload; 32-bit devices fall back to CPU inference.</p>
+<h3 id="does-it-support-android-tv"><a class="anchor" href="#does-it-support-android-tv" aria-label="Link to this section">#</a>Does it support Android TV?</h3>
+<p>There is no TV-specific interface. It can run on some Android TV devices, but navigation is designed for touch and the app is not tested there.</p>
+<h3 id="can-i-use-an-sd-card"><a class="anchor" href="#can-i-use-an-sd-card" aria-label="Link to this section">#</a>Can I use an SD card?</h3>
+<p>Yes for downloads and backups through Android&#39;s storage access framework. The database lives in app-private storage and cannot be moved to removable media.</p>
+<h3 id="can-i-import-my-mihon-komikku-or-tachiyomi-library"><a class="anchor" href="#can-i-import-my-mihon-komikku-or-tachiyomi-library" aria-label="Link to this section">#</a>Can I import my Mihon, Komikku or Tachiyomi library?</h3>
+<p>Yes. Restore a <code>.tachibk</code> backup from <strong>Settings → Data and storage → Restore backup</strong>. Install missing extensions and log back into trackers afterwards. Mihon-format backups (which carry no per-entry update schedule) are supported; the app recomputes the schedule from the backup&#39;s chapter list.</p>
+<h3 id="can-i-go-back-to-an-older-version"><a class="anchor" href="#can-i-go-back-to-an-older-version" aria-label="Link to this section">#</a>Can I go back to an older version?</h3>
+<p>Only by uninstalling the newer build first, which erases app data. Take a backup before downgrading, and expect the database schema of the newer build to be unreadable by older versions. In practice, downgrading usually means restoring a backup made on the older version.</p>
+<h3 id="will-stable-and-beta-installs-share-data"><a class="anchor" href="#will-stable-and-beta-installs-share-data" aria-label="Link to this section">#</a>Will stable and beta installs share data?</h3>
+<p>No. They have different application IDs and signing keys. They can coexist, but each has its own library and settings.</p>
+<h2 id="sources-and-extensions"><a class="anchor" href="#sources-and-extensions" aria-label="Link to this section">#</a>Sources and extensions</h2>
+<h3 id="why-are-sources-separate-extensions"><a class="anchor" href="#why-are-sources-separate-extensions" aria-label="Link to this section">#</a>Why are sources separate extensions?</h3>
+<p>Because the sites change constantly and the app should not ship a hundred scrapers. Extensions are independent APKs: they can be updated without an app release, and the app&#39;s core does not need to know about any particular site. This is the same model Tachiyomi and Mihon use.</p>
+<h3 id="why-did-mangadex-disappear"><a class="anchor" href="#why-did-mangadex-disappear" aria-label="Link to this section">#</a>Why did MangaDex disappear?</h3>
+<p>The in-app MangaDex client, login, follows sync and recommendations were removed. MangaDex remains available through the community MangaDex extension. Removed-source library entries are kept, and their metadata stays readable.</p>
+<h3 id="why-cant-i-install-an-extension"><a class="anchor" href="#why-cant-i-install-an-extension" aria-label="Link to this section">#</a>Why can&#39;t I install an extension?</h3>
+<p>The usual causes:</p>
+<ul>
+<li>No extension store is configured. Add a repository URL first.</li>
+<li>Android has not granted the installer permission. The Private installer needs none; the legacy/package installers do.</li>
+<li>Android 14+ blocks unverified installs from the app until the per-app &quot;allow&quot; cooldown expires. The Private installer avoids this.</li>
+<li>The APK is for a different app signature or a newer API level than the device supports.</li>
+</ul>
+<h3 id="are-all-extensions-safe"><a class="anchor" href="#are-all-extensions-safe" aria-label="Link to this section">#</a>Are all extensions safe?</h3>
+<p>No one can guarantee that. Extensions are third-party code and can read what they request. Prefer well-known repositories, use the Private installer (which verifies repository signatures), and avoid extensions from unknown sources.</p>
+<h3 id="why-does-an-extension-show-an-error"><a class="anchor" href="#why-does-an-extension-show-an-error" aria-label="Link to this section">#</a>Why does an extension show an error?</h3>
+<p>Most extension errors mean the site changed and the extension has not caught up. Open the extension&#39;s details: the app names the repository and offers a GitHub issue search. Updating the extension often fixes it. Cloudflare challenges and rate limits are logged but are not treated as extension failures.</p>
+<h2 id="reading"><a class="anchor" href="#reading" aria-label="Link to this section">#</a>Reading</h2>
+<h3 id="why-did-the-reader-fall-back-to-the-standard-viewer"><a class="anchor" href="#why-did-the-reader-fall-back-to-the-standard-viewer" aria-label="Link to this section">#</a>Why did the reader fall back to the standard viewer?</h3>
+<p>The WebGPU viewer declines for four reasons, in order: the high-quality switch is off; this build recorded two degraded sessions; the GPU device could not initialise or was lost; or constructing the viewer threw. Each reason is written to the in-app log. Turning the high-quality switch off and on clears the health latch and retries.</p>
+<h3 id="why-is-my-page-blank-or-black"><a class="anchor" href="#why-is-my-page-blank-or-black" aria-label="Link to this section">#</a>Why is my page blank or black?</h3>
+<p>On WebGPU devices this is usually a GPU/driver problem, not a missing image. Update the app, try the <strong>Use high quality renderer</strong> switch off and on, and check the log for a <code>WebGPU viewer declined</code> line. On the legacy viewer, lower the hardware bitmap threshold or enable the legacy long-strip decoder.</p>
+<h3 id="why-does-a-very-tall-page-open-at-the-bottom"><a class="anchor" href="#why-does-a-very-tall-page-open-at-the-bottom" aria-label="Link to this section">#</a>Why does a very tall page open at the bottom?</h3>
+<p>That was a long-standing page-splitting bug and is fixed in current builds. If you see it, update and report the source and chapter; the split path logs its decisions.</p>
+<h3 id="does-it-read-right-to-left-and-vertical-writing"><a class="anchor" href="#does-it-read-right-to-left-and-vertical-writing" aria-label="Link to this section">#</a>Does it read right-to-left and vertical writing?</h3>
+<p>Yes. The pager supports LTR, RTL and vertical modes, and books honour the publisher&#39;s vertical-writing CSS unless you override it. Tap zones follow the reading direction.</p>
+<h3 id="does-it-support-novels"><a class="anchor" href="#does-it-support-novels" aria-label="Link to this section">#</a>Does it support novels?</h3>
+<p>Yes — EPUB and plain-text web novels get a dedicated reader with publisher styling, pagination, highlights, footnotes, TTS and typography controls. See <a href="/hyoukan/guide/books/">Reading books</a>.</p>
+<h3 id="can-i-read-local-files"><a class="anchor" href="#can-i-read-local-files" aria-label="Link to this section">#</a>Can I read local files?</h3>
+<p>Yes. The local source reads image folders, CBZ/CBR archives and EPUB files. Put them in the local source directory and refresh. A folder that is all EPUBs is treated as a book series; a mixed folder stays a comic.</p>
+<h3 id="how-do-i-read-a-downloaded-book-offline"><a class="anchor" href="#how-do-i-read-a-downloaded-book-offline" aria-label="Link to this section">#</a>How do I read a downloaded book offline?</h3>
+<p>Download the chapter from the book&#39;s entry as usual. The EPUB is stored with the chapter and opened from disk by the book reader. Do not wrap an EPUB in a CBZ — an EPUB inside a CBZ is not a book.</p>
+<h2 id="ai-features"><a class="anchor" href="#ai-features" aria-label="Link to this section">#</a>AI features</h2>
+<h3 id="does-ai-translation-send-my-pages-to-the-cloud"><a class="anchor" href="#does-ai-translation-send-my-pages-to-the-cloud" aria-label="Link to this section">#</a>Does AI translation send my pages to the cloud?</h3>
+<p>Only if you choose a cloud provider. The local pipeline (detection, OCR, inpainting, typesetting) runs on-device. Translation itself can use Gemini Nano or a local GGUF model with no network. The Ichigo image service is remote by design and sends the page image.</p>
+<h3 id="why-is-ai-translation-unavailable"><a class="anchor" href="#why-is-ai-translation-unavailable" aria-label="Link to this section">#</a>Why is AI translation unavailable?</h3>
+<p>It needs at least 3 GB of RAM for the local engine and a supported ABI (<code>arm64-v8a</code> or <code>armeabi-v7a</code>). The <code>nomtl</code> build has no local engine. Without a downloaded model or a cloud key, pages fail cleanly rather than half-translating.</p>
+<h3 id="does-upscaling-require-ai-translation"><a class="anchor" href="#does-upscaling-require-ai-translation" aria-label="Link to this section">#</a>Does upscaling require AI translation?</h3>
+<p>No. Upscaling is its own module and works in <code>nomtl</code> builds. Without a native model it falls back to a simple resample.</p>
+<h3 id="why-does-upscaling-look-soft-sometimes"><a class="anchor" href="#why-does-upscaling-look-soft-sometimes" aria-label="Link to this section">#</a>Why does upscaling look soft sometimes?</h3>
+<p>The requested backend or model was unavailable and the plan fell through to a lower step. The upscaler&#39;s live status shows served, cache-hit, fallback and failure counts, plus per-backend readiness.</p>
+<h2 id="library-and-data"><a class="anchor" href="#library-and-data" aria-label="Link to this section">#</a>Library and data</h2>
+<h3 id="where-are-my-downloads"><a class="anchor" href="#where-are-my-downloads" aria-label="Link to this section">#</a>Where are my downloads?</h3>
+<p>Under the storage location chosen in <strong>Settings → Data and storage</strong>, in a per-source/per-entry/per-chapter tree. The <strong>Downloaded and cached content</strong> screen shows exactly what is on disk, including entries no longer in the library.</p>
+<h3 id="how-do-i-free-space"><a class="anchor" href="#how-do-i-free-space" aria-label="Link to this section">#</a>How do I free space?</h3>
+<ul>
+<li><strong>Delete downloads not in library</strong> for orphaned content.</li>
+<li><strong>Delete all downloads</strong> for a clean slate (library entries and progress are kept).</li>
+<li><strong>Clear chapter cache</strong> for cached-but-not-downloaded pages.</li>
+<li>Set a <strong>chapter cache retention</strong> window so old cached chapters expire on their own.</li>
+</ul>
+<h3 id="how-do-i-back-up"><a class="anchor" href="#how-do-i-back-up" aria-label="Link to this section">#</a>How do I back up?</h3>
+<p><strong>Settings → Data and storage → Create backup.</strong> Choose the content and a location. Enable automatic backups if you want the app to keep the last four. Custom covers are included when selected; private settings are opt-in.</p>
+<h3 id="does-sync-replace-backups"><a class="anchor" href="#does-sync-replace-backups" aria-label="Link to this section">#</a>Does sync replace backups?</h3>
+<p>No. Sync keeps devices aligned; a backup is a portable snapshot you control. Keep periodic backups even while using SyncYomi, WebDAV or Drive.</p>
+<h3 id="can-i-export-my-library-as-a-list"><a class="anchor" href="#can-i-export-my-library-as-a-list" aria-label="Link to this section">#</a>Can I export my library as a list?</h3>
+<p>Yes — <strong>Settings → Data and storage → Export → Library List</strong> writes a CSV with the columns you select (title, author, artist, categories). The same screen can export the database itself.</p>
+<h2 id="troubleshooting-and-contributing"><a class="anchor" href="#troubleshooting-and-contributing" aria-label="Link to this section">#</a>Troubleshooting and contributing</h2>
+<h3 id="how-do-i-report-a-bug"><a class="anchor" href="#how-do-i-report-a-bug" aria-label="Link to this section">#</a>How do I report a bug?</h3>
+<p>Update first, then check the existing issues. Include the app version, device, Android version, steps to reproduce and a log dump from <strong>Settings → Advanced → Dump crash logs</strong>. The version row on About copies the device-info block for you.</p>
+<h3 id="how-do-i-request-a-feature"><a class="anchor" href="#how-do-i-request-a-feature" aria-label="Link to this section">#</a>How do I request a feature?</h3>
+<p>Open a GitHub issue describing what it should do and why. Major changes are easier to discuss before code exists.</p>
+<h3 id="how-can-i-help-translate"><a class="anchor" href="#how-can-i-help-translate" aria-label="Link to this section">#</a>How can I help translate?</h3>
+<p>Translations are managed on Weblate. The app links to the project from <strong>About → Help translate</strong>. Do not edit non-base locale files in a pull request; Weblate owns them.</p>
+<h3 id="the-wiki-has-a-mistake-can-i-fix-it"><a class="anchor" href="#the-wiki-has-a-mistake-can-i-fix-it" aria-label="Link to this section">#</a>The wiki has a mistake. Can I fix it?</h3>
+<p>Yes. Every page has an <strong>Edit this page</strong> link at the bottom. The wiki source lives in <code>wiki/</code> and is built with <code>node tools/build-wiki.mjs</code>. See <a href="/hyoukan/contributing/">Contributing</a>.</p>
+
+      </article>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/features/"><span class="pager-dir">Previous</span><span class="pager-title">Feature tour</span></a><a class="pager-link pager-next" href="/hyoukan/guide/library/"><span class="pager-dir">Next</span><span class="pager-title">Library &amp; categories</span></a></nav>
+      <footer class="page-foot">
+        <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
+        <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/faq.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
+      </footer>
+    </div>
+  </main>
+
+  <aside class="toc" aria-label="On this page">
+    <p class="toc-heading">On this page</p>
+<ul class="toc-list"><li class="toc-l2"><a href="#the-basics">The basics</a></li>
+<li class="toc-l3"><a href="#what-is-hyoukan">What is Hyoukan?</a></li>
+<li class="toc-l3"><a href="#is-it-legal">Is it legal?</a></li>
+<li class="toc-l3"><a href="#is-it-free-are-there-ads-or-subscriptions">Is it free? Are there ads or subscriptions?</a></li>
+<li class="toc-l3"><a href="#does-it-collect-data">Does it collect data?</a></li>
+<li class="toc-l3"><a href="#why-is-the-package-id-still-apphouri">Why is the package ID still app.houri?</a></li>
+<li class="toc-l2"><a href="#compatibility">Compatibility</a></li>
+<li class="toc-l3"><a href="#what-android-version-do-i-need">What Android version do I need?</a></li>
+<li class="toc-l3"><a href="#which-architectures-are-supported">Which architectures are supported?</a></li>
+<li class="toc-l3"><a href="#does-it-support-android-tv">Does it support Android TV?</a></li>
+<li class="toc-l3"><a href="#can-i-use-an-sd-card">Can I use an SD card?</a></li>
+<li class="toc-l3"><a href="#can-i-import-my-mihon-komikku-or-tachiyomi-library">Can I import my Mihon, Komikku or Tachiyomi library?</a></li>
+<li class="toc-l3"><a href="#can-i-go-back-to-an-older-version">Can I go back to an older version?</a></li>
+<li class="toc-l3"><a href="#will-stable-and-beta-installs-share-data">Will stable and beta installs share data?</a></li>
+<li class="toc-l2"><a href="#sources-and-extensions">Sources and extensions</a></li>
+<li class="toc-l3"><a href="#why-are-sources-separate-extensions">Why are sources separate extensions?</a></li>
+<li class="toc-l3"><a href="#why-did-mangadex-disappear">Why did MangaDex disappear?</a></li>
+<li class="toc-l3"><a href="#why-cant-i-install-an-extension">Why can't I install an extension?</a></li>
+<li class="toc-l3"><a href="#are-all-extensions-safe">Are all extensions safe?</a></li>
+<li class="toc-l3"><a href="#why-does-an-extension-show-an-error">Why does an extension show an error?</a></li>
+<li class="toc-l2"><a href="#reading">Reading</a></li>
+<li class="toc-l3"><a href="#why-did-the-reader-fall-back-to-the-standard-viewer">Why did the reader fall back to the standard viewer?</a></li>
+<li class="toc-l3"><a href="#why-is-my-page-blank-or-black">Why is my page blank or black?</a></li>
+<li class="toc-l3"><a href="#why-does-a-very-tall-page-open-at-the-bottom">Why does a very tall page open at the bottom?</a></li>
+<li class="toc-l3"><a href="#does-it-read-right-to-left-and-vertical-writing">Does it read right-to-left and vertical writing?</a></li>
+<li class="toc-l3"><a href="#does-it-support-novels">Does it support novels?</a></li>
+<li class="toc-l3"><a href="#can-i-read-local-files">Can I read local files?</a></li>
+<li class="toc-l3"><a href="#how-do-i-read-a-downloaded-book-offline">How do I read a downloaded book offline?</a></li>
+<li class="toc-l2"><a href="#ai-features">AI features</a></li>
+<li class="toc-l3"><a href="#does-ai-translation-send-my-pages-to-the-cloud">Does AI translation send my pages to the cloud?</a></li>
+<li class="toc-l3"><a href="#why-is-ai-translation-unavailable">Why is AI translation unavailable?</a></li>
+<li class="toc-l3"><a href="#does-upscaling-require-ai-translation">Does upscaling require AI translation?</a></li>
+<li class="toc-l3"><a href="#why-does-upscaling-look-soft-sometimes">Why does upscaling look soft sometimes?</a></li>
+<li class="toc-l2"><a href="#library-and-data">Library and data</a></li>
+<li class="toc-l3"><a href="#where-are-my-downloads">Where are my downloads?</a></li>
+<li class="toc-l3"><a href="#how-do-i-free-space">How do I free space?</a></li>
+<li class="toc-l3"><a href="#how-do-i-back-up">How do I back up?</a></li>
+<li class="toc-l3"><a href="#does-sync-replace-backups">Does sync replace backups?</a></li>
+<li class="toc-l3"><a href="#can-i-export-my-library-as-a-list">Can I export my library as a list?</a></li>
+<li class="toc-l2"><a href="#troubleshooting-and-contributing">Troubleshooting and contributing</a></li>
+<li class="toc-l3"><a href="#how-do-i-report-a-bug">How do I report a bug?</a></li>
+<li class="toc-l3"><a href="#how-do-i-request-a-feature">How do I request a feature?</a></li>
+<li class="toc-l3"><a href="#how-can-i-help-translate">How can I help translate?</a></li>
+<li class="toc-l3"><a href="#the-wiki-has-a-mistake-can-i-fix-it">The wiki has a mistake. Can I fix it?</a></li></ul>
+  </aside>
+</div>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search the Hyoukan wiki" hidden>
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search-input" type="search" placeholder="Search the wiki…" autocomplete="off" spellcheck="false" aria-label="Search query">
+      <button class="icon-btn" id="search-close" aria-label="Close search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-results" id="search-results" aria-live="polite">
+      <p class="search-hint">Type to search 33 pages. Use ↑ ↓ to move and Enter to open.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.HYOUKAN_BASE = "/hyoukan";</script>
+<script>/* Hyoukan wiki — theme, navigation, search, TOC and reading progress. */
+(function () {
+  'use strict';
+
+  var BASE = window.HYOUKAN_BASE || '/hyoukan';
+  var root = document.documentElement;
+
+  // --- Theme ---------------------------------------------------------------
+  var themeBtn = document.getElementById('theme-toggle');
+  function setTheme(theme) {
+    root.dataset.theme = theme;
+    try { localStorage.setItem('hyoukan-theme', theme); } catch (e) {}
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+  setTheme(root.dataset.theme || 'light');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // --- Mobile sidebar ------------------------------------------------------
+  var menuBtn = document.getElementById('menu-btn');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('sidebar-backdrop');
+
+  function setMenu(open) {
+    if (!sidebar) return;
+    sidebar.classList.toggle('is-open', open);
+    if (backdrop) backdrop.hidden = !open;
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function () {
+      setMenu(!sidebar.classList.contains('is-open'));
+    });
+  }
+  if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
+  if (sidebar) {
+    sidebar.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setMenu(false);
+    });
+  }
+
+  // --- Reading progress ----------------------------------------------------
+  var progress = document.getElementById('progress-bar');
+  if (progress) {
+    var ticking = false;
+    function updateProgress() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+      progress.style.width = pct.toFixed(2) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+    updateProgress();
+  }
+
+  // --- TOC scroll spy ------------------------------------------------------
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-list a'));
+  var tocTargets = tocLinks
+    .map(function (link) {
+      var id = decodeURIComponent(link.getAttribute('href').slice(1));
+      var el = document.getElementById(id);
+      return el ? { link: link, el: el } : null;
+    })
+    .filter(Boolean);
+
+  if (tocTargets.length && 'IntersectionObserver' in window) {
+    var visible = new Map();
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) visible.set(entry.target.id, entry.boundingClientRect.top);
+        else visible.delete(entry.target.id);
+      });
+      var best = null;
+      tocTargets.forEach(function (t) {
+        if (visible.has(t.el.id)) {
+          var top = visible.get(t.el.id);
+          if (best === null || top < best.top) best = { top: top, link: t.link };
+        }
+      });
+      if (best) {
+        tocLinks.forEach(function (l) { l.classList.remove('is-active'); });
+        best.link.classList.add('is-active');
+      }
+    }, { rootMargin: '-88px 0px -65% 0px', threshold: [0, 1] });
+    tocTargets.forEach(function (t) { observer.observe(t.el); });
+  }
+
+  // --- Copy code buttons ---------------------------------------------------
+  document.querySelectorAll('.prose pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-code';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(area);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  // --- Search --------------------------------------------------------------
+  var overlay = document.getElementById('search-overlay');
+  var trigger = document.getElementById('search-trigger');
+  var closeBtn = document.getElementById('search-close');
+  var input = document.getElementById('search-input');
+  var resultsEl = document.getElementById('search-results');
+  var index = null;
+  var loading = null;
+  var selected = -1;
+  var currentResults = [];
+  var lastFocus = null;
+
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (loading) return loading;
+    loading = fetch(BASE + '/search-index.json', { cache: 'no-cache' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { index = data; return data; })
+      .catch(function () { index = []; return index; });
+    return loading;
+  }
+
+  function tokenize(q) {
+    return q.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function highlight(text, tokens) {
+    var safe = escapeHtml(text);
+    tokens.forEach(function (token) {
+      if (!token) return;
+      var re = new RegExp('(' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      safe = safe.replace(re, '<mark>$1</mark>');
+    });
+    return safe;
+  }
+
+  function snippet(text, tokens) {
+    if (!text) return '';
+    var lower = text.toLowerCase();
+    var at = -1;
+    for (var i = 0; i < tokens.length; i++) {
+      var p = lower.indexOf(tokens[i]);
+      if (p !== -1 && (at === -1 || p < at)) at = p;
+    }
+    if (at === -1) at = 0;
+    var start = Math.max(0, at - 70);
+    var end = Math.min(text.length, at + 190);
+    return (start > 0 ? '…' : '') + text.slice(start, end).trim() + (end < text.length ? '…' : '');
+  }
+
+  function score(page, tokens) {
+    var title = page.title.toLowerCase();
+    var headings = (page.headings || []).join(' ').toLowerCase();
+    var description = (page.description || '').toLowerCase();
+    var text = (page.text || '').toLowerCase();
+    var total = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      var s = 0;
+      if (title === t) s = 120;
+      else if (title.indexOf(t) === 0) s = 80;
+      else if (title.indexOf(t) !== -1) s = 55;
+      else if (headings.indexOf(t) !== -1) s = 24;
+      else if (description.indexOf(t) !== -1) s = 14;
+      else if (text.indexOf(t) !== -1) s = 6;
+      if (s === 0) return 0;
+
+      // Repeated mentions are a useful relevance hint once the token matches at all.
+      var count = 0;
+      var at = text.indexOf(t);
+      while (at !== -1 && count < 8) {
+        count++;
+        at = text.indexOf(t, at + t.length);
+      }
+      total += s + count;
+    }
+    return total;
+  }
+
+  function renderResults(query) {
+    var tokens = tokenize(query);
+    if (!tokens.length) {
+      resultsEl.innerHTML = '<p class="search-hint">Type to search ' + (index ? index.length : '') +
+        ' pages. Use ↑ ↓ to move and Enter to open.</p>';
+      currentResults = [];
+      selected = -1;
+      return;
+    }
+    if (!index) {
+      resultsEl.innerHTML = '<p class="search-hint">Loading index…</p>';
+      return;
+    }
+    var scored = index.map(function (page) {
+      return { page: page, score: score(page, tokens) };
+    }).filter(function (r) { return r.score > 0; });
+    scored.sort(function (a, b) { return b.score - a.score || a.page.title.localeCompare(b.page.title); });
+    currentResults = scored.slice(0, 18);
+    selected = currentResults.length ? 0 : -1;
+
+    if (!currentResults.length) {
+      resultsEl.innerHTML = '<p class="search-empty">No pages match <strong>' + escapeHtml(query) + '</strong>.</p>';
+      return;
+    }
+
+    resultsEl.innerHTML = currentResults.map(function (r, i) {
+      var p = r.page;
+      return '<a class="search-result' + (i === 0 ? ' is-selected' : '') + '" href="' + p.url + '">' +
+        '<span class="search-result-title">' + highlight(p.title, tokens) +
+        '<span class="search-result-section">' + escapeHtml(p.section || '') + '</span></span>' +
+        '<span class="search-result-text">' + highlight(snippet(p.description || p.text, tokens), tokens) + '</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  function moveSelection(delta) {
+    if (!currentResults.length) return;
+    selected = (selected + delta + currentResults.length) % currentResults.length;
+    Array.prototype.forEach.call(resultsEl.querySelectorAll('.search-result'), function (el, i) {
+      el.classList.toggle('is-selected', i === selected);
+      if (i === selected) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  function openSearch() {
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    renderResults('');
+    loadIndex().then(function () { renderResults(input.value); });
+    setTimeout(function () { input.focus(); }, 0);
+  }
+
+  function closeSearch() {
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  if (trigger) trigger.addEventListener('click', openSearch);
+  if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+  if (overlay) {
+    overlay.addEventListener('mousedown', function (e) {
+      if (e.target === overlay) closeSearch();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', function () {
+      loadIndex().then(function () { renderResults(input.value); });
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveSelection(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveSelection(-1); }
+      else if (e.key === 'Enter') {
+        var link = resultsEl.querySelector('.search-result.is-selected');
+        if (link) { e.preventDefault(); window.location.href = link.getAttribute('href'); }
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+    if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === '/' && !typing) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === 'Escape' && overlay && !overlay.hidden) {
+      closeSearch();
+    }
+  });
+
+  // --- External links get a quiet marker ----------------------------------
+  document.querySelectorAll('.prose a[target="_blank"]').forEach(function (a) {
+    a.setAttribute('rel', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>

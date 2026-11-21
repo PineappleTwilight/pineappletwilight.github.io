@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Troubleshooting · Hyoukan Wiki</title>
+<meta name="description" content="Diagnose the app without a computer — logs, crash reports, reader fallbacks, extension errors and sync failures.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e7490'/%3E%3Cpath d='M32 12l5 14h15l-12 9 4 15-12-9-12 9 4-15-12-9h15z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/hyoukan/assets/wiki.css">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('hyoukan-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  } catch (e) { document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="progress-bar" id="progress-bar" aria-hidden="true"></div>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="/hyoukan/">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><path d="M16 3l3.2 8.1L28 14l-8.8 2.9L16 25l-3.2-8.1L4 14l8.8-2.9z" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">Hyoukan</span><span class="brand-sub">Wiki</span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <button class="search-trigger" id="search-trigger" aria-label="Search the wiki">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <span class="search-label">Search</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+  <a class="icon-btn" href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener" aria-label="Hyoukan on GitHub">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5 4-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg>
+  </a>
+  <button class="icon-btn" id="theme-toggle" aria-label="Switch colour theme">
+    <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+  </button>
+</header>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Wiki navigation">
+      <div class="nav-section">
+  <p class="nav-heading">Overview</p>
+  <ul><li><a href="/hyoukan/">Home</a></li>
+<li><a href="/hyoukan/getting-started/">Getting started</a></li>
+<li><a href="/hyoukan/features/">Feature tour</a></li>
+<li><a href="/hyoukan/faq/">FAQ</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">User guide</p>
+  <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
+<li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
+<li><a href="/hyoukan/guide/books/">Reading books</a></li>
+<li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
+<li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
+<li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/translation/">AI translation</a></li>
+<li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
+<li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
+<li><a href="/hyoukan/guide/appearance/">Appearance &amp; identity</a></li>
+<li><a href="/hyoukan/guide/connections/">Connections</a></li>
+<li><a href="/hyoukan/guide/privacy/">Privacy &amp; security</a></li>
+<li><a href="/hyoukan/guide/troubleshooting/" aria-current="page">Troubleshooting</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Development</p>
+  <ul><li><a href="/hyoukan/development/architecture/">Architecture</a></li>
+<li><a href="/hyoukan/development/reader/">Reader &amp; WebGPU</a></li>
+<li><a href="/hyoukan/development/books-engine/">Book engine</a></li>
+<li><a href="/hyoukan/development/data/">Data &amp; database</a></li>
+<li><a href="/hyoukan/development/extensions/">Extensions &amp; source API</a></li>
+<li><a href="/hyoukan/development/translation-upscaling/">Translation &amp; upscaling</a></li>
+<li><a href="/hyoukan/development/settings/">Settings framework</a></li>
+<li><a href="/hyoukan/development/build/">Build &amp; release</a></li>
+<li><a href="/hyoukan/development/testing/">Testing &amp; conventions</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Reference</p>
+  <ul><li><a href="/hyoukan/reference/settings/">Settings index</a></li>
+<li><a href="/hyoukan/reference/formats/">Files &amp; formats</a></li>
+<li><a href="/hyoukan/reference/glossary/">Glossary</a></li>
+<li><a href="/hyoukan/reference/versions/">Versions &amp; channels</a></li>
+<li><a href="/hyoukan/reference/history/">Project history</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Contributing</p>
+  <ul><li><a href="/hyoukan/contributing/">Contributing</a></li></ul>
+</div>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="version-pill">v1.25.3</span>
+      <span>Updated November 2026</span>
+    </div>
+  </aside>
+
+  <main class="main" id="content">
+    <div class="page">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/hyoukan/">Wiki</a><span aria-hidden="true">/</span><span>User guide</span><span aria-hidden="true">/</span><span aria-current="page">Troubleshooting</span>
+</nav>
+      <article class="prose">
+        <h1>Troubleshooting</h1><p class="page-lede">Diagnose the app without a computer — logs, crash reports, reader fallbacks, extension errors and sync failures.</p>
+        <p>Most problems have one of four causes: an extension that has not caught up with its site, a network or Cloudflare block, a device-specific rendering limit, or a setting that is doing what it says. This page starts with the tools that tell you which one you are looking at.</p>
+<h2 id="first-steps"><a class="anchor" href="#first-steps" aria-label="Link to this section">#</a>First steps</h2>
+<ol>
+<li><strong>Update the app</strong> — About → Check for updates. Many reports describe bugs already fixed.</li>
+<li><strong>Update the extension</strong> — a site change is the most common source failure.</li>
+<li><strong>Restart the app</strong> — a force stop clears the source map and the reader state.</li>
+<li><strong>Check the log</strong> — the app keeps a log ring even when nothing is written to disk.</li>
+</ol>
+<h2 id="diagnostics"><a class="anchor" href="#diagnostics" aria-label="Link to this section">#</a>Diagnostics</h2>
+<h3 id="log-levels"><a class="anchor" href="#log-levels" aria-label="Link to this section">#</a>Log levels</h3>
+<p><strong>Settings → Advanced → Log level:</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Level</th>
+<th>What it records</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Minimal</strong> (default)</td>
+<td>Warnings and errors</td>
+<td>In-memory ring, flushed on demand</td>
+</tr>
+<tr>
+<td><strong>Extra</strong></td>
+<td>Adds debug detail and request/response headers</td>
+<td>File logging enabled</td>
+</tr>
+<tr>
+<td><strong>Extreme</strong></td>
+<td>Adds full network bodies for every app request</td>
+<td>File logging enabled; expensive</td>
+</tr>
+</tbody></table></div>
+<p>Changing the level can affect performance and requires a force restart. Return to Minimal when you are done.</p>
+<h3 id="view-logs"><a class="anchor" href="#view-logs" aria-label="Link to this section">#</a>View logs</h3>
+<p><strong>Settings → Advanced → View logs</strong> browses the app&#39;s crash reports, dumps and logcat ring on-device. You can copy or share individual files. <strong>Clear logs</strong> wipes crash files, the ring and the system buffer.</p>
+<h3 id="dump-crash-logs"><a class="anchor" href="#dump-crash-logs" aria-label="Link to this section">#</a>Dump crash logs</h3>
+<p><strong>Settings → Advanced → Dump crash logs</strong> writes a shareable archive. It includes a short WebGPU session summary:</p>
+<ul>
+<li>what the reader decoded and how long it took;</li>
+<li>how tight memory was;</li>
+<li>whether pages were downsampled or evicted;</li>
+<li>whether a decode stalled;</li>
+<li>whether the GPU device was lost.</li>
+</ul>
+<p>A report with this attached is far more useful than &quot;the reader is broken&quot;.</p>
+<h3 id="debug-info"><a class="anchor" href="#debug-info" aria-label="Link to this section">#</a>Debug info</h3>
+<p><strong>Settings → Advanced → Debug info</strong> shows the version, build, device, ABI, memory class, database size and feature flags. Tapping the version row on <strong>About</strong> copies the same device-info block.</p>
+<h3 id="worker-info-and-backup-schema"><a class="anchor" href="#worker-info-and-backup-schema" aria-label="Link to this section">#</a>Worker info and backup schema</h3>
+<p>The debug menu exposes scheduled workers and the backup schema. These are advanced tools; they are safe to inspect and copy, not to edit.</p>
+<h2 id="app-crashes"><a class="anchor" href="#app-crashes" aria-label="Link to this section">#</a>App crashes</h2>
+<ul>
+<li>The crash screen shows the <strong>full stack trace and device info</strong>, not just the exception name.</li>
+<li>A crash loop is tolerated for a burst of crashes before the app gives up, so a one-off crash does not lock you out.</li>
+<li>If the app will not start at all, the database may have failed its integrity check. The maintenance pass restores the latest daily database snapshot; if that fails, it quarantines the corrupt file as <code>tachiyomi.db.corrupt-&lt;timestamp&gt;</code> in app-private storage.</li>
+<li>If the database was reset, restore your latest <code>.tachibk</code> backup.</li>
+</ul>
+<h2 id="library-and-updates"><a class="anchor" href="#library-and-updates" aria-label="Link to this section">#</a>Library and updates</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Library update finds nothing</td>
+<td>All entries skipped by rules</td>
+<td>Check <strong>Skip entries with unread chapters / unstarted / completed</strong> and category schedules</td>
+</tr>
+<tr>
+<td>A series never updates</td>
+<td>Excluded scanlator covers every chapter</td>
+<td>Open the chapter list → Scanlator filter</td>
+</tr>
+<tr>
+<td>Update errors list is empty but updates fail</td>
+<td>HTTP 401/404 only are recorded</td>
+<td>Check <strong>View logs</strong> at Extra level</td>
+</tr>
+<tr>
+<td>Entries missing after restore</td>
+<td>Restore was interrupted, or the backup was category-scoped</td>
+<td>Re-run the restore; check the source/tracker warnings</td>
+</tr>
+<tr>
+<td>Duplicate entries</td>
+<td>Same series from several sources</td>
+<td>Use <strong>Find duplicates</strong> and merge or migrate</td>
+</tr>
+<tr>
+<td>Covers not loading</td>
+<td>Coil cache or source blocked</td>
+<td>Long-press the cover to refresh; check the source in WebView</td>
+</tr>
+<tr>
+<td>Unread counts wrong</td>
+<td>Blacklisted chapters or merged entries</td>
+<td>Check the chapter blacklist and merge state</td>
+</tr>
+</tbody></table></div>
+<h2 id="sources-and-extensions"><a class="anchor" href="#sources-and-extensions" aria-label="Link to this section">#</a>Sources and extensions</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Extension will not install</td>
+<td>Installer permission or Android 14+ cooldown</td>
+<td>Choose the <strong>Private</strong> installer</td>
+</tr>
+<tr>
+<td>Extension installs but no sources appear</td>
+<td>Incompatible API level or a disabled content warning</td>
+<td>Check the extension details; review Allowed content warnings</td>
+</tr>
+<tr>
+<td>&quot;Cloudflare&quot; or a timeout</td>
+<td>Challenge not solved</td>
+<td>Open the source in WebView; enable FlareSolverr; try again</td>
+</tr>
+<tr>
+<td>HTTP 403/429</td>
+<td>Site blocking or rate limiting</td>
+<td>Slow down downloads, change the user agent, wait</td>
+</tr>
+<tr>
+<td>Source works in browser but not in app</td>
+<td>User agent or cookie difference</td>
+<td>Reset the user agent; clear cookies and log in again</td>
+</tr>
+<tr>
+<td>Komga cannot connect</td>
+<td>Wrong URL, API key or DNS</td>
+<td>Use the server&#39;s IP; the source intentionally uses system DNS</td>
+</tr>
+<tr>
+<td>EPUB from Komga says &quot;No pages found&quot;</td>
+<td>Chapter treated as an image chapter</td>
+<td>Update; downloaded books must use the downloaded-book loader</td>
+</tr>
+</tbody></table></div>
+<h2 id="the-webgpu-reader"><a class="anchor" href="#the-webgpu-reader" aria-label="Link to this section">#</a>The WebGPU reader</h2>
+<h3 id="it-falls-back-to-the-standard-viewer"><a class="anchor" href="#it-falls-back-to-the-standard-viewer" aria-label="Link to this section">#</a>It falls back to the standard viewer</h3>
+<p>Check <strong>Settings → Advanced → Use high quality renderer</strong>. If it is on, the log says why:</p>
+<ul>
+<li><code>WebGPU viewer declined:</code> — the health latch or the device.</li>
+<li><code>WebGPU viewer failed</code> — constructing the viewer threw.</li>
+</ul>
+<p>Turning the switch off and on clears the accumulated strikes. A new app build clears them automatically.</p>
+<h3 id="the-screen-is-black-but-pages-are-decoding"><a class="anchor" href="#the-screen-is-black-but-pages-are-decoding" aria-label="Link to this section">#</a>The screen is black, but pages are decoding</h3>
+<p>This is a GPU/driver problem. Try:</p>
+<ol>
+<li>Update the app (the bundled Dawn runtime tracks upstream).</li>
+<li>Toggle the high-quality switch off and on.</li>
+<li>Try <strong>Fast rendering</strong>.</li>
+<li>Disable <strong>ArtCNN</strong>.</li>
+<li>If the device is PowerVR-based, a current build may have a texture-copy workaround.</li>
+</ol>
+<h3 id="pages-are-blurry-or-downsampled"><a class="anchor" href="#pages-are-blurry-or-downsampled" aria-label="Link to this section">#</a>Pages are blurry or downsampled</h3>
+<p>The reader caps the uploaded page at what the panel can show, with zoom headroom, and scales further under memory pressure. That is deliberate: the alternative is a lost GPU device. Free memory or lower the preload counts.</p>
+<h3 id="a-page-is-stuck"><a class="anchor" href="#a-page-is-stuck" aria-label="Link to this section">#</a>A page is stuck</h3>
+<p>Tap it to retry. The reader&#39;s ladder retries a bounded number of times, then gives up and leaves a visible error page rather than spinning forever.</p>
+<h3 id="it-opens-at-the-wrong-page"><a class="anchor" href="#it-opens-at-the-wrong-page" aria-label="Link to this section">#</a>It opens at the wrong page</h3>
+<p>Update first. Several fixes landed for split pages, process-death restores and progress writes over failed pages. If it persists, note the source, chapter, reading mode and whether the entry was incognito.</p>
+<h2 id="books"><a class="anchor" href="#books" aria-label="Link to this section">#</a>Books</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Book opens as images</td>
+<td>Entry type or mixed folder</td>
+<td>Set <strong>Render as book</strong> on the entry</td>
+</tr>
+<tr>
+<td>Text is invisible</td>
+<td>Page colour vs text colour, or a dark theme</td>
+<td>Enable Force dark or pick contrasting colours</td>
+</tr>
+<tr>
+<td>Styles are ignored</td>
+<td>The book hardcodes sizes</td>
+<td>Enable <strong>Ignore publisher styles</strong></td>
+</tr>
+<tr>
+<td>Images missing</td>
+<td>External URLs are not copied</td>
+<td>Only archive resources are inlined; this is expected</td>
+</tr>
+<tr>
+<td>Pages do not turn</td>
+<td>Not in Paged mode, or the document has no layout yet</td>
+<td>Check the page mode; update</td>
+</tr>
+<tr>
+<td>Read-aloud silent</td>
+<td>No TTS engine or language data</td>
+<td>Install a system TTS voice</td>
+</tr>
+<tr>
+<td>Footnotes do nothing</td>
+<td>The note is not labelled as a footnote</td>
+<td>Unlabelled links navigate normally</td>
+</tr>
+</tbody></table></div>
+<h2 id="downloads"><a class="anchor" href="#downloads" aria-label="Link to this section">#</a>Downloads</h2>
+<ul>
+<li><strong>Stuck at 0%</strong> — the source cannot list pages. Verify it in WebView.</li>
+<li><strong>&quot;No pages found&quot;</strong> — a book being downloaded as images; update the app.</li>
+<li><strong>Files exist but the app disagrees</strong> — <strong>Reindex downloads</strong>.</li>
+<li><strong>Not enough space</strong> — clear the cache, then orphaned downloads, then all downloads.</li>
+<li><strong>Corrupt archive</strong> — the download is verified on completion; a broken archive is deleted and the download fails with a retry message. Re-download.</li>
+</ul>
+<h2 id="backup-and-restore"><a class="anchor" href="#backup-and-restore" aria-label="Link to this section">#</a>Backup and restore</h2>
+<ul>
+<li><strong>Invalid backup file</strong> — the file is truncated or not a <code>.tachibk</code>. Try another copy; the error screen shows the parser message.</li>
+<li><strong>Restore is slow</strong> — expected on a large library; it streams and batches. Do not kill it.</li>
+<li><strong>Trackers missing after restore</strong> — log back in; tracking records are restored but sessions are not.</li>
+<li><strong>Extensions missing after restore</strong> — extension APKs are not in the backup. Install them, then restore source settings if needed.</li>
+<li><strong>Custom covers missing</strong> — restore with <strong>Custom covers</strong> enabled; the images are stored inside the backup.</li>
+</ul>
+<h2 id="sync"><a class="anchor" href="#sync" aria-label="Link to this section">#</a>Sync</h2>
+<ul>
+<li><strong>Nothing appears on the second device</strong> — check the host, API key and last-sync timestamp; run <strong>Sync now</strong>.</li>
+<li><strong>Most of the library was skipped</strong> — run <strong>Sync now</strong> once after updating so every entry gets the favorite stamp the uploader requires.</li>
+<li><strong>Deleted entries come back</strong> — v1 is full-payload; enable protocol v2 for tombstones, or delete again on both devices.</li>
+<li><strong>Sync is slow or times out</strong> — v2 allows up to 5 minutes per full request; a very large library may still need several runs.</li>
+</ul>
+<h2 id="tracking"><a class="anchor" href="#tracking" aria-label="Link to this section">#</a>Tracking</h2>
+<ul>
+<li><strong>Login fails</strong> — check the service status, then try the other auth mode. Anime-Planet&#39;s Cloudflare check is waited out.</li>
+<li><strong>Progress does not update</strong> — check the per-setting toggles and whether the entry is linked.</li>
+<li><strong>Records vanished after logout</strong> — <strong>Delete tracking records on logout</strong> was on. Restore or re-sync.</li>
+</ul>
+<h2 id="translation-and-upscaling"><a class="anchor" href="#translation-and-upscaling" aria-label="Link to this section">#</a>Translation and upscaling</h2>
+<ul>
+<li><strong>Translation unavailable</strong> — 3 GB RAM, supported ABI, models installed or a provider configured. The status row names the missing piece.</li>
+<li><strong>Blank or half-translated page</strong> — OCR found nothing; install the PaddleOCR add-on for Latin scripts.</li>
+<li><strong>Upscaling does nothing</strong> — check the global switch, per-entry toggle and category default, in that order.</li>
+<li><strong>Everything falls back to resample</strong> — no model installed or the backend is unavailable. Check live status.</li>
+</ul>
+<h2 id="background-work-and-notifications"><a class="anchor" href="#background-work-and-notifications" aria-label="Link to this section">#</a>Background work and notifications</h2>
+<ul>
+<li><strong>Updates stop when the app is closed</strong> — Android battery optimization. Use <strong>Settings → Advanced → Disable battery optimization</strong>, and check the manufacturer&#39;s extra restrictions.</li>
+<li><strong>No notifications</strong> — grant the notification permission; check that the channel is not blocked.</li>
+<li><strong>Backups do not run</strong> — auto backups require battery not low and a valid storage location.</li>
+</ul>
+<h2 id="performance-and-battery"><a class="anchor" href="#performance-and-battery" aria-label="Link to this section">#</a>Performance and battery</h2>
+<ul>
+<li>Lower the reader cache and preload counts.</li>
+<li>Disable ArtCNN and page transitions.</li>
+<li>Turn off cover-based dynamic colour if the library scroll stutters.</li>
+<li>Use <strong>Fast rendering</strong> on weak tablets.</li>
+<li>The reader already backs off memory polling when the screen is off and only requests the top refresh rate while something moves; if battery drain persists, capture a log and report the device.</li>
+</ul>
+<h2 id="reporting-a-bug"><a class="anchor" href="#reporting-a-bug" aria-label="Link to this section">#</a>Reporting a bug</h2>
+<p>Include:</p>
+<ol>
+<li>App version and build number (About).</li>
+<li>Device, Android version and ABI (the version row copies this block).</li>
+<li>Steps to reproduce, with the source and entry if relevant.</li>
+<li>Whether it happens on a fresh library or only yours.</li>
+<li>A log dump from <strong>Dump crash logs</strong>.</li>
+</ol>
+<p>Open the issue on <a href="https://github.com/PineappleTwilight/hyoukan/issues" target="_blank" rel="noopener">GitHub</a>. For extension bugs, use the extension&#39;s own repository — the app cannot fix a source it does not own.</p>
+
+      </article>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/guide/privacy/"><span class="pager-dir">Previous</span><span class="pager-title">Privacy &amp; security</span></a><a class="pager-link pager-next" href="/hyoukan/development/architecture/"><span class="pager-dir">Next</span><span class="pager-title">Architecture</span></a></nav>
+      <footer class="page-foot">
+        <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
+        <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/guide/troubleshooting.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
+      </footer>
+    </div>
+  </main>
+
+  <aside class="toc" aria-label="On this page">
+    <p class="toc-heading">On this page</p>
+<ul class="toc-list"><li class="toc-l2"><a href="#first-steps">First steps</a></li>
+<li class="toc-l2"><a href="#diagnostics">Diagnostics</a></li>
+<li class="toc-l3"><a href="#log-levels">Log levels</a></li>
+<li class="toc-l3"><a href="#view-logs">View logs</a></li>
+<li class="toc-l3"><a href="#dump-crash-logs">Dump crash logs</a></li>
+<li class="toc-l3"><a href="#debug-info">Debug info</a></li>
+<li class="toc-l3"><a href="#worker-info-and-backup-schema">Worker info and backup schema</a></li>
+<li class="toc-l2"><a href="#app-crashes">App crashes</a></li>
+<li class="toc-l2"><a href="#library-and-updates">Library and updates</a></li>
+<li class="toc-l2"><a href="#sources-and-extensions">Sources and extensions</a></li>
+<li class="toc-l2"><a href="#the-webgpu-reader">The WebGPU reader</a></li>
+<li class="toc-l3"><a href="#it-falls-back-to-the-standard-viewer">It falls back to the standard viewer</a></li>
+<li class="toc-l3"><a href="#the-screen-is-black-but-pages-are-decoding">The screen is black, but pages are decoding</a></li>
+<li class="toc-l3"><a href="#pages-are-blurry-or-downsampled">Pages are blurry or downsampled</a></li>
+<li class="toc-l3"><a href="#a-page-is-stuck">A page is stuck</a></li>
+<li class="toc-l3"><a href="#it-opens-at-the-wrong-page">It opens at the wrong page</a></li>
+<li class="toc-l2"><a href="#books">Books</a></li>
+<li class="toc-l2"><a href="#downloads">Downloads</a></li>
+<li class="toc-l2"><a href="#backup-and-restore">Backup and restore</a></li>
+<li class="toc-l2"><a href="#sync">Sync</a></li>
+<li class="toc-l2"><a href="#tracking">Tracking</a></li>
+<li class="toc-l2"><a href="#translation-and-upscaling">Translation and upscaling</a></li>
+<li class="toc-l2"><a href="#background-work-and-notifications">Background work and notifications</a></li>
+<li class="toc-l2"><a href="#performance-and-battery">Performance and battery</a></li>
+<li class="toc-l2"><a href="#reporting-a-bug">Reporting a bug</a></li></ul>
+  </aside>
+</div>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search the Hyoukan wiki" hidden>
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search-input" type="search" placeholder="Search the wiki…" autocomplete="off" spellcheck="false" aria-label="Search query">
+      <button class="icon-btn" id="search-close" aria-label="Close search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-results" id="search-results" aria-live="polite">
+      <p class="search-hint">Type to search 33 pages. Use ↑ ↓ to move and Enter to open.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.HYOUKAN_BASE = "/hyoukan";</script>
+<script>/* Hyoukan wiki — theme, navigation, search, TOC and reading progress. */
+(function () {
+  'use strict';
+
+  var BASE = window.HYOUKAN_BASE || '/hyoukan';
+  var root = document.documentElement;
+
+  // --- Theme ---------------------------------------------------------------
+  var themeBtn = document.getElementById('theme-toggle');
+  function setTheme(theme) {
+    root.dataset.theme = theme;
+    try { localStorage.setItem('hyoukan-theme', theme); } catch (e) {}
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+  setTheme(root.dataset.theme || 'light');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // --- Mobile sidebar ------------------------------------------------------
+  var menuBtn = document.getElementById('menu-btn');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('sidebar-backdrop');
+
+  function setMenu(open) {
+    if (!sidebar) return;
+    sidebar.classList.toggle('is-open', open);
+    if (backdrop) backdrop.hidden = !open;
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function () {
+      setMenu(!sidebar.classList.contains('is-open'));
+    });
+  }
+  if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
+  if (sidebar) {
+    sidebar.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setMenu(false);
+    });
+  }
+
+  // --- Reading progress ----------------------------------------------------
+  var progress = document.getElementById('progress-bar');
+  if (progress) {
+    var ticking = false;
+    function updateProgress() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+      progress.style.width = pct.toFixed(2) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+    updateProgress();
+  }
+
+  // --- TOC scroll spy ------------------------------------------------------
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-list a'));
+  var tocTargets = tocLinks
+    .map(function (link) {
+      var id = decodeURIComponent(link.getAttribute('href').slice(1));
+      var el = document.getElementById(id);
+      return el ? { link: link, el: el } : null;
+    })
+    .filter(Boolean);
+
+  if (tocTargets.length && 'IntersectionObserver' in window) {
+    var visible = new Map();
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) visible.set(entry.target.id, entry.boundingClientRect.top);
+        else visible.delete(entry.target.id);
+      });
+      var best = null;
+      tocTargets.forEach(function (t) {
+        if (visible.has(t.el.id)) {
+          var top = visible.get(t.el.id);
+          if (best === null || top < best.top) best = { top: top, link: t.link };
+        }
+      });
+      if (best) {
+        tocLinks.forEach(function (l) { l.classList.remove('is-active'); });
+        best.link.classList.add('is-active');
+      }
+    }, { rootMargin: '-88px 0px -65% 0px', threshold: [0, 1] });
+    tocTargets.forEach(function (t) { observer.observe(t.el); });
+  }
+
+  // --- Copy code buttons ---------------------------------------------------
+  document.querySelectorAll('.prose pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-code';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(area);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  // --- Search --------------------------------------------------------------
+  var overlay = document.getElementById('search-overlay');
+  var trigger = document.getElementById('search-trigger');
+  var closeBtn = document.getElementById('search-close');
+  var input = document.getElementById('search-input');
+  var resultsEl = document.getElementById('search-results');
+  var index = null;
+  var loading = null;
+  var selected = -1;
+  var currentResults = [];
+  var lastFocus = null;
+
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (loading) return loading;
+    loading = fetch(BASE + '/search-index.json', { cache: 'no-cache' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { index = data; return data; })
+      .catch(function () { index = []; return index; });
+    return loading;
+  }
+
+  function tokenize(q) {
+    return q.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function highlight(text, tokens) {
+    var safe = escapeHtml(text);
+    tokens.forEach(function (token) {
+      if (!token) return;
+      var re = new RegExp('(' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      safe = safe.replace(re, '<mark>$1</mark>');
+    });
+    return safe;
+  }
+
+  function snippet(text, tokens) {
+    if (!text) return '';
+    var lower = text.toLowerCase();
+    var at = -1;
+    for (var i = 0; i < tokens.length; i++) {
+      var p = lower.indexOf(tokens[i]);
+      if (p !== -1 && (at === -1 || p < at)) at = p;
+    }
+    if (at === -1) at = 0;
+    var start = Math.max(0, at - 70);
+    var end = Math.min(text.length, at + 190);
+    return (start > 0 ? '…' : '') + text.slice(start, end).trim() + (end < text.length ? '…' : '');
+  }
+
+  function score(page, tokens) {
+    var title = page.title.toLowerCase();
+    var headings = (page.headings || []).join(' ').toLowerCase();
+    var description = (page.description || '').toLowerCase();
+    var text = (page.text || '').toLowerCase();
+    var total = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      var s = 0;
+      if (title === t) s = 120;
+      else if (title.indexOf(t) === 0) s = 80;
+      else if (title.indexOf(t) !== -1) s = 55;
+      else if (headings.indexOf(t) !== -1) s = 24;
+      else if (description.indexOf(t) !== -1) s = 14;
+      else if (text.indexOf(t) !== -1) s = 6;
+      if (s === 0) return 0;
+
+      // Repeated mentions are a useful relevance hint once the token matches at all.
+      var count = 0;
+      var at = text.indexOf(t);
+      while (at !== -1 && count < 8) {
+        count++;
+        at = text.indexOf(t, at + t.length);
+      }
+      total += s + count;
+    }
+    return total;
+  }
+
+  function renderResults(query) {
+    var tokens = tokenize(query);
+    if (!tokens.length) {
+      resultsEl.innerHTML = '<p class="search-hint">Type to search ' + (index ? index.length : '') +
+        ' pages. Use ↑ ↓ to move and Enter to open.</p>';
+      currentResults = [];
+      selected = -1;
+      return;
+    }
+    if (!index) {
+      resultsEl.innerHTML = '<p class="search-hint">Loading index…</p>';
+      return;
+    }
+    var scored = index.map(function (page) {
+      return { page: page, score: score(page, tokens) };
+    }).filter(function (r) { return r.score > 0; });
+    scored.sort(function (a, b) { return b.score - a.score || a.page.title.localeCompare(b.page.title); });
+    currentResults = scored.slice(0, 18);
+    selected = currentResults.length ? 0 : -1;
+
+    if (!currentResults.length) {
+      resultsEl.innerHTML = '<p class="search-empty">No pages match <strong>' + escapeHtml(query) + '</strong>.</p>';
+      return;
+    }
+
+    resultsEl.innerHTML = currentResults.map(function (r, i) {
+      var p = r.page;
+      return '<a class="search-result' + (i === 0 ? ' is-selected' : '') + '" href="' + p.url + '">' +
+        '<span class="search-result-title">' + highlight(p.title, tokens) +
+        '<span class="search-result-section">' + escapeHtml(p.section || '') + '</span></span>' +
+        '<span class="search-result-text">' + highlight(snippet(p.description || p.text, tokens), tokens) + '</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  function moveSelection(delta) {
+    if (!currentResults.length) return;
+    selected = (selected + delta + currentResults.length) % currentResults.length;
+    Array.prototype.forEach.call(resultsEl.querySelectorAll('.search-result'), function (el, i) {
+      el.classList.toggle('is-selected', i === selected);
+      if (i === selected) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  function openSearch() {
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    renderResults('');
+    loadIndex().then(function () { renderResults(input.value); });
+    setTimeout(function () { input.focus(); }, 0);
+  }
+
+  function closeSearch() {
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  if (trigger) trigger.addEventListener('click', openSearch);
+  if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+  if (overlay) {
+    overlay.addEventListener('mousedown', function (e) {
+      if (e.target === overlay) closeSearch();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', function () {
+      loadIndex().then(function () { renderResults(input.value); });
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveSelection(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveSelection(-1); }
+      else if (e.key === 'Enter') {
+        var link = resultsEl.querySelector('.search-result.is-selected');
+        if (link) { e.preventDefault(); window.location.href = link.getAttribute('href'); }
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+    if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === '/' && !typing) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === 'Escape' && overlay && !overlay.hidden) {
+      closeSearch();
+    }
+  });
+
+  // --- External links get a quiet marker ----------------------------------
+  document.querySelectorAll('.prose a[target="_blank"]').forEach(function (a) {
+    a.setAttribute('rel', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>

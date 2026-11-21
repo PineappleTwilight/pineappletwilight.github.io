@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backup &amp; sync · Hyoukan Wiki</title>
+<meta name="description" content="Portable .tachibk backups, automatic snapshots, SyncYomi, WebDAV and Google Drive.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e7490'/%3E%3Cpath d='M32 12l5 14h15l-12 9 4 15-12-9-12 9 4-15-12-9h15z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/hyoukan/assets/wiki.css">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('hyoukan-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  } catch (e) { document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="progress-bar" id="progress-bar" aria-hidden="true"></div>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="/hyoukan/">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><path d="M16 3l3.2 8.1L28 14l-8.8 2.9L16 25l-3.2-8.1L4 14l8.8-2.9z" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">Hyoukan</span><span class="brand-sub">Wiki</span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <button class="search-trigger" id="search-trigger" aria-label="Search the wiki">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <span class="search-label">Search</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+  <a class="icon-btn" href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener" aria-label="Hyoukan on GitHub">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5 4-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg>
+  </a>
+  <button class="icon-btn" id="theme-toggle" aria-label="Switch colour theme">
+    <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+  </button>
+</header>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Wiki navigation">
+      <div class="nav-section">
+  <p class="nav-heading">Overview</p>
+  <ul><li><a href="/hyoukan/">Home</a></li>
+<li><a href="/hyoukan/getting-started/">Getting started</a></li>
+<li><a href="/hyoukan/features/">Feature tour</a></li>
+<li><a href="/hyoukan/faq/">FAQ</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">User guide</p>
+  <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
+<li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
+<li><a href="/hyoukan/guide/books/">Reading books</a></li>
+<li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
+<li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
+<li><a href="/hyoukan/guide/backup-sync/" aria-current="page">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/translation/">AI translation</a></li>
+<li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
+<li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
+<li><a href="/hyoukan/guide/appearance/">Appearance &amp; identity</a></li>
+<li><a href="/hyoukan/guide/connections/">Connections</a></li>
+<li><a href="/hyoukan/guide/privacy/">Privacy &amp; security</a></li>
+<li><a href="/hyoukan/guide/troubleshooting/">Troubleshooting</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Development</p>
+  <ul><li><a href="/hyoukan/development/architecture/">Architecture</a></li>
+<li><a href="/hyoukan/development/reader/">Reader &amp; WebGPU</a></li>
+<li><a href="/hyoukan/development/books-engine/">Book engine</a></li>
+<li><a href="/hyoukan/development/data/">Data &amp; database</a></li>
+<li><a href="/hyoukan/development/extensions/">Extensions &amp; source API</a></li>
+<li><a href="/hyoukan/development/translation-upscaling/">Translation &amp; upscaling</a></li>
+<li><a href="/hyoukan/development/settings/">Settings framework</a></li>
+<li><a href="/hyoukan/development/build/">Build &amp; release</a></li>
+<li><a href="/hyoukan/development/testing/">Testing &amp; conventions</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Reference</p>
+  <ul><li><a href="/hyoukan/reference/settings/">Settings index</a></li>
+<li><a href="/hyoukan/reference/formats/">Files &amp; formats</a></li>
+<li><a href="/hyoukan/reference/glossary/">Glossary</a></li>
+<li><a href="/hyoukan/reference/versions/">Versions &amp; channels</a></li>
+<li><a href="/hyoukan/reference/history/">Project history</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Contributing</p>
+  <ul><li><a href="/hyoukan/contributing/">Contributing</a></li></ul>
+</div>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="version-pill">v1.25.3</span>
+      <span>Updated November 2026</span>
+    </div>
+  </aside>
+
+  <main class="main" id="content">
+    <div class="page">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/hyoukan/">Wiki</a><span aria-hidden="true">/</span><span>User guide</span><span aria-hidden="true">/</span><span aria-current="page">Backup &amp; sync</span>
+</nav>
+      <article class="prose">
+        <h1>Backup &amp; sync</h1><p class="page-lede">Portable .tachibk backups, automatic snapshots, SyncYomi, WebDAV and Google Drive.</p>
+        <p>Hyoukan stores everything in one SQLite database. Keeping that database safe has two parts: <strong>backups</strong> (portable snapshots you own) and <strong>sync</strong> (keeping several devices aligned). They are not substitutes for each other.</p>
+<h2 id="backups"><a class="anchor" href="#backups" aria-label="Link to this section">#</a>Backups</h2>
+<p>A backup is a <code>.tachibk</code> file — a protobuf stream containing the library, chapters, categories, history, tracking and selected settings. It is not a copy of the database file, and it does not contain downloaded pages or extension APKs.</p>
+<h3 id="creating-one"><a class="anchor" href="#creating-one" aria-label="Link to this section">#</a>Creating one</h3>
+<p><strong>More → Settings → Data and storage → Create backup.</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Default</th>
+<th>What it includes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Library entries</strong></td>
+<td>On</td>
+<td>Entries, covers, metadata</td>
+</tr>
+<tr>
+<td><strong>Chapters</strong></td>
+<td>On</td>
+<td>Chapter lists and read state</td>
+</tr>
+<tr>
+<td><strong>Tracking</strong></td>
+<td>On</td>
+<td>Tracker links, scores, statuses</td>
+</tr>
+<tr>
+<td><strong>History</strong></td>
+<td>On</td>
+<td>Reading history</td>
+</tr>
+<tr>
+<td><strong>Categories</strong></td>
+<td>On</td>
+<td>Categories and their hierarchy</td>
+</tr>
+<tr>
+<td><strong>Non-library settings</strong></td>
+<td>On</td>
+<td>Read state for entries not in the library</td>
+</tr>
+<tr>
+<td><strong>Custom entry info</strong></td>
+<td>On</td>
+<td>User-edited metadata</td>
+</tr>
+<tr>
+<td><strong>Saved searches &amp; feeds</strong></td>
+<td>On</td>
+<td>Saved searches and feed definitions</td>
+</tr>
+<tr>
+<td><strong>Custom covers</strong></td>
+<td>On</td>
+<td>The actual cover images, not just references</td>
+</tr>
+<tr>
+<td><strong>App settings</strong></td>
+<td>On</td>
+<td>App preferences</td>
+</tr>
+<tr>
+<td><strong>Extension stores</strong></td>
+<td>On</td>
+<td>Configured repositories</td>
+</tr>
+<tr>
+<td><strong>Source settings</strong></td>
+<td>On</td>
+<td>Per-source preferences (logins included)</td>
+</tr>
+<tr>
+<td><strong>Private settings</strong></td>
+<td><strong>Off</strong></td>
+<td>Settings marked <code>__PRIVATE_</code>; may include passwords</td>
+</tr>
+</tbody></table></div>
+<p>A backup can also be <strong>scoped to selected categories</strong>, so you can snapshot one shelf without the rest.</p>
+<blockquote class="callout callout-warning"><p class="callout-title">Warning</p>
+<p><strong>Backups can contain sensitive data.</strong> With private settings or source settings enabled, they can include stored passwords and cookies. Treat a backup like a password database, not like a screenshot.</p>
+</blockquote>
+<h3 id="automatic-backups"><a class="anchor" href="#automatic-backups" aria-label="Link to this section">#</a>Automatic backups</h3>
+<p><strong>Settings → Data and storage → Automatic backup frequency</strong> schedules a backup every 1, 3, 6 or 12 hours, daily, every 2 days or weekly. Automatic backups:</p>
+<ul>
+<li>run only when the battery is not low;</li>
+<li>are written to the automatic-backup folder (or the chosen storage location);</li>
+<li>keep the <strong>four most recent</strong> files; older automatic backups are deleted;</li>
+<li>never run while a restore is in progress.</li>
+</ul>
+<p>The screen shows the last automatic backup time.</p>
+<h3 id="restoring"><a class="anchor" href="#restoring" aria-label="Link to this section">#</a>Restoring</h3>
+<p><strong>Settings → Data and storage → Restore backup.</strong> Pick a file, choose what to restore, and confirm.</p>
+<p>Restore options mirror the backup options: library, categories, app settings, extension stores, source settings and saved searches/feeds. A separate <strong>Update library after restore</strong> toggle (on by default) runs a full library refresh once the restore finishes; it is a follow-up action, not backup content, so checking only it restores nothing.</p>
+<p>How restore behaves:</p>
+<ul>
+<li>The file is <strong>streamed</strong>. Entries are decoded one at a time and restored in batches, so a large library does not need to fit in memory.</li>
+<li>Entries are classified as new, existing or merged and walked twice; merged entries are written after the ordinary chunks.</li>
+<li>Each batch runs in one transaction, falling back to per-entry writes if the batch fails.</li>
+<li>Old Mihon-format backups are readable; entries without an update schedule have one computed from the backup&#39;s own chapter list.</li>
+<li>Missing extensions and logged-out trackers are reported before the restore starts.</li>
+<li>The &quot;Restoring backup&quot; banner clears when the restore finishes, not when the follow-up refresh does.</li>
+</ul>
+<p>A restore merges into the existing library rather than replacing it wholesale. Entries are matched by source and URL; categories are remapped by id and name.</p>
+<h3 id="integrity-and-recovery"><a class="anchor" href="#integrity-and-recovery" aria-label="Link to this section">#</a>Integrity and recovery</h3>
+<p>The app protects the database on its own:</p>
+<ul>
+<li>A <strong>startup quick check</strong> probes the database file before the connection pool opens.</li>
+<li>A <strong>rolling local database backup</strong> is refreshed at most once a day; the three most recent are kept.</li>
+<li>If the quick check fails, the latest local backup is restored automatically.</li>
+<li>If no backup can be restored, the corrupt file is <strong>quarantined</strong> (renamed with a <code>.corrupt-&lt;timestamp&gt;</code> suffix) instead of crash-looping forever.</li>
+</ul>
+<p>This is separate from your <code>.tachibk</code> backups and lives in app-private storage. It protects against corruption, not against uninstalling the app.</p>
+<h2 id="sync"><a class="anchor" href="#sync" aria-label="Link to this section">#</a>Sync</h2>
+<p>Sync keeps several devices aligned. Configure it under <strong>Settings → Data and storage → Sync</strong>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Service</th>
+<th>What it needs</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Off</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>SyncYomi</strong></td>
+<td>A host URL and an API key</td>
+</tr>
+<tr>
+<td><strong>Google Drive</strong></td>
+<td>A Google sign-in</td>
+</tr>
+<tr>
+<td><strong>WebDAV</strong></td>
+<td>Server URL, username, password and a data folder</td>
+</tr>
+</tbody></table></div>
+<h3 id="what-syncs"><a class="anchor" href="#what-syncs" aria-label="Link to this section">#</a>What syncs</h3>
+<p>The same content classes as a backup, with one important difference: <strong>custom covers are off by default for sync</strong> so the images do not ride on every request. Private settings are on by default for sync in the current configuration; turn them off if you do not want credentials leaving the device.</p>
+<h3 id="frequency-and-triggers"><a class="anchor" href="#frequency-and-triggers" aria-label="Link to this section">#</a>Frequency and triggers</h3>
+<ul>
+<li><strong>Synchronization frequency</strong> — every 30 minutes, hourly, every 3/6/12 hours, daily, every 2 days or weekly.</li>
+<li><strong>Sync triggers</strong> — sync on chapter read, on chapter open, on app start and on app resume. Any combination.</li>
+<li><strong>Sync now</strong> — run immediately.</li>
+<li><strong>Show syncing progress banner</strong> — show or hide the banner.</li>
+<li><strong>Last Synchronization</strong> — the timestamp of the last successful run.</li>
+</ul>
+<h3 id="syncyomi-protocol-v2"><a class="anchor" href="#syncyomi-protocol-v2" aria-label="Link to this section">#</a>SyncYomi protocol v2</h3>
+<p>SyncYomi has two protocols:</p>
+<ul>
+<li><strong>v1 (default)</strong> — full-library upload/download with an ETag.</li>
+<li><strong>v2 (opt-in)</strong> — server-side merge and delta sync, with tombstones for deleted categories and chapters. It requires a host running SyncYomi 1.6 or newer.</li>
+</ul>
+<p>Enable <strong>Use protocol v2</strong> to opt in. The app probes the host, and a host that does not advertise v2 falls back to the classic path. v2 keeps a cursor and a last-pushed timestamp; a full sync is requested when the server needs one. It also applies remote un-favourites and drops chapters tombstoned on another device.</p>
+<h3 id="webdav"><a class="anchor" href="#webdav" aria-label="Link to this section">#</a>WebDAV</h3>
+<p>Point the app at any WebDAV server and folder. The default folder is <code>houri</code> (a legacy name kept for compatibility). The app writes the sync payload as a file and downloads it on the next device. No third-party service is involved beyond your own server.</p>
+<h3 id="google-drive"><a class="anchor" href="#google-drive" aria-label="Link to this section">#</a>Google Drive</h3>
+<p>Sign in with Google, then sync to the app&#39;s Drive folder. <strong>Clear Sync Data from Google Drive</strong> purges the remote payload after a confirmation. The OAuth redirect is a build setting, so a fork can register its own client.</p>
+<h3 id="what-sync-is-not"><a class="anchor" href="#what-sync-is-not" aria-label="Link to this section">#</a>What sync is not</h3>
+<ul>
+<li>It is <strong>not encrypted end-to-end</strong> by the app. Your host can read the payload.</li>
+<li>It is <strong>not a backup</strong>. A bad merge or a deleted library propagates. Keep periodic <code>.tachibk</code> backups.</li>
+<li>It does <strong>not</strong> sync downloaded pages or extensions.</li>
+<li>It does <strong>not</strong> resolve every conflict automatically. When two devices change the same entry, the service&#39;s merge rules decide; v1 is last-write-wins per payload, v2 merges by version and tombstone.</li>
+</ul>
+<h2 id="choosing-a-strategy"><a class="anchor" href="#choosing-a-strategy" aria-label="Link to this section">#</a>Choosing a strategy</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>One device</td>
+<td>Automatic backups weekly, plus a manual backup before updates</td>
+</tr>
+<tr>
+<td>Two or three devices</td>
+<td>SyncYomi or WebDAV for convenience, plus a weekly backup</td>
+</tr>
+<tr>
+<td>A very large library</td>
+<td>Manual backups scoped to categories; sync v2 if the host supports it</td>
+</tr>
+<tr>
+<td>Privacy-sensitive library</td>
+<td>Local backups only, private settings off, database encryption on</td>
+</tr>
+<tr>
+<td>Moving to a new phone</td>
+<td>Create a full backup, copy it, restore on the new device, then log back into trackers</td>
+</tr>
+</tbody></table></div>
+<h2 id="troubleshooting"><a class="anchor" href="#troubleshooting" aria-label="Link to this section">#</a>Troubleshooting</h2>
+<ul>
+<li><strong>Restore says the file is invalid</strong> — the file is truncated or not a <code>.tachibk</code>. Try another copy; the error screen shows the full parser message.</li>
+<li><strong>Restore is slow</strong> — expected on a very large library; it is streaming and batched. Do not kill the app mid-restore.</li>
+<li><strong>Sync uploads but the other device sees nothing</strong> — check the device&#39;s last-sync timestamp and whether the host accepts the payload. Run <strong>Sync now</strong> once after updating.</li>
+<li><strong>Sync skipped most of the library</strong> — older builds required a favorite stamp that restored entries lacked. Run <strong>Sync now</strong> once so the full library uploads.</li>
+<li><strong>The database was reset after an update</strong> — the startup quick check may have quarantined a corrupt file. Look for <code>tachiyomi.db.corrupt-*</code> in app-private storage and restore your latest <code>.tachibk</code>.</li>
+</ul>
+
+      </article>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/guide/tracking/"><span class="pager-dir">Previous</span><span class="pager-title">Tracking</span></a><a class="pager-link pager-next" href="/hyoukan/guide/translation/"><span class="pager-dir">Next</span><span class="pager-title">AI translation</span></a></nav>
+      <footer class="page-foot">
+        <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
+        <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/guide/backup-sync.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
+      </footer>
+    </div>
+  </main>
+
+  <aside class="toc" aria-label="On this page">
+    <p class="toc-heading">On this page</p>
+<ul class="toc-list"><li class="toc-l2"><a href="#backups">Backups</a></li>
+<li class="toc-l3"><a href="#creating-one">Creating one</a></li>
+<li class="toc-l3"><a href="#automatic-backups">Automatic backups</a></li>
+<li class="toc-l3"><a href="#restoring">Restoring</a></li>
+<li class="toc-l3"><a href="#integrity-and-recovery">Integrity and recovery</a></li>
+<li class="toc-l2"><a href="#sync">Sync</a></li>
+<li class="toc-l3"><a href="#what-syncs">What syncs</a></li>
+<li class="toc-l3"><a href="#frequency-and-triggers">Frequency and triggers</a></li>
+<li class="toc-l3"><a href="#syncyomi-protocol-v2">SyncYomi protocol v2</a></li>
+<li class="toc-l3"><a href="#webdav">WebDAV</a></li>
+<li class="toc-l3"><a href="#google-drive">Google Drive</a></li>
+<li class="toc-l3"><a href="#what-sync-is-not">What sync is not</a></li>
+<li class="toc-l2"><a href="#choosing-a-strategy">Choosing a strategy</a></li>
+<li class="toc-l2"><a href="#troubleshooting">Troubleshooting</a></li></ul>
+  </aside>
+</div>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search the Hyoukan wiki" hidden>
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search-input" type="search" placeholder="Search the wiki…" autocomplete="off" spellcheck="false" aria-label="Search query">
+      <button class="icon-btn" id="search-close" aria-label="Close search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-results" id="search-results" aria-live="polite">
+      <p class="search-hint">Type to search 33 pages. Use ↑ ↓ to move and Enter to open.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.HYOUKAN_BASE = "/hyoukan";</script>
+<script>/* Hyoukan wiki — theme, navigation, search, TOC and reading progress. */
+(function () {
+  'use strict';
+
+  var BASE = window.HYOUKAN_BASE || '/hyoukan';
+  var root = document.documentElement;
+
+  // --- Theme ---------------------------------------------------------------
+  var themeBtn = document.getElementById('theme-toggle');
+  function setTheme(theme) {
+    root.dataset.theme = theme;
+    try { localStorage.setItem('hyoukan-theme', theme); } catch (e) {}
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+  setTheme(root.dataset.theme || 'light');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // --- Mobile sidebar ------------------------------------------------------
+  var menuBtn = document.getElementById('menu-btn');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('sidebar-backdrop');
+
+  function setMenu(open) {
+    if (!sidebar) return;
+    sidebar.classList.toggle('is-open', open);
+    if (backdrop) backdrop.hidden = !open;
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function () {
+      setMenu(!sidebar.classList.contains('is-open'));
+    });
+  }
+  if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
+  if (sidebar) {
+    sidebar.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setMenu(false);
+    });
+  }
+
+  // --- Reading progress ----------------------------------------------------
+  var progress = document.getElementById('progress-bar');
+  if (progress) {
+    var ticking = false;
+    function updateProgress() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+      progress.style.width = pct.toFixed(2) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+    updateProgress();
+  }
+
+  // --- TOC scroll spy ------------------------------------------------------
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-list a'));
+  var tocTargets = tocLinks
+    .map(function (link) {
+      var id = decodeURIComponent(link.getAttribute('href').slice(1));
+      var el = document.getElementById(id);
+      return el ? { link: link, el: el } : null;
+    })
+    .filter(Boolean);
+
+  if (tocTargets.length && 'IntersectionObserver' in window) {
+    var visible = new Map();
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) visible.set(entry.target.id, entry.boundingClientRect.top);
+        else visible.delete(entry.target.id);
+      });
+      var best = null;
+      tocTargets.forEach(function (t) {
+        if (visible.has(t.el.id)) {
+          var top = visible.get(t.el.id);
+          if (best === null || top < best.top) best = { top: top, link: t.link };
+        }
+      });
+      if (best) {
+        tocLinks.forEach(function (l) { l.classList.remove('is-active'); });
+        best.link.classList.add('is-active');
+      }
+    }, { rootMargin: '-88px 0px -65% 0px', threshold: [0, 1] });
+    tocTargets.forEach(function (t) { observer.observe(t.el); });
+  }
+
+  // --- Copy code buttons ---------------------------------------------------
+  document.querySelectorAll('.prose pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-code';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(area);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  // --- Search --------------------------------------------------------------
+  var overlay = document.getElementById('search-overlay');
+  var trigger = document.getElementById('search-trigger');
+  var closeBtn = document.getElementById('search-close');
+  var input = document.getElementById('search-input');
+  var resultsEl = document.getElementById('search-results');
+  var index = null;
+  var loading = null;
+  var selected = -1;
+  var currentResults = [];
+  var lastFocus = null;
+
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (loading) return loading;
+    loading = fetch(BASE + '/search-index.json', { cache: 'no-cache' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { index = data; return data; })
+      .catch(function () { index = []; return index; });
+    return loading;
+  }
+
+  function tokenize(q) {
+    return q.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function highlight(text, tokens) {
+    var safe = escapeHtml(text);
+    tokens.forEach(function (token) {
+      if (!token) return;
+      var re = new RegExp('(' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      safe = safe.replace(re, '<mark>$1</mark>');
+    });
+    return safe;
+  }
+
+  function snippet(text, tokens) {
+    if (!text) return '';
+    var lower = text.toLowerCase();
+    var at = -1;
+    for (var i = 0; i < tokens.length; i++) {
+      var p = lower.indexOf(tokens[i]);
+      if (p !== -1 && (at === -1 || p < at)) at = p;
+    }
+    if (at === -1) at = 0;
+    var start = Math.max(0, at - 70);
+    var end = Math.min(text.length, at + 190);
+    return (start > 0 ? '…' : '') + text.slice(start, end).trim() + (end < text.length ? '…' : '');
+  }
+
+  function score(page, tokens) {
+    var title = page.title.toLowerCase();
+    var headings = (page.headings || []).join(' ').toLowerCase();
+    var description = (page.description || '').toLowerCase();
+    var text = (page.text || '').toLowerCase();
+    var total = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      var s = 0;
+      if (title === t) s = 120;
+      else if (title.indexOf(t) === 0) s = 80;
+      else if (title.indexOf(t) !== -1) s = 55;
+      else if (headings.indexOf(t) !== -1) s = 24;
+      else if (description.indexOf(t) !== -1) s = 14;
+      else if (text.indexOf(t) !== -1) s = 6;
+      if (s === 0) return 0;
+
+      // Repeated mentions are a useful relevance hint once the token matches at all.
+      var count = 0;
+      var at = text.indexOf(t);
+      while (at !== -1 && count < 8) {
+        count++;
+        at = text.indexOf(t, at + t.length);
+      }
+      total += s + count;
+    }
+    return total;
+  }
+
+  function renderResults(query) {
+    var tokens = tokenize(query);
+    if (!tokens.length) {
+      resultsEl.innerHTML = '<p class="search-hint">Type to search ' + (index ? index.length : '') +
+        ' pages. Use ↑ ↓ to move and Enter to open.</p>';
+      currentResults = [];
+      selected = -1;
+      return;
+    }
+    if (!index) {
+      resultsEl.innerHTML = '<p class="search-hint">Loading index…</p>';
+      return;
+    }
+    var scored = index.map(function (page) {
+      return { page: page, score: score(page, tokens) };
+    }).filter(function (r) { return r.score > 0; });
+    scored.sort(function (a, b) { return b.score - a.score || a.page.title.localeCompare(b.page.title); });
+    currentResults = scored.slice(0, 18);
+    selected = currentResults.length ? 0 : -1;
+
+    if (!currentResults.length) {
+      resultsEl.innerHTML = '<p class="search-empty">No pages match <strong>' + escapeHtml(query) + '</strong>.</p>';
+      return;
+    }
+
+    resultsEl.innerHTML = currentResults.map(function (r, i) {
+      var p = r.page;
+      return '<a class="search-result' + (i === 0 ? ' is-selected' : '') + '" href="' + p.url + '">' +
+        '<span class="search-result-title">' + highlight(p.title, tokens) +
+        '<span class="search-result-section">' + escapeHtml(p.section || '') + '</span></span>' +
+        '<span class="search-result-text">' + highlight(snippet(p.description || p.text, tokens), tokens) + '</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  function moveSelection(delta) {
+    if (!currentResults.length) return;
+    selected = (selected + delta + currentResults.length) % currentResults.length;
+    Array.prototype.forEach.call(resultsEl.querySelectorAll('.search-result'), function (el, i) {
+      el.classList.toggle('is-selected', i === selected);
+      if (i === selected) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  function openSearch() {
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    renderResults('');
+    loadIndex().then(function () { renderResults(input.value); });
+    setTimeout(function () { input.focus(); }, 0);
+  }
+
+  function closeSearch() {
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  if (trigger) trigger.addEventListener('click', openSearch);
+  if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+  if (overlay) {
+    overlay.addEventListener('mousedown', function (e) {
+      if (e.target === overlay) closeSearch();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', function () {
+      loadIndex().then(function () { renderResults(input.value); });
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveSelection(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveSelection(-1); }
+      else if (e.key === 'Enter') {
+        var link = resultsEl.querySelector('.search-result.is-selected');
+        if (link) { e.preventDefault(); window.location.href = link.getAttribute('href'); }
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+    if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === '/' && !typing) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === 'Escape' && overlay && !overlay.hidden) {
+      closeSearch();
+    }
+  });
+
+  // --- External links get a quiet marker ----------------------------------
+  document.querySelectorAll('.prose a[target="_blank"]').forEach(function (a) {
+    a.setAttribute('rel', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>

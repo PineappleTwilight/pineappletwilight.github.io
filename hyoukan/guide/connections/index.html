@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connections · Hyoukan Wiki</title>
+<meta name="description" content="Discord presence, webhooks, FlareSolverr, DNS-over-HTTPS and the network plumbing behind sources.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e7490'/%3E%3Cpath d='M32 12l5 14h15l-12 9 4 15-12-9-12 9 4-15-12-9h15z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/hyoukan/assets/wiki.css">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('hyoukan-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  } catch (e) { document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="progress-bar" id="progress-bar" aria-hidden="true"></div>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="/hyoukan/">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><path d="M16 3l3.2 8.1L28 14l-8.8 2.9L16 25l-3.2-8.1L4 14l8.8-2.9z" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">Hyoukan</span><span class="brand-sub">Wiki</span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <button class="search-trigger" id="search-trigger" aria-label="Search the wiki">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <span class="search-label">Search</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+  <a class="icon-btn" href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener" aria-label="Hyoukan on GitHub">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5 4-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg>
+  </a>
+  <button class="icon-btn" id="theme-toggle" aria-label="Switch colour theme">
+    <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+  </button>
+</header>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Wiki navigation">
+      <div class="nav-section">
+  <p class="nav-heading">Overview</p>
+  <ul><li><a href="/hyoukan/">Home</a></li>
+<li><a href="/hyoukan/getting-started/">Getting started</a></li>
+<li><a href="/hyoukan/features/">Feature tour</a></li>
+<li><a href="/hyoukan/faq/">FAQ</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">User guide</p>
+  <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
+<li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
+<li><a href="/hyoukan/guide/books/">Reading books</a></li>
+<li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
+<li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
+<li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/translation/">AI translation</a></li>
+<li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
+<li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
+<li><a href="/hyoukan/guide/appearance/">Appearance &amp; identity</a></li>
+<li><a href="/hyoukan/guide/connections/" aria-current="page">Connections</a></li>
+<li><a href="/hyoukan/guide/privacy/">Privacy &amp; security</a></li>
+<li><a href="/hyoukan/guide/troubleshooting/">Troubleshooting</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Development</p>
+  <ul><li><a href="/hyoukan/development/architecture/">Architecture</a></li>
+<li><a href="/hyoukan/development/reader/">Reader &amp; WebGPU</a></li>
+<li><a href="/hyoukan/development/books-engine/">Book engine</a></li>
+<li><a href="/hyoukan/development/data/">Data &amp; database</a></li>
+<li><a href="/hyoukan/development/extensions/">Extensions &amp; source API</a></li>
+<li><a href="/hyoukan/development/translation-upscaling/">Translation &amp; upscaling</a></li>
+<li><a href="/hyoukan/development/settings/">Settings framework</a></li>
+<li><a href="/hyoukan/development/build/">Build &amp; release</a></li>
+<li><a href="/hyoukan/development/testing/">Testing &amp; conventions</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Reference</p>
+  <ul><li><a href="/hyoukan/reference/settings/">Settings index</a></li>
+<li><a href="/hyoukan/reference/formats/">Files &amp; formats</a></li>
+<li><a href="/hyoukan/reference/glossary/">Glossary</a></li>
+<li><a href="/hyoukan/reference/versions/">Versions &amp; channels</a></li>
+<li><a href="/hyoukan/reference/history/">Project history</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Contributing</p>
+  <ul><li><a href="/hyoukan/contributing/">Contributing</a></li></ul>
+</div>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="version-pill">v1.25.3</span>
+      <span>Updated November 2026</span>
+    </div>
+  </aside>
+
+  <main class="main" id="content">
+    <div class="page">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/hyoukan/">Wiki</a><span aria-hidden="true">/</span><span>User guide</span><span aria-hidden="true">/</span><span aria-current="page">Connections</span>
+</nav>
+      <article class="prose">
+        <h1>Connections</h1><p class="page-lede">Discord presence, webhooks, FlareSolverr, DNS-over-HTTPS and the network plumbing behind sources.</p>
+        <p>Hyoukan can talk to more than sources. This page covers the optional services that observe or extend the app, and the network layer they share.</p>
+<h2 id="discord-rich-presence"><a class="anchor" href="#discord-rich-presence" aria-label="Link to this section">#</a>Discord Rich Presence</h2>
+<p><strong>Settings → Connections → Discord.</strong></p>
+<p>Enable <strong>Discord RPC</strong> and sign in to a Discord account. Presence shows what you are reading: the entry title, chapter, cover and progress, depending on the options below.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Discord status</strong></td>
+<td>Online, idle or do-not-disturb</td>
+</tr>
+<tr>
+<td><strong>Custom message</strong></td>
+<td>Text shown in the presence</td>
+</tr>
+<tr>
+<td><strong>Show progress</strong></td>
+<td>Chapter progress in the presence</td>
+</tr>
+<tr>
+<td><strong>Show page progress</strong></td>
+<td>Page-level detail</td>
+</tr>
+<tr>
+<td><strong>Show timestamp</strong></td>
+<td>Elapsed reading time</td>
+</tr>
+<tr>
+<td><strong>Show buttons</strong></td>
+<td>Link buttons in the card</td>
+</tr>
+<tr>
+<td><strong>Download button</strong></td>
+<td>A button that opens the entry</td>
+</tr>
+<tr>
+<td><strong>Discord button</strong></td>
+<td>A button that opens the app&#39;s Discord</td>
+</tr>
+<tr>
+<td><strong>Incognito</strong></td>
+<td>Hide presence while incognito</td>
+</tr>
+<tr>
+<td><strong>Excluded categories</strong></td>
+<td>Entries in these categories are never shown</td>
+</tr>
+</tbody></table></div>
+<h3 id="signing-in"><a class="anchor" href="#signing-in" aria-label="Link to this section">#</a>Signing in</h3>
+<p>Two paths:</p>
+<ol>
+<li><strong>Embedded WebView login</strong> — the normal OAuth flow.</li>
+<li><strong>Log in with a token</strong> — the account menu accepts a raw account token, validates it against Discord and stores it locally. This is the fallback when the WebView login is flagged or fails.</li>
+</ol>
+<blockquote class="callout callout-warning"><p class="callout-title">Warning</p>
+<p>A Discord account token is a credential. Storing it locally is convenient, not risk-free. Use the OAuth flow where possible, and sign out from the Discord accounts screen when you are done.</p>
+</blockquote>
+<p>Multiple accounts are supported; one is active at a time. Deleting an account removes its stored session.</p>
+<h2 id="webhooks"><a class="anchor" href="#webhooks" aria-label="Link to this section">#</a>Webhooks</h2>
+<p><strong>Settings → Connections → Webhooks.</strong></p>
+<p>Send app events to a <strong>Discord webhook</strong> or a <strong>generic JSON endpoint</strong>. URLs are stored privately and are included in backups.</p>
+<h3 id="events"><a class="anchor" href="#events" aria-label="Link to this section">#</a>Events</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Event</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Chapter started</strong></td>
+<td>A chapter is opened</td>
+</tr>
+<tr>
+<td><strong>Chapter read</strong></td>
+<td>A chapter is marked read</td>
+</tr>
+<tr>
+<td><strong>New manga started</strong></td>
+<td>First chapter of a new entry is read</td>
+</tr>
+<tr>
+<td><strong>Manga finished</strong></td>
+<td>The last chapter is marked read</td>
+</tr>
+<tr>
+<td><strong>Library update</strong></td>
+<td>A library refresh finishes</td>
+</tr>
+<tr>
+<td><strong>Downloads finished</strong></td>
+<td>The download queue drains</td>
+</tr>
+<tr>
+<td><strong>Backup created</strong></td>
+<td>A backup completes</td>
+</tr>
+<tr>
+<td><strong>Backup restored</strong></td>
+<td>A restore completes</td>
+</tr>
+<tr>
+<td><strong>Manga added</strong></td>
+<td>An entry is added to the library</td>
+</tr>
+<tr>
+<td><strong>Manga removed</strong></td>
+<td>An entry is removed</td>
+</tr>
+<tr>
+<td><strong>Manga migrated</strong></td>
+<td>An entry is migrated to another source</td>
+</tr>
+<tr>
+<td><strong>App updated</strong></td>
+<td>The app version changes</td>
+</tr>
+<tr>
+<td><strong>Achievement unlocked</strong></td>
+<td>An achievement unlocks</td>
+</tr>
+</tbody></table></div>
+<p><strong>Include reading time</strong> adds the session&#39;s reading time to the payload.</p>
+<p><strong>Excluded categories</strong> suppresses events for entries in those categories and subcategories.</p>
+<h3 id="payloads"><a class="anchor" href="#payloads" aria-label="Link to this section">#</a>Payloads</h3>
+<ul>
+<li><strong>Discord</strong> payloads use Discord&#39;s webhook format: an embed with the entry, chapter, cover, progress and optional reading time.</li>
+<li><strong>Generic</strong> payloads are JSON objects with the event name and the same fields, suitable for Home Assistant, n8n, a personal server or a script.</li>
+</ul>
+<p><strong>Send test notification</strong> validates the URL and shows what a payload looks like.</p>
+<blockquote class="callout callout-note"><p class="callout-title">Note</p>
+<p>A webhook URL is a secret. Anyone with it can post to the channel or endpoint. If one leaks, revoke it at the destination.</p>
+</blockquote>
+<h2 id="flaresolverr"><a class="anchor" href="#flaresolverr" aria-label="Link to this section">#</a>FlareSolverr</h2>
+<p>Some sources sit behind Cloudflare. Hyoukan&#39;s built-in WebView solver handles most challenges; FlareSolverr is an optional external service for the rest.</p>
+<p><strong>Settings → Advanced → Networking:</strong></p>
+<ol>
+<li>Enable <strong>FlareSolverr</strong>.</li>
+<li>Set the URL, for example <code>http://192.168.1.202:8191/v1</code>.</li>
+<li><strong>Test FlareSolverr and update user agent</strong> — verifies the instance and refreshes the user agent string.</li>
+<li><strong>Cloudflare bypass banner</strong> — optionally show which host and method are being used while a challenge is being solved.</li>
+</ol>
+<p>The instance must share the device&#39;s public IP, because Cloudflare binds the clearance cookie to it. If FlareSolverr is unreachable, the app falls back to the built-in solver.</p>
+<h2 id="dns-over-https"><a class="anchor" href="#dns-over-https" aria-label="Link to this section">#</a>DNS over HTTPS</h2>
+<p><strong>Settings → Advanced → Networking → DNS over HTTPS.</strong></p>
+<p>Twelve providers are available, from Cloudflare and Google to Quad9, AdGuard and others. DoH is applied to the app&#39;s OkHttp clients; the local Komga source deliberately uses the system DNS so IP-addressed servers keep working.</p>
+<p>A custom <strong>default user agent</strong> can be set, or reset to the current Chrome string. Changing it affects sites that key behaviour on the user agent; a reset is the first thing to try when a source starts behaving differently.</p>
+<h2 id="cookies-and-webview-data"><a class="anchor" href="#cookies-and-webview-data" aria-label="Link to this section">#</a>Cookies and WebView data</h2>
+<ul>
+<li><strong>Clear cookies</strong> — removes the app&#39;s HTTP cookie jar.</li>
+<li><strong>Clear WebView data</strong> — clears the WebView profile used for logins and challenge solving.</li>
+</ul>
+<p>Clearing these logs you out of cookie-based sources and trackers. It does not delete your library or downloaded chapters.</p>
+<h2 id="google-drive"><a class="anchor" href="#google-drive" aria-label="Link to this section">#</a>Google Drive</h2>
+<p>The Google Drive sync service uses OAuth. Sign in from <strong>Settings → Data and storage → Sync → Google Drive</strong>, then choose what to sync. See <a href="/hyoukan/guide/backup-sync/#google-drive">Backup &amp; sync</a>.</p>
+<p>Forks can register their own OAuth client with <code>-PgoogleDriveRedirect=...</code>; the default keeps existing credentials working.</p>
+<h2 id="syncyomi-and-webdav"><a class="anchor" href="#syncyomi-and-webdav" aria-label="Link to this section">#</a>SyncYomi and WebDAV</h2>
+<p>These are library-sync services rather than &quot;connections&quot; in the social sense. Their setup, triggers, protocol v2 and conflict behaviour are covered in <a href="/hyoukan/guide/backup-sync/#sync">Backup &amp; sync</a>.</p>
+<h2 id="network-log-levels"><a class="anchor" href="#network-log-levels" aria-label="Link to this section">#</a>Network log levels</h2>
+<p><strong>Settings → Advanced → Log level</strong> controls diagnostics:</p>
+<ul>
+<li><strong>Minimal</strong> (default) — warnings and errors in the in-memory ring; nothing written to disk.</li>
+<li><strong>Verbose / Extra / Extreme</strong> — progressively more detail, including request and response headers.</li>
+<li><strong>Extreme</strong> also captures the app&#39;s own networking (E-Hentai API, image loads, downloads, sync), not just source fetches.</li>
+</ul>
+<p>Higher levels cost performance and storage. Return to Minimal when you are done diagnosing.</p>
+
+      </article>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/guide/appearance/"><span class="pager-dir">Previous</span><span class="pager-title">Appearance &amp; identity</span></a><a class="pager-link pager-next" href="/hyoukan/guide/privacy/"><span class="pager-dir">Next</span><span class="pager-title">Privacy &amp; security</span></a></nav>
+      <footer class="page-foot">
+        <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
+        <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/guide/connections.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
+      </footer>
+    </div>
+  </main>
+
+  <aside class="toc" aria-label="On this page">
+    <p class="toc-heading">On this page</p>
+<ul class="toc-list"><li class="toc-l2"><a href="#discord-rich-presence">Discord Rich Presence</a></li>
+<li class="toc-l3"><a href="#signing-in">Signing in</a></li>
+<li class="toc-l2"><a href="#webhooks">Webhooks</a></li>
+<li class="toc-l3"><a href="#events">Events</a></li>
+<li class="toc-l3"><a href="#payloads">Payloads</a></li>
+<li class="toc-l2"><a href="#flaresolverr">FlareSolverr</a></li>
+<li class="toc-l2"><a href="#dns-over-https">DNS over HTTPS</a></li>
+<li class="toc-l2"><a href="#cookies-and-webview-data">Cookies and WebView data</a></li>
+<li class="toc-l2"><a href="#google-drive">Google Drive</a></li>
+<li class="toc-l2"><a href="#syncyomi-and-webdav">SyncYomi and WebDAV</a></li>
+<li class="toc-l2"><a href="#network-log-levels">Network log levels</a></li></ul>
+  </aside>
+</div>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search the Hyoukan wiki" hidden>
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search-input" type="search" placeholder="Search the wiki…" autocomplete="off" spellcheck="false" aria-label="Search query">
+      <button class="icon-btn" id="search-close" aria-label="Close search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-results" id="search-results" aria-live="polite">
+      <p class="search-hint">Type to search 33 pages. Use ↑ ↓ to move and Enter to open.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.HYOUKAN_BASE = "/hyoukan";</script>
+<script>/* Hyoukan wiki — theme, navigation, search, TOC and reading progress. */
+(function () {
+  'use strict';
+
+  var BASE = window.HYOUKAN_BASE || '/hyoukan';
+  var root = document.documentElement;
+
+  // --- Theme ---------------------------------------------------------------
+  var themeBtn = document.getElementById('theme-toggle');
+  function setTheme(theme) {
+    root.dataset.theme = theme;
+    try { localStorage.setItem('hyoukan-theme', theme); } catch (e) {}
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+  setTheme(root.dataset.theme || 'light');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // --- Mobile sidebar ------------------------------------------------------
+  var menuBtn = document.getElementById('menu-btn');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('sidebar-backdrop');
+
+  function setMenu(open) {
+    if (!sidebar) return;
+    sidebar.classList.toggle('is-open', open);
+    if (backdrop) backdrop.hidden = !open;
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function () {
+      setMenu(!sidebar.classList.contains('is-open'));
+    });
+  }
+  if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
+  if (sidebar) {
+    sidebar.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setMenu(false);
+    });
+  }
+
+  // --- Reading progress ----------------------------------------------------
+  var progress = document.getElementById('progress-bar');
+  if (progress) {
+    var ticking = false;
+    function updateProgress() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+      progress.style.width = pct.toFixed(2) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+    updateProgress();
+  }
+
+  // --- TOC scroll spy ------------------------------------------------------
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-list a'));
+  var tocTargets = tocLinks
+    .map(function (link) {
+      var id = decodeURIComponent(link.getAttribute('href').slice(1));
+      var el = document.getElementById(id);
+      return el ? { link: link, el: el } : null;
+    })
+    .filter(Boolean);
+
+  if (tocTargets.length && 'IntersectionObserver' in window) {
+    var visible = new Map();
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) visible.set(entry.target.id, entry.boundingClientRect.top);
+        else visible.delete(entry.target.id);
+      });
+      var best = null;
+      tocTargets.forEach(function (t) {
+        if (visible.has(t.el.id)) {
+          var top = visible.get(t.el.id);
+          if (best === null || top < best.top) best = { top: top, link: t.link };
+        }
+      });
+      if (best) {
+        tocLinks.forEach(function (l) { l.classList.remove('is-active'); });
+        best.link.classList.add('is-active');
+      }
+    }, { rootMargin: '-88px 0px -65% 0px', threshold: [0, 1] });
+    tocTargets.forEach(function (t) { observer.observe(t.el); });
+  }
+
+  // --- Copy code buttons ---------------------------------------------------
+  document.querySelectorAll('.prose pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-code';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(area);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  // --- Search --------------------------------------------------------------
+  var overlay = document.getElementById('search-overlay');
+  var trigger = document.getElementById('search-trigger');
+  var closeBtn = document.getElementById('search-close');
+  var input = document.getElementById('search-input');
+  var resultsEl = document.getElementById('search-results');
+  var index = null;
+  var loading = null;
+  var selected = -1;
+  var currentResults = [];
+  var lastFocus = null;
+
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (loading) return loading;
+    loading = fetch(BASE + '/search-index.json', { cache: 'no-cache' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { index = data; return data; })
+      .catch(function () { index = []; return index; });
+    return loading;
+  }
+
+  function tokenize(q) {
+    return q.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function highlight(text, tokens) {
+    var safe = escapeHtml(text);
+    tokens.forEach(function (token) {
+      if (!token) return;
+      var re = new RegExp('(' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      safe = safe.replace(re, '<mark>$1</mark>');
+    });
+    return safe;
+  }
+
+  function snippet(text, tokens) {
+    if (!text) return '';
+    var lower = text.toLowerCase();
+    var at = -1;
+    for (var i = 0; i < tokens.length; i++) {
+      var p = lower.indexOf(tokens[i]);
+      if (p !== -1 && (at === -1 || p < at)) at = p;
+    }
+    if (at === -1) at = 0;
+    var start = Math.max(0, at - 70);
+    var end = Math.min(text.length, at + 190);
+    return (start > 0 ? '…' : '') + text.slice(start, end).trim() + (end < text.length ? '…' : '');
+  }
+
+  function score(page, tokens) {
+    var title = page.title.toLowerCase();
+    var headings = (page.headings || []).join(' ').toLowerCase();
+    var description = (page.description || '').toLowerCase();
+    var text = (page.text || '').toLowerCase();
+    var total = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      var s = 0;
+      if (title === t) s = 120;
+      else if (title.indexOf(t) === 0) s = 80;
+      else if (title.indexOf(t) !== -1) s = 55;
+      else if (headings.indexOf(t) !== -1) s = 24;
+      else if (description.indexOf(t) !== -1) s = 14;
+      else if (text.indexOf(t) !== -1) s = 6;
+      if (s === 0) return 0;
+
+      // Repeated mentions are a useful relevance hint once the token matches at all.
+      var count = 0;
+      var at = text.indexOf(t);
+      while (at !== -1 && count < 8) {
+        count++;
+        at = text.indexOf(t, at + t.length);
+      }
+      total += s + count;
+    }
+    return total;
+  }
+
+  function renderResults(query) {
+    var tokens = tokenize(query);
+    if (!tokens.length) {
+      resultsEl.innerHTML = '<p class="search-hint">Type to search ' + (index ? index.length : '') +
+        ' pages. Use ↑ ↓ to move and Enter to open.</p>';
+      currentResults = [];
+      selected = -1;
+      return;
+    }
+    if (!index) {
+      resultsEl.innerHTML = '<p class="search-hint">Loading index…</p>';
+      return;
+    }
+    var scored = index.map(function (page) {
+      return { page: page, score: score(page, tokens) };
+    }).filter(function (r) { return r.score > 0; });
+    scored.sort(function (a, b) { return b.score - a.score || a.page.title.localeCompare(b.page.title); });
+    currentResults = scored.slice(0, 18);
+    selected = currentResults.length ? 0 : -1;
+
+    if (!currentResults.length) {
+      resultsEl.innerHTML = '<p class="search-empty">No pages match <strong>' + escapeHtml(query) + '</strong>.</p>';
+      return;
+    }
+
+    resultsEl.innerHTML = currentResults.map(function (r, i) {
+      var p = r.page;
+      return '<a class="search-result' + (i === 0 ? ' is-selected' : '') + '" href="' + p.url + '">' +
+        '<span class="search-result-title">' + highlight(p.title, tokens) +
+        '<span class="search-result-section">' + escapeHtml(p.section || '') + '</span></span>' +
+        '<span class="search-result-text">' + highlight(snippet(p.description || p.text, tokens), tokens) + '</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  function moveSelection(delta) {
+    if (!currentResults.length) return;
+    selected = (selected + delta + currentResults.length) % currentResults.length;
+    Array.prototype.forEach.call(resultsEl.querySelectorAll('.search-result'), function (el, i) {
+      el.classList.toggle('is-selected', i === selected);
+      if (i === selected) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  function openSearch() {
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    renderResults('');
+    loadIndex().then(function () { renderResults(input.value); });
+    setTimeout(function () { input.focus(); }, 0);
+  }
+
+  function closeSearch() {
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  if (trigger) trigger.addEventListener('click', openSearch);
+  if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+  if (overlay) {
+    overlay.addEventListener('mousedown', function (e) {
+      if (e.target === overlay) closeSearch();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', function () {
+      loadIndex().then(function () { renderResults(input.value); });
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveSelection(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveSelection(-1); }
+      else if (e.key === 'Enter') {
+        var link = resultsEl.querySelector('.search-result.is-selected');
+        if (link) { e.preventDefault(); window.location.href = link.getAttribute('href'); }
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+    if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === '/' && !typing) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === 'Escape' && overlay && !overlay.hidden) {
+      closeSearch();
+    }
+  });
+
+  // --- External links get a quiet marker ----------------------------------
+  document.querySelectorAll('.prose a[target="_blank"]').forEach(function (a) {
+    a.setAttribute('rel', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings index · Hyoukan Wiki</title>
+<meta name="description" content="A screen-by-screen reference to Hyoukan's settings, grouped by the decision each one makes.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e7490'/%3E%3Cpath d='M32 12l5 14h15l-12 9 4 15-12-9-12 9 4-15-12-9h15z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/hyoukan/assets/wiki.css">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('hyoukan-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  } catch (e) { document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="progress-bar" id="progress-bar" aria-hidden="true"></div>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="/hyoukan/">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><path d="M16 3l3.2 8.1L28 14l-8.8 2.9L16 25l-3.2-8.1L4 14l8.8-2.9z" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">Hyoukan</span><span class="brand-sub">Wiki</span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <button class="search-trigger" id="search-trigger" aria-label="Search the wiki">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <span class="search-label">Search</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+  <a class="icon-btn" href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener" aria-label="Hyoukan on GitHub">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5 4-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg>
+  </a>
+  <button class="icon-btn" id="theme-toggle" aria-label="Switch colour theme">
+    <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+  </button>
+</header>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Wiki navigation">
+      <div class="nav-section">
+  <p class="nav-heading">Overview</p>
+  <ul><li><a href="/hyoukan/">Home</a></li>
+<li><a href="/hyoukan/getting-started/">Getting started</a></li>
+<li><a href="/hyoukan/features/">Feature tour</a></li>
+<li><a href="/hyoukan/faq/">FAQ</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">User guide</p>
+  <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
+<li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
+<li><a href="/hyoukan/guide/books/">Reading books</a></li>
+<li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
+<li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
+<li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/translation/">AI translation</a></li>
+<li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
+<li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
+<li><a href="/hyoukan/guide/appearance/">Appearance &amp; identity</a></li>
+<li><a href="/hyoukan/guide/connections/">Connections</a></li>
+<li><a href="/hyoukan/guide/privacy/">Privacy &amp; security</a></li>
+<li><a href="/hyoukan/guide/troubleshooting/">Troubleshooting</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Development</p>
+  <ul><li><a href="/hyoukan/development/architecture/">Architecture</a></li>
+<li><a href="/hyoukan/development/reader/">Reader &amp; WebGPU</a></li>
+<li><a href="/hyoukan/development/books-engine/">Book engine</a></li>
+<li><a href="/hyoukan/development/data/">Data &amp; database</a></li>
+<li><a href="/hyoukan/development/extensions/">Extensions &amp; source API</a></li>
+<li><a href="/hyoukan/development/translation-upscaling/">Translation &amp; upscaling</a></li>
+<li><a href="/hyoukan/development/settings/">Settings framework</a></li>
+<li><a href="/hyoukan/development/build/">Build &amp; release</a></li>
+<li><a href="/hyoukan/development/testing/">Testing &amp; conventions</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Reference</p>
+  <ul><li><a href="/hyoukan/reference/settings/" aria-current="page">Settings index</a></li>
+<li><a href="/hyoukan/reference/formats/">Files &amp; formats</a></li>
+<li><a href="/hyoukan/reference/glossary/">Glossary</a></li>
+<li><a href="/hyoukan/reference/versions/">Versions &amp; channels</a></li>
+<li><a href="/hyoukan/reference/history/">Project history</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Contributing</p>
+  <ul><li><a href="/hyoukan/contributing/">Contributing</a></li></ul>
+</div>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="version-pill">v1.25.3</span>
+      <span>Updated November 2026</span>
+    </div>
+  </aside>
+
+  <main class="main" id="content">
+    <div class="page">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/hyoukan/">Wiki</a><span aria-hidden="true">/</span><span>Reference</span><span aria-hidden="true">/</span><span aria-current="page">Settings index</span>
+</nav>
+      <article class="prose">
+        <h1>Settings index</h1><p class="page-lede">A screen-by-screen reference to Hyoukan's settings, grouped by the decision each one makes.</p>
+        <p>This is the map of <strong>More → Settings</strong>. Rows are grouped as they appear; a row&#39;s exact wording may vary slightly by translation. Linked pages explain the behaviour behind a group.</p>
+<h2 id="appearance"><a class="anchor" href="#appearance" aria-label="Link to this section">#</a>Appearance</h2>
+<p><strong>Theme</strong></p>
+<ul>
+<li><strong>App theme</strong> — light, dark, system or a named scheme.</li>
+<li><strong>Palette Personalizer</strong> — pick a seed colour and style for the custom theme.</li>
+<li><strong>Custom theme style</strong> — tonal spot, neutral, vibrant, expressive, rainbow, fruit salad, monochrome, fidelity or content.</li>
+<li><strong>Pure black dark mode</strong> — AMOLED black.</li>
+<li><strong>Theme based on cover</strong> — derive the palette from the open entry.</li>
+<li><strong>Cover based theme style</strong> — how that palette is built.</li>
+<li><strong>Panorama Cover</strong> — show a wide cover in landscape.</li>
+<li><strong>Align Cover to Top</strong> — cover at the top of the details page.</li>
+<li><strong>Cover Loading Spinner</strong> — spinner or plain placeholder.</li>
+</ul>
+<p><strong>Display</strong></p>
+<ul>
+<li><strong>App icon &amp; name</strong> — launcher identity screen.</li>
+<li><strong>App language</strong> — follow the system or pick a language.</li>
+<li><strong>Tablet UI</strong> — automatic, always on, always off.</li>
+<li><strong>Rail button alignment</strong> — start, centre, end.</li>
+<li><strong>Date format</strong>.</li>
+<li><strong>Statistics cover style</strong> — square/compact or book/full.</li>
+<li><strong>Relative timestamps</strong> — &quot;2 hours ago&quot; instead of an absolute date.</li>
+<li><strong>Render images in manga descriptions</strong>.</li>
+<li><strong>Censor lewd manga</strong> — blur thumbnails and redact text.</li>
+</ul>
+<p><strong>Fork settings</strong></p>
+<ul>
+<li><strong>Panorama Cover Flow</strong> — show panorama covers in global search and suggestions.</li>
+<li><strong>Expand all search filters by default</strong>.</li>
+<li><strong>Recommendations in overflow</strong>.</li>
+<li><strong>Merge in overflow</strong>.</li>
+<li><strong>Previews row count</strong>.</li>
+</ul>
+<p><strong>Navbar</strong></p>
+<ul>
+<li><strong>Show updates in the nav</strong>.</li>
+<li><strong>Show history in the nav</strong>.</li>
+<li><strong>Always show nav labels</strong>.</li>
+</ul>
+<h2 id="app-icon-name"><a class="anchor" href="#app-icon-name" aria-label="Link to this section">#</a>App icon &amp; name</h2>
+<ul>
+<li><strong>Six built-in launcher icons</strong> — Forest, Midnight, Sakura, Ocean, Ember, Paper.</li>
+<li><strong>Custom launcher icon</strong> — choose an image; Android cannot replace the installed icon, so a shortcut is pinned.</li>
+<li><strong>Crop / Fit</strong> — crop trims the edges; fit keeps the whole image on a transparent square.</li>
+<li><strong>Add home-screen shortcut</strong> — pins the custom image and name.</li>
+<li><strong>Remove image</strong>.</li>
+<li><strong>Custom app name</strong> — shown on the shortcut and in About.</li>
+</ul>
+<h2 id="library"><a class="anchor" href="#library" aria-label="Link to this section">#</a>Library</h2>
+<p><strong>Categories</strong></p>
+<ul>
+<li><strong>Edit categories</strong> — create, rename, reorder, delete, nest subcategories.</li>
+<li><strong>Default category</strong> — where new entries land.</li>
+<li><strong>Per-category settings for sort</strong>.</li>
+</ul>
+<p><strong>Global update</strong></p>
+<ul>
+<li><strong>Automatic updates</strong> — off, every 12 hours, daily, every 2/3 days, weekly.</li>
+<li><strong>Automatic updates device restrictions</strong> — Wi-Fi only, unmetered only, charging.</li>
+<li><strong>Always launch global updates</strong> / <strong>Launch global updates only for ungrouped, category updates for others</strong> / <strong>Launch category updates all the time</strong>.</li>
+<li><strong>Automatically refresh metadata</strong> — cover and details during updates.</li>
+<li><strong>Subcategory refresh scope</strong> — entire category or selected subcategory.</li>
+<li><strong>Skip entries with unread chapter(s)</strong>.</li>
+<li><strong>Skip unstarted entries</strong>.</li>
+<li><strong>Skip entries with &quot;Completed&quot; status</strong>.</li>
+<li><strong>Predict next release time</strong> / <strong>Smart update</strong>.</li>
+<li><strong>Show unread count on Updates icon</strong>.</li>
+<li><strong>Show updating progress banner</strong>.</li>
+</ul>
+<p><strong>Behavior</strong></p>
+<ul>
+<li><strong>Chapter on swipe left / right</strong> — disabled, bookmark, mark as read, download.</li>
+<li><strong>After reading a chapter</strong> — what happens when a chapter is finished.</li>
+<li><strong>After fetching new chapter</strong>.</li>
+<li><strong>Mark duplicate read chapter as read</strong> — old or new.</li>
+<li><strong>Hide missing chapter indicators</strong>.</li>
+<li><strong>Show empty categories during search/filtering</strong>.</li>
+<li><strong>Use folder layout for subcategories</strong>.</li>
+<li><strong>Hide the &quot;All&quot; subcategory</strong>.</li>
+<li><strong>Fetch metadata when adding to library</strong>.</li>
+<li><strong>Fetch chapters when adding to library</strong>.</li>
+<li><strong>Advanced search (colons)</strong>.</li>
+</ul>
+<p><strong>Sorting settings</strong></p>
+<ul>
+<li>Tag sorting tags.</li>
+</ul>
+<h2 id="reader"><a class="anchor" href="#reader" aria-label="Link to this section">#</a>Reader</h2>
+<p><strong>Display</strong></p>
+<ul>
+<li><strong>Default reading mode</strong> — LTR, RTL, vertical, webtoon, continuous vertical.</li>
+<li><strong>Default rotation</strong> — free, portrait, landscape, locked.</li>
+<li><strong>Background color</strong> — black, gray, white, auto.</li>
+<li><strong>Fullscreen</strong>.</li>
+<li><strong>Show content in cutout area</strong>.</li>
+<li><strong>Keep screen on</strong>.</li>
+<li><strong>Show page number</strong>.</li>
+<li><strong>Flash on page change</strong> — duration, interval, black/white.</li>
+<li><strong>Display cutout mode</strong> — single and dual page.</li>
+</ul>
+<p><strong>Reading</strong></p>
+<ul>
+<li><strong>Skip chapters marked read</strong>.</li>
+<li><strong>Skip filtered chapters</strong>.</li>
+<li><strong>Skip duplicate chapters</strong>.</li>
+<li><strong>Always show chapter transition</strong>.</li>
+<li><strong>NSFW chapter completion sound</strong>.</li>
+<li><strong>Randomize moan location</strong> — 50% last page, 50% between chapters.</li>
+</ul>
+<p><strong>Paged</strong></p>
+<ul>
+<li><strong>Tap zones</strong> and <strong>Invert tap zones</strong>.</li>
+<li><strong>Scale type</strong>.</li>
+<li><strong>Zoom start position</strong>.</li>
+<li><strong>Crop borders</strong>.</li>
+<li><strong>Automatically zoom into wide images</strong>.</li>
+<li><strong>Wide images zoom mode</strong>.</li>
+<li><strong>Disable zoom in</strong>.</li>
+<li><strong>Double tap to zoom</strong>.</li>
+<li><strong>Pan wide images</strong>.</li>
+<li><strong>Split wide pages</strong> and <strong>Invert split page placement</strong>.</li>
+<li><strong>Rotate wide pages to fit</strong> and <strong>Flip orientation of rotated wide pages</strong>.</li>
+</ul>
+<p><strong>Long strip</strong></p>
+<ul>
+<li><strong>Smart scale on wide screen</strong>.</li>
+<li><strong>Apply Smart scale to Long strip with gaps</strong>.</li>
+<li><strong>Side padding</strong>.</li>
+<li><strong>Sensitivity for hiding menu on scroll</strong>.</li>
+<li><strong>Pinch to zoom</strong>.</li>
+<li><strong>Disable zoom out</strong>.</li>
+<li><strong>Long strip with gaps</strong>.</li>
+<li><strong>Tap scroll by page</strong>.</li>
+<li><strong>Performance HUD</strong> (debug builds).</li>
+</ul>
+<p><strong>WebGPU</strong></p>
+<ul>
+<li><strong>WebGPU page offset</strong>.</li>
+<li><strong>Dark mode filter / True black (AMOLED) / Gray tolerance / Color dimming</strong>.</li>
+<li><strong>ArtCNN upscaling</strong> — sharper zoomed tiles, more battery.</li>
+<li><strong>Fast rendering</strong> — skip the tile cache for weak tablets.</li>
+<li><strong>Brightness</strong>, <strong>Contrast</strong>.</li>
+<li><strong>HLG tone mapping</strong> and <strong>HLG exposure</strong>.</li>
+<li><strong>Color LUT preset</strong> and <strong>LUT intensity</strong>.</li>
+<li><strong>Custom LUT file</strong> — <code>.cube</code> or madVR <code>.3dlut</code>.</li>
+<li><strong>Compare translation</strong> — show the original page.</li>
+<li><strong>E-ink preset</strong>.</li>
+<li><strong>Pages preloaded ahead / behind</strong>.</li>
+<li><strong>Transition animation</strong> (single and dual).</li>
+<li><strong>Display cutout mode</strong> (single and dual).</li>
+<li><strong>Min width</strong>, <strong>Gap</strong>.</li>
+</ul>
+<p><strong>Navigation</strong></p>
+<ul>
+<li><strong>Volume keys</strong> and <strong>Invert volume keys</strong>.</li>
+<li><strong>Controller scroll speed</strong>.</li>
+</ul>
+<p><strong>Actions</strong></p>
+<ul>
+<li><strong>Show actions on long tap</strong>.</li>
+<li><strong>Save pages into separate folders</strong>.</li>
+</ul>
+<p><strong>Page downloading</strong></p>
+<ul>
+<li><strong>Page Preload amount</strong>.</li>
+<li><strong>Download threads</strong>.</li>
+<li><strong>Reader cache size</strong>.</li>
+<li><strong>Aggressively load pages</strong>.</li>
+</ul>
+<p><strong>Fork settings</strong></p>
+<ul>
+<li><strong>Skip queue on retry</strong>.</li>
+<li><strong>Preserve reading position on read entries</strong>.</li>
+<li><strong>Auto Webtoon Mode</strong>.</li>
+<li><strong>Reader Bottom Buttons</strong>.</li>
+<li><strong>Page layout</strong>.</li>
+<li><strong>Invert double pages</strong>.</li>
+<li><strong>Center Margin</strong> — spacer for foldables.</li>
+<li><strong>Archive reader mode</strong>.</li>
+</ul>
+<h2 id="book-reading"><a class="anchor" href="#book-reading" aria-label="Link to this section">#</a>Book reading</h2>
+<ul>
+<li><strong>Import books</strong> — copy EPUBs into a new local-source folder.</li>
+<li><strong>Reading appearance</strong> — the full typography and behaviour sheet (also available in the reader).</li>
+</ul>
+<h2 id="downloads"><a class="anchor" href="#downloads" aria-label="Link to this section">#</a>Downloads</h2>
+<ul>
+<li><strong>Only on Wi-Fi</strong>.</li>
+<li><strong>Save as CBZ archive</strong>.</li>
+<li><strong>Split tall images</strong>.</li>
+<li><strong>Concurrent source downloads</strong>.</li>
+<li><strong>Concurrent page downloads</strong>.</li>
+<li><strong>Download threads</strong>.</li>
+<li><strong>Download cache renew interval</strong> — manual to 1 day.</li>
+<li><strong>Delete chapters</strong> — after manual read, or after the last/second/third/fourth/fifth read chapter.</li>
+<li><strong>After reading automatically delete</strong>.</li>
+<li><strong>Allow deleting bookmarked chapters</strong>.</li>
+<li><strong>Excluded categories</strong>.</li>
+<li><strong>Download new chapters</strong>.</li>
+<li><strong>Skip downloading duplicate read chapters</strong>.</li>
+<li><strong>Download ahead</strong>.</li>
+<li><strong>Auto download while reading</strong>.</li>
+</ul>
+<h2 id="tracking"><a class="anchor" href="#tracking" aria-label="Link to this section">#</a>Tracking</h2>
+<ul>
+<li><strong>Open track menu on adding to library</strong>.</li>
+<li><strong>Update progress after reading</strong>.</li>
+<li><strong>Update progress when marked as read</strong>.</li>
+<li><strong>Auto sync progress from Trackers</strong>.</li>
+<li><strong>Delete tracking records on logout</strong>.</li>
+<li><strong>Select entries using source metadata</strong>.</li>
+<li><strong>Trackers</strong> — per-service login and status.</li>
+<li><strong>Enhanced trackers</strong> — Kavita, Komga, Suwayomi.</li>
+</ul>
+<h2 id="connections"><a class="anchor" href="#connections" aria-label="Link to this section">#</a>Connections</h2>
+<p><strong>Sync</strong> (Data and storage → Sync)</p>
+<ul>
+<li><strong>Service</strong> — Off, SyncYomi, Google Drive, WebDAV.</li>
+<li><strong>SyncYomi host</strong>, <strong>API key</strong>, <strong>Use protocol v2</strong>, <strong>Scan a QR code</strong>.</li>
+<li><strong>WebDAV server URL</strong>, <strong>username</strong>, <strong>password</strong>, <strong>data folder</strong>.</li>
+<li><strong>Choose what to sync</strong>.</li>
+<li><strong>Sync now</strong>.</li>
+<li><strong>Create sync triggers</strong> — chapter read, chapter open, app start, app resume.</li>
+<li><strong>Synchronization frequency</strong> — 30 minutes to weekly.</li>
+<li><strong>Show syncing progress banner</strong>.</li>
+</ul>
+<p><strong>Discord</strong></p>
+<ul>
+<li><strong>Discord RPC</strong> and <strong>Discord Accounts</strong>.</li>
+<li><strong>Discord status</strong> — online, idle, do not disturb.</li>
+<li><strong>Custom message</strong>.</li>
+<li><strong>Show progress</strong>, <strong>Show page progress</strong>, <strong>Show timestamp</strong>, <strong>Show buttons</strong>, <strong>Download button</strong>, <strong>Discord button</strong>.</li>
+<li><strong>Incognito</strong> and <strong>Excluded categories</strong>.</li>
+</ul>
+<p><strong>Webhooks</strong></p>
+<ul>
+<li><strong>Discord webhook URL</strong> and <strong>generic JSON endpoint</strong>.</li>
+<li><strong>Events</strong> — chapter started/read, manga added/removed/finished/started/migrated, library update, downloads finished, backup created/restored, app updated, achievement unlocked.</li>
+<li><strong>Include reading time</strong>.</li>
+<li><strong>Excluded categories</strong>.</li>
+<li><strong>Send test notification</strong>.</li>
+</ul>
+<h2 id="browse"><a class="anchor" href="#browse" aria-label="Link to this section">#</a>Browse</h2>
+<ul>
+<li><strong>Sources</strong> group.</li>
+<li><strong>Suggestions</strong> — show, expand, overflow, Home button.</li>
+<li><strong>Sequels &amp; prequels</strong>.</li>
+<li><strong>Edit categories</strong> / <strong>Filter sources in categories</strong>.</li>
+<li><strong>Replace latest button</strong> — custom browse view.</li>
+<li><strong>Local source hidden folders</strong>.</li>
+<li><strong>Feed</strong> — hide tab, tab position, hide entries already in library.</li>
+<li><strong>Extension stores</strong>.</li>
+<li><strong>Extensions</strong>.</li>
+<li><strong>Allowed content warnings</strong> — Safe, Mixed, NSFW.</li>
+</ul>
+<h2 id="data-and-storage"><a class="anchor" href="#data-and-storage" aria-label="Link to this section">#</a>Data and storage</h2>
+<ul>
+<li><strong>Storage location</strong> — used for automatic backups, downloads and the local source.</li>
+<li><strong>Create backup</strong>.</li>
+<li><strong>Restore backup</strong>.</li>
+<li><strong>Automatic backup frequency</strong> — every 1/3/6/12 hours, daily, every 2 days, weekly.</li>
+<li><strong>Show restoring progress banner</strong>.</li>
+<li><strong>Storage usage</strong>.</li>
+<li><strong>Clear chapter cache</strong>.</li>
+<li><strong>Clear page preview cache</strong>.</li>
+<li><strong>Clear chapter cache on app launch</strong>.</li>
+<li><strong>Chapter cache retention</strong> — until space is needed, 12 h, 24 h, 3 d, 7 d, 30 d.</li>
+<li><strong>Downloaded and cached content</strong>.</li>
+<li><strong>Delete downloads not in library</strong>.</li>
+<li><strong>Delete all downloads</strong>.</li>
+<li><strong>Export → Library List (CSV)</strong>.</li>
+<li><strong>Export database</strong>.</li>
+</ul>
+<h2 id="security"><a class="anchor" href="#security" aria-label="Link to this section">#</a>Security</h2>
+<ul>
+<li><strong>Require unlock</strong> — never, always, lock when idle.</li>
+<li><strong>Lock when idle</strong> timeout.</li>
+<li><strong>Hide notification content</strong>.</li>
+<li><strong>Secure screen</strong> — always, incognito, never.</li>
+<li><strong>Password protect downloads</strong>.</li>
+<li><strong>Encryption type</strong> — AES-256, AES-128, ZipCrypto.</li>
+<li><strong>Set / delete CBZ archive password</strong>.</li>
+<li><strong>Edit lock times</strong>.</li>
+<li><strong>Biometric lock days</strong>.</li>
+<li><strong>Send crash logs</strong>.</li>
+<li><strong>Allow analytics</strong>.</li>
+</ul>
+<h2 id="e-hentai"><a class="anchor" href="#e-hentai" aria-label="Link to this section">#</a>E-Hentai</h2>
+<ul>
+<li><strong>E-Hentai Website Account Settings</strong>.</li>
+<li><strong>E-Hentai Favorites sync</strong>.</li>
+<li><strong>Gallery update checker</strong>.</li>
+<li><strong>Incognito mode</strong>.</li>
+<li><strong>Enable ExHentai</strong> (requires login).</li>
+<li><strong>Client type</strong> — any client, default-port clients only.</li>
+<li><strong>Use Hentai@Home Network</strong>.</li>
+<li><strong>Show Japanese titles in search results</strong>.</li>
+<li><strong>Use original images</strong>.</li>
+<li><strong>Watched Tags</strong>.</li>
+<li><strong>Tag Filtering Threshold</strong> and <strong>Tag Watching Threshold</strong>.</li>
+<li><strong>Language Filtering</strong>.</li>
+<li><strong>Front Page Categories</strong>.</li>
+<li><strong>Watched List Filter Default State</strong>.</li>
+<li><strong>Image quality</strong> — auto, 2400×, 1600×, 1280×, 980×, 780×.</li>
+<li><strong>Enhanced E/ExHentai browse</strong>.</li>
+<li><strong>Disable favorites uploading</strong>.</li>
+<li><strong>Show favorites sync notes</strong>.</li>
+<li><strong>Ignore sync errors when possible</strong>.</li>
+<li><strong>Force sync state reset</strong>.</li>
+<li><strong>Time between update batches</strong>.</li>
+<li><strong>Auto update restrictions</strong>.</li>
+<li><strong>Show updater statistics</strong>.</li>
+</ul>
+<h2 id="ai-translation"><a class="anchor" href="#ai-translation" aria-label="Link to this section">#</a>AI translation</h2>
+<ul>
+<li><strong>Status row</strong> — engine, provider, model, readiness.</li>
+<li><strong>Target language</strong>.</li>
+<li><strong>Translation font</strong>.</li>
+<li><strong>Text color</strong> — palette or custom hex.</li>
+<li><strong>Offline ML Kit fallback</strong>.</li>
+<li><strong>Cache translated pages</strong>.</li>
+<li><strong>Auto-translate on download</strong>.</li>
+<li><strong>Advanced engine tuning</strong> — quality pipeline, uniform fast cleanup, long-page slicing.</li>
+<li><strong>Provider</strong> — Auto, Ichigo, Gemini Nano, local GGUF, cloud LLM.</li>
+<li><strong>Models &amp; engine</strong> — detector, OCR, PaddleOCR add-on, inpainter, local LLM, custom URLs, clear models.</li>
+<li><strong>Translation prompts</strong> — custom instructions, formality, SFX policy, few-shot examples, glossary, reset.</li>
+<li><strong>Sessions</strong> — stop, pause, resume, retry.</li>
+</ul>
+<h2 id="ai-upscaling"><a class="anchor" href="#ai-upscaling" aria-label="Link to this section">#</a>AI upscaling</h2>
+<ul>
+<li><strong>Enable AI upscaling</strong>.</li>
+<li><strong>Upscale new entries by default</strong>.</li>
+<li><strong>Upscale mode</strong> — auto, native models, simple resample.</li>
+<li><strong>Resampling algorithm</strong> — bicubic, bilinear, nearest.</li>
+<li><strong>Quality preset</strong> — fast, balanced, high, quality.</li>
+<li><strong>Model</strong> — Real-CUGAN, Real-ESRGAN, Waifu2x, imported ONNX.</li>
+<li><strong>Upscale factor</strong>.</li>
+<li><strong>Backend</strong> — best available, Vulkan, NPU, CPU.</li>
+<li><strong>Prefetch pages ahead</strong> — off, 1–5.</li>
+<li><strong>WebGPU tile refinement (ArtCNN)</strong>.</li>
+<li><strong>Cache upscaled pages</strong> and <strong>Clear upscaled cache</strong>.</li>
+<li><strong>Live status</strong> — served, cached, fell back, failed, average inference, backend readiness.</li>
+<li><strong>Models installed</strong>, <strong>download</strong>, <strong>clear</strong>, <strong>import ONNX</strong>.</li>
+<li><strong>Library categories</strong> — inherit, always, never.</li>
+</ul>
+<h2 id="achievements"><a class="anchor" href="#achievements" aria-label="Link to this section">#</a>Achievements</h2>
+<ul>
+<li><strong>Enable achievements</strong>.</li>
+<li><strong>Achievement popups</strong>.</li>
+<li><strong>Achievement sounds</strong>.</li>
+<li><strong>Wipe achievement data</strong>.</li>
+<li><strong>All achievements</strong>, rank, stats, rotating pool.</li>
+</ul>
+<h2 id="advanced"><a class="anchor" href="#advanced" aria-label="Link to this section">#</a>Advanced</h2>
+<p><strong>Diagnostics</strong></p>
+<ul>
+<li><strong>Dump crash logs</strong>.</li>
+<li><strong>Verbose logging</strong>.</li>
+<li><strong>Debug info</strong>.</li>
+<li><strong>View logs</strong> / <strong>Clear logs</strong>.</li>
+<li><strong>Onboarding guide</strong>.</li>
+</ul>
+<p><strong>Notifications</strong></p>
+<ul>
+<li><strong>Manage notifications</strong>.</li>
+<li><strong>Only on Wi-Fi</strong>, <strong>Only on unmetered network</strong>, <strong>When charging</strong>.</li>
+<li><strong>Auto-update app</strong> and update restrictions.</li>
+</ul>
+<p><strong>Background activity</strong></p>
+<ul>
+<li><strong>Disable battery optimization</strong>.</li>
+<li>Manufacturer-restriction help link.</li>
+</ul>
+<p><strong>Data</strong></p>
+<ul>
+<li><strong>Keep removed covers</strong> — retention period.</li>
+<li><strong>Reindex downloads</strong>.</li>
+<li><strong>Clear database</strong> — non-library history, with &quot;keep entries with read chapters&quot;.</li>
+</ul>
+<p><strong>Library</strong></p>
+<ul>
+<li><strong>Refresh library covers</strong>.</li>
+<li><strong>Preload library&#39;s cover color</strong>.</li>
+<li><strong>Reset per-series reader settings</strong>.</li>
+<li><strong>Update library manga titles to match source</strong>.</li>
+<li><strong>Disallow non-ASCII filenames</strong>.</li>
+<li><strong>Smart scanlator merge</strong>.</li>
+<li><strong>Show scanlator filter in details</strong>.</li>
+</ul>
+<p><strong>Downloads</strong></p>
+<ul>
+<li><strong>Include chapter URL hash</strong>.</li>
+</ul>
+<p><strong>Reader</strong></p>
+<ul>
+<li><strong>Custom hardware bitmap threshold</strong>.</li>
+<li><strong>Use legacy decoder for long strip reader</strong>.</li>
+<li><strong>Use high quality renderer (WebGPU)</strong>.</li>
+<li><strong>Match double-page heights</strong>.</li>
+<li><strong>Custom display profile</strong>.</li>
+</ul>
+<p><strong>Extensions</strong></p>
+<ul>
+<li><strong>Installer</strong> — Private, Shizuku, Legacy, Package installer.</li>
+<li><strong>Update extensions automatically</strong> — every 6/12 hours, daily, weekly.</li>
+<li><strong>Revoke trusted unknown extensions</strong>.</li>
+</ul>
+<p><strong>Networking</strong></p>
+<ul>
+<li><strong>Clear cookies</strong>.</li>
+<li><strong>Clear WebView data</strong>.</li>
+<li><strong>DNS over HTTPS (DoH)</strong>.</li>
+<li><strong>Default user agent string</strong> / <strong>Reset</strong>.</li>
+<li><strong>Enable FlareSolverr</strong>, <strong>URL</strong>, <strong>Test</strong>.</li>
+<li><strong>Cloudflare bypass banner</strong>.</li>
+<li><strong>Clean up downloaded chapters</strong>.</li>
+</ul>
+<p><strong>Developer tools</strong></p>
+<ul>
+<li><strong>Enable integrated hentai features</strong>.</li>
+<li><strong>Enable source blacklist</strong>.</li>
+<li><strong>Extension error popups</strong>.</li>
+<li><strong>Extension error details</strong>.</li>
+<li><strong>Enable delegated sources</strong>.</li>
+<li><strong>Log level</strong> — Minimal, Extra, Extreme.</li>
+<li><strong>Encrypt database</strong>.</li>
+<li><strong>Open debug menu</strong> — workers, backup schema, backup schema tools.</li>
+</ul>
+<h2 id="about"><a class="anchor" href="#about" aria-label="Link to this section">#</a>About</h2>
+<ul>
+<li><strong>Version</strong> (tap to copy the device-info block).</li>
+<li><strong>Check for updates</strong>.</li>
+<li><strong>What&#39;s new</strong>.</li>
+<li><strong>What&#39;s coming (soon)</strong>.</li>
+<li><strong>Help translate</strong>.</li>
+<li><strong>Open source licenses</strong>.</li>
+<li><strong>Privacy policy</strong>.</li>
+<li><strong>Website</strong>.</li>
+</ul>
+<blockquote class="callout callout-note"><p class="callout-title">Note</p>
+<p>Settings marked <code>__PRIVATE_</code> are excluded from backups unless <strong>Private settings</strong> is enabled. Settings marked <code>__APP_STATE_</code> are internal and never backed up.</p>
+</blockquote>
+
+      </article>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/development/testing/"><span class="pager-dir">Previous</span><span class="pager-title">Testing &amp; conventions</span></a><a class="pager-link pager-next" href="/hyoukan/reference/formats/"><span class="pager-dir">Next</span><span class="pager-title">Files &amp; formats</span></a></nav>
+      <footer class="page-foot">
+        <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
+        <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/reference/settings.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
+      </footer>
+    </div>
+  </main>
+
+  <aside class="toc" aria-label="On this page">
+    <p class="toc-heading">On this page</p>
+<ul class="toc-list"><li class="toc-l2"><a href="#appearance">Appearance</a></li>
+<li class="toc-l2"><a href="#app-icon-name">App icon &amp; name</a></li>
+<li class="toc-l2"><a href="#library">Library</a></li>
+<li class="toc-l2"><a href="#reader">Reader</a></li>
+<li class="toc-l2"><a href="#book-reading">Book reading</a></li>
+<li class="toc-l2"><a href="#downloads">Downloads</a></li>
+<li class="toc-l2"><a href="#tracking">Tracking</a></li>
+<li class="toc-l2"><a href="#connections">Connections</a></li>
+<li class="toc-l2"><a href="#browse">Browse</a></li>
+<li class="toc-l2"><a href="#data-and-storage">Data and storage</a></li>
+<li class="toc-l2"><a href="#security">Security</a></li>
+<li class="toc-l2"><a href="#e-hentai">E-Hentai</a></li>
+<li class="toc-l2"><a href="#ai-translation">AI translation</a></li>
+<li class="toc-l2"><a href="#ai-upscaling">AI upscaling</a></li>
+<li class="toc-l2"><a href="#achievements">Achievements</a></li>
+<li class="toc-l2"><a href="#advanced">Advanced</a></li>
+<li class="toc-l2"><a href="#about">About</a></li></ul>
+  </aside>
+</div>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search the Hyoukan wiki" hidden>
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search-input" type="search" placeholder="Search the wiki…" autocomplete="off" spellcheck="false" aria-label="Search query">
+      <button class="icon-btn" id="search-close" aria-label="Close search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-results" id="search-results" aria-live="polite">
+      <p class="search-hint">Type to search 33 pages. Use ↑ ↓ to move and Enter to open.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.HYOUKAN_BASE = "/hyoukan";</script>
+<script>/* Hyoukan wiki — theme, navigation, search, TOC and reading progress. */
+(function () {
+  'use strict';
+
+  var BASE = window.HYOUKAN_BASE || '/hyoukan';
+  var root = document.documentElement;
+
+  // --- Theme ---------------------------------------------------------------
+  var themeBtn = document.getElementById('theme-toggle');
+  function setTheme(theme) {
+    root.dataset.theme = theme;
+    try { localStorage.setItem('hyoukan-theme', theme); } catch (e) {}
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+  setTheme(root.dataset.theme || 'light');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // --- Mobile sidebar ------------------------------------------------------
+  var menuBtn = document.getElementById('menu-btn');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('sidebar-backdrop');
+
+  function setMenu(open) {
+    if (!sidebar) return;
+    sidebar.classList.toggle('is-open', open);
+    if (backdrop) backdrop.hidden = !open;
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function () {
+      setMenu(!sidebar.classList.contains('is-open'));
+    });
+  }
+  if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
+  if (sidebar) {
+    sidebar.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setMenu(false);
+    });
+  }
+
+  // --- Reading progress ----------------------------------------------------
+  var progress = document.getElementById('progress-bar');
+  if (progress) {
+    var ticking = false;
+    function updateProgress() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+      progress.style.width = pct.toFixed(2) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+    updateProgress();
+  }
+
+  // --- TOC scroll spy ------------------------------------------------------
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-list a'));
+  var tocTargets = tocLinks
+    .map(function (link) {
+      var id = decodeURIComponent(link.getAttribute('href').slice(1));
+      var el = document.getElementById(id);
+      return el ? { link: link, el: el } : null;
+    })
+    .filter(Boolean);
+
+  if (tocTargets.length && 'IntersectionObserver' in window) {
+    var visible = new Map();
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) visible.set(entry.target.id, entry.boundingClientRect.top);
+        else visible.delete(entry.target.id);
+      });
+      var best = null;
+      tocTargets.forEach(function (t) {
+        if (visible.has(t.el.id)) {
+          var top = visible.get(t.el.id);
+          if (best === null || top < best.top) best = { top: top, link: t.link };
+        }
+      });
+      if (best) {
+        tocLinks.forEach(function (l) { l.classList.remove('is-active'); });
+        best.link.classList.add('is-active');
+      }
+    }, { rootMargin: '-88px 0px -65% 0px', threshold: [0, 1] });
+    tocTargets.forEach(function (t) { observer.observe(t.el); });
+  }
+
+  // --- Copy code buttons ---------------------------------------------------
+  document.querySelectorAll('.prose pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-code';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(area);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  // --- Search --------------------------------------------------------------
+  var overlay = document.getElementById('search-overlay');
+  var trigger = document.getElementById('search-trigger');
+  var closeBtn = document.getElementById('search-close');
+  var input = document.getElementById('search-input');
+  var resultsEl = document.getElementById('search-results');
+  var index = null;
+  var loading = null;
+  var selected = -1;
+  var currentResults = [];
+  var lastFocus = null;
+
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (loading) return loading;
+    loading = fetch(BASE + '/search-index.json', { cache: 'no-cache' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { index = data; return data; })
+      .catch(function () { index = []; return index; });
+    return loading;
+  }
+
+  function tokenize(q) {
+    return q.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function highlight(text, tokens) {
+    var safe = escapeHtml(text);
+    tokens.forEach(function (token) {
+      if (!token) return;
+      var re = new RegExp('(' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      safe = safe.replace(re, '<mark>$1</mark>');
+    });
+    return safe;
+  }
+
+  function snippet(text, tokens) {
+    if (!text) return '';
+    var lower = text.toLowerCase();
+    var at = -1;
+    for (var i = 0; i < tokens.length; i++) {
+      var p = lower.indexOf(tokens[i]);
+      if (p !== -1 && (at === -1 || p < at)) at = p;
+    }
+    if (at === -1) at = 0;
+    var start = Math.max(0, at - 70);
+    var end = Math.min(text.length, at + 190);
+    return (start > 0 ? '…' : '') + text.slice(start, end).trim() + (end < text.length ? '…' : '');
+  }
+
+  function score(page, tokens) {
+    var title = page.title.toLowerCase();
+    var headings = (page.headings || []).join(' ').toLowerCase();
+    var description = (page.description || '').toLowerCase();
+    var text = (page.text || '').toLowerCase();
+    var total = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      var s = 0;
+      if (title === t) s = 120;
+      else if (title.indexOf(t) === 0) s = 80;
+      else if (title.indexOf(t) !== -1) s = 55;
+      else if (headings.indexOf(t) !== -1) s = 24;
+      else if (description.indexOf(t) !== -1) s = 14;
+      else if (text.indexOf(t) !== -1) s = 6;
+      if (s === 0) return 0;
+
+      // Repeated mentions are a useful relevance hint once the token matches at all.
+      var count = 0;
+      var at = text.indexOf(t);
+      while (at !== -1 && count < 8) {
+        count++;
+        at = text.indexOf(t, at + t.length);
+      }
+      total += s + count;
+    }
+    return total;
+  }
+
+  function renderResults(query) {
+    var tokens = tokenize(query);
+    if (!tokens.length) {
+      resultsEl.innerHTML = '<p class="search-hint">Type to search ' + (index ? index.length : '') +
+        ' pages. Use ↑ ↓ to move and Enter to open.</p>';
+      currentResults = [];
+      selected = -1;
+      return;
+    }
+    if (!index) {
+      resultsEl.innerHTML = '<p class="search-hint">Loading index…</p>';
+      return;
+    }
+    var scored = index.map(function (page) {
+      return { page: page, score: score(page, tokens) };
+    }).filter(function (r) { return r.score > 0; });
+    scored.sort(function (a, b) { return b.score - a.score || a.page.title.localeCompare(b.page.title); });
+    currentResults = scored.slice(0, 18);
+    selected = currentResults.length ? 0 : -1;
+
+    if (!currentResults.length) {
+      resultsEl.innerHTML = '<p class="search-empty">No pages match <strong>' + escapeHtml(query) + '</strong>.</p>';
+      return;
+    }
+
+    resultsEl.innerHTML = currentResults.map(function (r, i) {
+      var p = r.page;
+      return '<a class="search-result' + (i === 0 ? ' is-selected' : '') + '" href="' + p.url + '">' +
+        '<span class="search-result-title">' + highlight(p.title, tokens) +
+        '<span class="search-result-section">' + escapeHtml(p.section || '') + '</span></span>' +
+        '<span class="search-result-text">' + highlight(snippet(p.description || p.text, tokens), tokens) + '</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  function moveSelection(delta) {
+    if (!currentResults.length) return;
+    selected = (selected + delta + currentResults.length) % currentResults.length;
+    Array.prototype.forEach.call(resultsEl.querySelectorAll('.search-result'), function (el, i) {
+      el.classList.toggle('is-selected', i === selected);
+      if (i === selected) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  function openSearch() {
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    renderResults('');
+    loadIndex().then(function () { renderResults(input.value); });
+    setTimeout(function () { input.focus(); }, 0);
+  }
+
+  function closeSearch() {
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  if (trigger) trigger.addEventListener('click', openSearch);
+  if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+  if (overlay) {
+    overlay.addEventListener('mousedown', function (e) {
+      if (e.target === overlay) closeSearch();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', function () {
+      loadIndex().then(function () { renderResults(input.value); });
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveSelection(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveSelection(-1); }
+      else if (e.key === 'Enter') {
+        var link = resultsEl.querySelector('.search-result.is-selected');
+        if (link) { e.preventDefault(); window.location.href = link.getAttribute('href'); }
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+    if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === '/' && !typing) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === 'Escape' && overlay && !overlay.hidden) {
+      closeSearch();
+    }
+  });
+
+  // --- External links get a quiet marker ----------------------------------
+  document.querySelectorAll('.prose a[target="_blank"]').forEach(function (a) {
+    a.setAttribute('rel', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>

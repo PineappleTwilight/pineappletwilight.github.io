@@ -1,0 +1,871 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reader &amp; WebGPU · Hyoukan Wiki</title>
+<meta name="description" content="The reader's activity model, page pipeline and the state machines behind the hardware renderer.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e7490'/%3E%3Cpath d='M32 12l5 14h15l-12 9 4 15-12-9-12 9 4-15-12-9h15z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/hyoukan/assets/wiki.css">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('hyoukan-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  } catch (e) { document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="progress-bar" id="progress-bar" aria-hidden="true"></div>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="/hyoukan/">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><path d="M16 3l3.2 8.1L28 14l-8.8 2.9L16 25l-3.2-8.1L4 14l8.8-2.9z" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">Hyoukan</span><span class="brand-sub">Wiki</span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <button class="search-trigger" id="search-trigger" aria-label="Search the wiki">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <span class="search-label">Search</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+  <a class="icon-btn" href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener" aria-label="Hyoukan on GitHub">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5 4-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg>
+  </a>
+  <button class="icon-btn" id="theme-toggle" aria-label="Switch colour theme">
+    <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+  </button>
+</header>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Wiki navigation">
+      <div class="nav-section">
+  <p class="nav-heading">Overview</p>
+  <ul><li><a href="/hyoukan/">Home</a></li>
+<li><a href="/hyoukan/getting-started/">Getting started</a></li>
+<li><a href="/hyoukan/features/">Feature tour</a></li>
+<li><a href="/hyoukan/faq/">FAQ</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">User guide</p>
+  <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
+<li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
+<li><a href="/hyoukan/guide/books/">Reading books</a></li>
+<li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
+<li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
+<li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/translation/">AI translation</a></li>
+<li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
+<li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
+<li><a href="/hyoukan/guide/appearance/">Appearance &amp; identity</a></li>
+<li><a href="/hyoukan/guide/connections/">Connections</a></li>
+<li><a href="/hyoukan/guide/privacy/">Privacy &amp; security</a></li>
+<li><a href="/hyoukan/guide/troubleshooting/">Troubleshooting</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Development</p>
+  <ul><li><a href="/hyoukan/development/architecture/">Architecture</a></li>
+<li><a href="/hyoukan/development/reader/" aria-current="page">Reader &amp; WebGPU</a></li>
+<li><a href="/hyoukan/development/books-engine/">Book engine</a></li>
+<li><a href="/hyoukan/development/data/">Data &amp; database</a></li>
+<li><a href="/hyoukan/development/extensions/">Extensions &amp; source API</a></li>
+<li><a href="/hyoukan/development/translation-upscaling/">Translation &amp; upscaling</a></li>
+<li><a href="/hyoukan/development/settings/">Settings framework</a></li>
+<li><a href="/hyoukan/development/build/">Build &amp; release</a></li>
+<li><a href="/hyoukan/development/testing/">Testing &amp; conventions</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Reference</p>
+  <ul><li><a href="/hyoukan/reference/settings/">Settings index</a></li>
+<li><a href="/hyoukan/reference/formats/">Files &amp; formats</a></li>
+<li><a href="/hyoukan/reference/glossary/">Glossary</a></li>
+<li><a href="/hyoukan/reference/versions/">Versions &amp; channels</a></li>
+<li><a href="/hyoukan/reference/history/">Project history</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Contributing</p>
+  <ul><li><a href="/hyoukan/contributing/">Contributing</a></li></ul>
+</div>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="version-pill">v1.25.3</span>
+      <span>Updated November 2026</span>
+    </div>
+  </aside>
+
+  <main class="main" id="content">
+    <div class="page">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/hyoukan/">Wiki</a><span aria-hidden="true">/</span><span>Development</span><span aria-hidden="true">/</span><span aria-current="page">Reader &amp; WebGPU</span>
+</nav>
+      <article class="prose">
+        <h1>Reader &amp; WebGPU</h1><p class="page-lede">The reader's activity model, page pipeline and the state machines behind the hardware renderer.</p>
+        <p>The reader is the largest and most failure-sensitive subsystem in the app. This page is the map for changing it: the entry points, the viewer contract, the page-loading path, and the WebGPU pipeline&#39;s threads, states, retries and memory rules.</p>
+<blockquote class="callout callout-note"><p class="callout-title">Note</p>
+<p>The WebGPU folder carries its own <code>AGENTS.md</code> that is kept current by the people debugging it. This page summarises that knowledge; when the two disagree, the source and that file win.</p>
+</blockquote>
+<h2 id="entry-points"><a class="anchor" href="#entry-points" aria-label="Link to this section">#</a>Entry points</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ReaderActivity.kt</code></td>
+<td><code>singleTask</code> activity; <code>newIntent(context, mangaId, chapterId, page)</code></td>
+</tr>
+<tr>
+<td><code>ReaderViewModel.kt</code></td>
+<td>AndroidX ViewModel holding chapter and page state</td>
+</tr>
+<tr>
+<td><code>ui/reader/viewer/</code></td>
+<td><code>Viewer</code> / <code>ViewerConfig</code> contracts, pager and webtoon viewers</td>
+</tr>
+<tr>
+<td><code>ui/reader/loader/</code></td>
+<td><code>PageLoaderFactory</code> and the loaders</td>
+</tr>
+<tr>
+<td><code>ui/reader/model/</code></td>
+<td><code>ReaderChapter</code>, <code>ReaderPage</code>, <code>ViewerChapters</code>, transitions</td>
+</tr>
+<tr>
+<td><code>ui/reader/setting/</code></td>
+<td><code>ReaderPreferences</code>, modes, orientation, settings models</td>
+</tr>
+<tr>
+<td><code>ui/reader/viewer/webgpu/</code></td>
+<td>The hardware renderer&#39;s app-side half</td>
+</tr>
+<tr>
+<td><code>ui/reader/viewer/novel/</code></td>
+<td>The book renderer (see <a href="/hyoukan/development/books-engine/">Book engine</a>)</td>
+</tr>
+</tbody></table></div>
+<p>The activity is the only thing that knows when the reader stops, so <code>Viewer</code> declares three audience hooks, all default no-ops:</p>
+<ul>
+<li><code>onActivityStop()</code> / <code>onActivityStart()</code> — fired from <code>onPause</code>/<code>onResume</code>.</li>
+<li><code>onMemoryPressure()</code> — fired from a <code>ComponentCallbacks2</code> for severe trim levels.</li>
+</ul>
+<p>Only WebGPU and the novel viewer implement them. The WebGPU viewer uses the first pair to park its memory monitor and the last to shed caches; the novel viewer drops its inlined-document and font-rule caches. The legacy viewers deliberately shed nothing: their only derived data is a next-chapter transition map that is content, not a cache.</p>
+<h2 id="viewer-selection"><a class="anchor" href="#viewer-selection" aria-label="Link to this section">#</a>Viewer selection</h2>
+<p><code>ViewerRegistry</code> asks each provider whether it claims a chapter. A <code>null</code> from a provider means &quot;not my kind of chapter&quot;, not &quot;not this instance&quot;.</p>
+<ul>
+<li><code>NovelViewerProvider</code> claims a chapter whose <strong>loader</strong> is a <code>TextPageLoader</code> — exactly what the registry picks for a <code>TextSource</code>.</li>
+<li>Image viewers decline text chapters explicitly (<code>declinesTextChapters</code>), so an EPUB can never reach a pager that would render it blank.</li>
+<li>If no provider claims a text chapter, <code>create</code> throws rather than falling back silently.</li>
+<li><code>ReaderActivity.updateViewer</code> guards on <code>currentChapter?.pageLoader == null</code>, not on pages, because a text chapter has no image page list to inspect.</li>
+</ul>
+<p>The chosen renderer and whether the chapter was text are logged. A wrong choice is invisible in the UI — the app bar looks right and the page is blank — so that line is the only diagnosis.</p>
+<h2 id="page-loading"><a class="anchor" href="#page-loading" aria-label="Link to this section">#</a>Page loading</h2>
+<p><code>PageLoaderFactory</code> chooses a loader from the source and chapter:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Loader</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>HttpPageLoader</code></td>
+<td>Online image chapters</td>
+</tr>
+<tr>
+<td><code>ArchivePageLoader</code></td>
+<td>CBZ/CBR downloads</td>
+</tr>
+<tr>
+<td><code>DirectoryPageLoader</code></td>
+<td>Local folders</td>
+</tr>
+<tr>
+<td><code>DownloadPageLoader</code></td>
+<td>Downloaded chapters</td>
+</tr>
+<tr>
+<td><code>EpubPageLoader</code></td>
+<td>EPUB-as-comic (art books)</td>
+</tr>
+<tr>
+<td><code>TextPageLoader</code></td>
+<td>EPUB / web novels (the book reader)</td>
+</tr>
+</tbody></table></div>
+<p>A page has a status (<code>Queue</code>, <code>LoadPage</code>, <code>DownloadImage</code>, <code>Ready</code>, <code>Error</code>) and a stream. Loaders expose <code>loadPage</code>, <code>retryPage</code> and a status flow.</p>
+<h3 id="page-splitting"><a class="anchor" href="#page-splitting" aria-label="Link to this section">#</a>Page splitting</h3>
+<p>A page too tall for the decoder is cut into segments by <code>HttpPageLoader</code> and <strong>replaces its parent in the chapter&#39;s page list, mid-session</strong>.</p>
+<ul>
+<li><code>ReaderChapter.pageListVersion</code> is the change signal.</li>
+<li><code>PageListWatch</code> holds prev/current/next chapter slots.</li>
+<li><code>syncPageList</code> runs from preload <strong>and</strong> from continuous-page changes.</li>
+<li>Anything walking the page chain must handle a page that is no longer in the list.</li>
+<li>A split segment&#39;s slice identity lives in its synthetic index, not only in the URL suffix, because a retry can clear the URL.</li>
+</ul>
+<h2 id="the-two-webgpu-halves"><a class="anchor" href="#the-two-webgpu-halves" aria-label="Link to this section">#</a>The two WebGPU halves</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Half</th>
+<th>Where</th>
+<th>Owns</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>App</strong></td>
+<td><code>app/.../viewer/webgpu/</code></td>
+<td>Page shells, residency, decode scheduling, GPU upload</td>
+</tr>
+<tr>
+<td><strong>Library</strong></td>
+<td><code>external/webgpuviewer-houri</code> (<code>:webgpuviewer</code>)</td>
+<td>Device, render thread, tile grids, transitions, filters</td>
+</tr>
+</tbody></table></div>
+<p>The app never decodes or draws. It hands the library an <code>ImagePage</code> per page; the library draws it. &quot;The page is blank&quot; is therefore a question about which <code>ImagePage</code> the shell holds. &quot;Nothing renders at all&quot; is almost always the device.</p>
+<p>The library is an <code>includeBuild</code>. Its <code>embed(libs.androidx.webgpu)</code> does <strong>not</strong> reach the app&#39;s runtime classpath, so <code>app/build.gradle.kts</code> pins the matching <code>androidx.webgpu</code> version itself. The two must stay equal; a drift ships an older Dawn than the library was compiled against.</p>
+<h2 id="threads"><a class="anchor" href="#threads" aria-label="Link to this section">#</a>Threads</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thread</th>
+<th>Name</th>
+<th>Work</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Render</strong></td>
+<td><code>WebGPU-Render-Thread</code></td>
+<td><code>render()</code>, render passes, tile grids, spreads. Guarded by <code>WebGpuRenderer.mutex</code>.</td>
+</tr>
+<tr>
+<td><strong>Decode</strong></td>
+<td><code>WebGpuViewer-Decode-N</code></td>
+<td>A pool of 1–2 workers; each owns the page it popped under <code>lock</code>. All decode, preload and byte transforms.</td>
+</tr>
+<tr>
+<td><strong>Main</strong></td>
+<td><code>MainScope</code></td>
+<td>Stuck sweep, progress spinner, device-loss handler, trim callbacks, memory monitor.</td>
+</tr>
+<tr>
+<td><strong>Default</strong></td>
+<td>—</td>
+<td>Chapter preload and retry only.</td>
+</tr>
+</tbody></table></div>
+<p>A field read by both render and main must be <code>@Volatile</code>. The viewer&#39;s <code>lock</code> covers <code>pageCache</code>, <code>decodeQueue</code>, <code>stuckRecords</code> and the <code>currentPage</code> swap — not the shell fields.</p>
+<p>The decode pool keeps the single-flight invariant: a page in a state <code>queueForDecode</code> treats as in-flight has a worker actually on it. The pop happens under the lock, so N workers pop N distinct pages, and every exit path resets its own page. Small devices run one worker on purpose, because two concurrent decodes double the transient bitmap spike.</p>
+<h2 id="page-state-machine"><a class="anchor" href="#page-state-machine" aria-label="Link to this section">#</a>Page state machine</h2>
+<pre><code>IDLE ──queueForDecode──▶ QUEUED ──worker pops──▶ DECODING ──▶ imagePage = ImageSingle
+  ▲                        │                        │
+  │                        │                        ├─ fails ─▶ ErrorPage, back to IDLE
+  └────────────────────────┴────────────────────────┘
+                     LOOPING (bytes absent) ──startPageLoad──▶ LOADING ──Ready──▶ QUEUED
+</code></pre>
+<p>The invariant: a page is never in a state treated as &quot;someone is already on it&quot; while nothing is. <code>ensureDecoding</code> is the one producer; <code>requeueStuckPage</code> is the only thing allowed to break the tie.</p>
+<p><code>ensureDecoding</code> is <strong>one-shot</strong>: it sets <code>wantedByRender</code> and queues at most once per shell. A failed shell is therefore never re-queued by the render walk; an <code>ErrorPage</code> is recovered by <strong>tap</strong>, not by re-demand. This is deliberate — otherwise a failing page becomes a frame-rate retry loop.</p>
+<h2 id="decode-priority"><a class="anchor" href="#decode-priority" aria-label="Link to this section">#</a>Decode priority</h2>
+<p>The queue is a <strong>priority queue</strong>, not a two-ended deque. Priorities are computed at enqueue from five facts (current, on screen, renderer-demanded, signed distance, scroll direction):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Current page</td>
+<td>1000</td>
+</tr>
+<tr>
+<td>On screen</td>
+<td>900</td>
+</tr>
+<tr>
+<td>Renderer-demanded</td>
+<td>800</td>
+</tr>
+<tr>
+<td>Travelling preload (ahead)</td>
+<td>750 − distance</td>
+</tr>
+<tr>
+<td>Travelling preload (behind)</td>
+<td>740 − distance</td>
+</tr>
+<tr>
+<td>Idle preload (ahead)</td>
+<td>730 − distance</td>
+</tr>
+<tr>
+<td>Idle preload (behind)</td>
+<td>720 − distance</td>
+</tr>
+<tr>
+<td>Other</td>
+<td>100</td>
+</tr>
+</tbody></table></div>
+<p>Direction genuinely flips the race: scrolling up, the nearest page above outranks the nearest below. Distances clamp at 64, so a far preload still outranks an unrelated shell. Ties resolve LIFO among renderer-demanded pages and FIFO among preloads.</p>
+<p>The policy is a pure function in <code>WebGpuDecodePriority.kt</code>, asserted offline by <code>DecodePriorityHarness</code>; the queue itself is generic and covered by <code>DecodeQueueHarness</code>.</p>
+<h2 id="pipeline-stages"><a class="anchor" href="#pipeline-stages" aria-label="Link to this section">#</a>Pipeline stages</h2>
+<p><code>WebGpuPagePipeline.kt</code> names the decode path:</p>
+<pre><code>FETCH → LOAD → READ → VALIDATE → ENHANCE → METADATA → DECODE → PREPARE → UPLOAD → ADOPT
+</code></pre>
+<p>Each stage is entered through <code>enterPipelineStage</code>, which does exactly two things: records the trace stage and publishes the label onto the page placeholder under the percentage (<code>43%</code> over <code>Decoding</code>). The stage line is diagnostic plumbing with a reader-facing face; it adds no work and disappears when the placeholder is replaced.</p>
+<h2 id="the-stuck-page-ladder"><a class="anchor" href="#the-stuck-page-ladder" aria-label="Link to this section">#</a>The stuck-page ladder</h2>
+<p><code>startStuckPageSweep</code> is signal-driven, not a timer. It recognises three orphan shapes:</p>
+<ul>
+<li><strong>queued-but-absent</strong> — queued but not in the decode queue;</li>
+<li><strong>loading-done</strong> — loading but the bytes already arrived;</li>
+<li><strong>idle-placeholder</strong> — idle, demanded, still a progress placeholder.</li>
+</ul>
+<p><code>requeueStuckPage</code> then acts:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Attempts</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>≤ 3</td>
+<td>Reset to IDLE and re-queue (<code>REDRIVEN</code>)</td>
+</tr>
+<tr>
+<td>≤ 9</td>
+<td>Tear down the shell and tiles entirely (<code>REBUILT</code>)</td>
+</tr>
+<tr>
+<td>&gt; 9</td>
+<td>Give up, clear <code>wantedByRender</code>, hand it back to the render walk (<code>GONE</code>)</td>
+</tr>
+<tr>
+<td>Inside the 1.5 s cooldown</td>
+<td>Defer without logging</td>
+</tr>
+</tbody></table></div>
+<p><code>last=&lt;outcome&gt;</code> records <strong>how the previous decode ended</strong>, not why the page is stuck. Outcomes include <code>no-stream</code>, <code>no-bytes</code>, <code>rejected:*</code>, <code>abandoned</code>, <code>not-adopted</code>, <code>loading</code>, <code>decoded</code>, <code>threw</code>, <code>unfinished</code>. Several are normal returns; a return that skips its own trace completion is recorded as <code>threw</code>, which makes the ladder lie.</p>
+<p>Loading has a deadline (<code>STUCK_LOAD_DEADLINE_MS</code>): a page stranded at <code>LoadPage</code>/<code>DownloadImage</code> used to be invisible, because <code>queueForDecode</code> treats LOADING as in-flight.</p>
+<h2 id="retry-semantics"><a class="anchor" href="#retry-semantics" aria-label="Link to this section">#</a>Retry semantics</h2>
+<ul>
+<li><code>retryPage</code> is the first <code>no-stream</code> recovery.</li>
+<li>A repeat <code>no-stream</code> escalates to <code>requerySuspectPage</code>, which evicts the cache entry <strong>before</strong> re-queuing; cached bytes that are themselves the defect never heal otherwise.</li>
+<li>A page&#39;s re-query is limited to one per page (<code>MAX_SOURCE_REQUERIES</code>).</li>
+<li>Re-querying clears the cooldown but <strong>not</strong> the attempt count: escalation and cooldown are separate dials. Deleting the record would restart at attempt 1 forever.</li>
+</ul>
+<h2 id="device-lifecycle"><a class="anchor" href="#device-lifecycle" aria-label="Link to this section">#</a>Device lifecycle</h2>
+<p><code>WebGpuRenderer</code> is a companion singleton: instance → adapter → device, plus one render dispatcher and mutex.</p>
+<p><strong>Never reuse an adapter.</strong> A <code>GPUAdapter</code> is consumed by the first successful <code>requestDevice</code>; Dawn rejects a second one. After a loss the app must <code>requestAdapter</code> again. Reusing the old adapter latched <code>initError</code> for the process and made every later decode throw <code>WebGPU not available</code>.</p>
+<p><strong>After a loss:</strong></p>
+<ol>
+<li>Rebuild the device.</li>
+<li>Clean filters and device-bound caches.</li>
+<li>Rebuild the swapchain from the retained surface.</li>
+<li>The app&#39;s <code>deviceLostListener</code> calls <code>resetDecodedPagesAfterDeviceLoss()</code>: every decoded page is destroyed, tile grids clear, and the viewer re-anchors on the current page.</li>
+</ol>
+<p><strong>Recovery is bounded:</strong></p>
+<ul>
+<li>The app makes 3 attempts with linear backoff (250/500/750 ms).</li>
+<li>The library counts consecutive failed recoveries; early ones run inside the app&#39;s pacing, deeper ones get longer cooldowns, and 12 consecutive failures stop self-retries until a fresh loss event.</li>
+<li>A recovery resets its dial only after the new device has stayed alive 15 seconds.</li>
+<li>A failed recovery self-retries once per cooldown.</li>
+<li>A recovery that loses its device at birth reports failure rather than returning true.</li>
+</ul>
+<p><strong>Device upgrades itself to core.</strong> If the adapter lists <code>core-features-and-limits</code>, the library requests it; Compatibility mode only added restrictions and produced silent black frames when a pipeline exceeded one of them. A driver that lists the feature but rejects the request retries compat-only.</p>
+<h2 id="fallback-and-health"><a class="anchor" href="#fallback-and-health" aria-label="Link to this section">#</a>Fallback and health</h2>
+<p><code>WebGpuProvider.create</code> is the only place that can hand the reader to the legacy pager. It stops at the first reason:</p>
+<ol>
+<li>The user&#39;s high-quality switch is off.</li>
+<li>This build recorded two degraded sessions.</li>
+<li>The renderer cannot initialise or lost its device.</li>
+<li>Constructing the viewer threw.</li>
+</ol>
+<p>Rows 2–4 are logged, both on the <code>ViewerRegistry</code> line and in the in-app log.</p>
+<p>A <strong>strike</strong> is a session verdict, not a sample at exit:</p>
+<ul>
+<li>One strike per session that closes with the renderer still dead.</li>
+<li>Or a session that loses the device three times even with recoveries.</li>
+<li>A clean close clears the count.</li>
+<li>Strikes are scoped to the build (<code>VERSION_NAME</code> + <code>BUILD_TIME</code>), so a fix gets a fresh try.</li>
+<li>Turning the high-quality switch off and on clears them.</li>
+<li>A session that lost the device once and recovered is not a strike; backgrounding does that on healthy phones.</li>
+</ul>
+<p>The verdict is computed from facts accumulated over the session (<code>anyPageDrawn()</code>), never from the page named at <code>destroy()</code> — closing on a chapter transition used to record a false strike.</p>
+<h2 id="memory-budget"><a class="anchor" href="#memory-budget" aria-label="Link to this section">#</a>Memory budget</h2>
+<p>The reader sizes itself to the device and to live pressure.</p>
+<ul>
+<li><strong>Device tier</strong> comes from total RAM, the vendor low-RAM mark and the ABI. A 32-bit process is capped at SMALL; that also pins decode parallelism to one.</li>
+<li><strong>Pressure</strong> is ROOMY / TIGHT / CRITICAL, derived from the system verdict, Java heap headroom and available memory.</li>
+<li><strong>Headroom is <code>availMem - threshold</code></strong>, not <code>availMem</code>; swap makes the raw number lie.</li>
+<li>The <strong>page cache is bounded by bytes and by page count</strong>. <code>decodedBytes</code> is a measurement set at adoption, including the mip chain.</li>
+<li>The <strong>pixel ceiling</strong> is the tighter of the device tier and the panel (<code>displayPixels * 4</code>, floored at 2 MP). Pages above it are downsampled before upload.</li>
+<li>The <strong>drawn page and anchor are never evicted</strong>, even under a tight budget; the cache stops at &quot;visible window plus what fits&quot;.</li>
+<li>Eviction is distance-based, with drawn-page immunity and preload-window membership; ties prefer the cheaper page, then oldest insertion.</li>
+</ul>
+<p>The monitor&#39;s cadence:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Interval</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Idle (activity stopped, pager detached)</td>
+<td>10 s</td>
+</tr>
+<tr>
+<td>ROOMY / TIGHT</td>
+<td>4 s / 2 s</td>
+</tr>
+<tr>
+<td>CRITICAL, sustained</td>
+<td>backs off from 1 s toward 16 s</td>
+</tr>
+</tbody></table></div>
+<p>Recovery from a shrink needs <strong>all three</strong>: a 12 s cooldown, ROOMY pressure, and an 8 s stable reading. The cooldown measures how long ago the last shed was; the stability gate decides whether this reading has settled. Escalation to worse pressure is ungated.</p>
+<p><code>isLowRamDevice</code> is gone from the reader. Every old boolean now asks the budget.</p>
+<h2 id="cache-and-eviction"><a class="anchor" href="#cache-and-eviction" aria-label="Link to this section">#</a>Cache and eviction</h2>
+<pre><code>cacheSize = 1 + preloadAhead + preloadBehind + (dualPage ? 3 : 1)
+</code></pre>
+<ul>
+<li><code>evictFarthestPage</code> measures distance by chapter/index arithmetic, never by walking the cache chain.</li>
+<li>Drawn pages are immune; preload-window pages survive while anything outside exists.</li>
+<li>A page superseded by a split measures <code>distance == null</code> and sorts farthest — exactly what the replacement is about to replace.</li>
+<li>Tile-cache shedding on low memory records the pre-shrink value and restores it later; the old 0.8 ratchet was a permanent downgrade.</li>
+</ul>
+<h2 id="restore-and-progress"><a class="anchor" href="#restore-and-progress" aria-label="Link to this section">#</a>Restore and progress</h2>
+<p>There are three coordinate systems:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Coordinates</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>WebGpuReadingPositionStore</code></td>
+<td>The full strip, camera-page relative</td>
+</tr>
+<tr>
+<td>DB <code>last_page_read</code></td>
+<td>The next-open (persisted, unsplit) list</td>
+</tr>
+<tr>
+<td><code>SavedStateHandle</code> <code>page_index</code></td>
+<td>The live list at write time, including split segments</td>
+</tr>
+</tbody></table></div>
+<p>A process-death restore used to index the fresh list with the live coordinate, opening several pages forward past a tall page&#39;s split. It is now clamped to <code>chapter.last_page_read</code> when that value sits inside <code>1 until chapterPageIndex</code>.</p>
+<p>A saved index is only valid in the list it was written against. Every restore site says which list its coordinate belongs to.</p>
+<p>Progress writes are unconditional even when a page failed to load; only completion side-effects (read sync) are gated on the page having rendered. In continuous mode, <code>onPageChange</code> resolves what the strip actually showed, not an independent chapter walk.</p>
+<h2 id="resource-ownership"><a class="anchor" href="#resource-ownership" aria-label="Link to this section">#</a>Resource ownership</h2>
+<p><code>releasePageResources(page)</code> is the single owner and the only place that releases a <code>ViewerReaderPage</code>. It frees:</p>
+<ul>
+<li>the spread image;</li>
+<li>the height-match retry job;</li>
+<li>comparison originals;</li>
+<li>retained source bytes;</li>
+<li>the rescale-in-flight flag;</li>
+<li><code>wantedByRender</code>;</li>
+<li>the image page itself.</li>
+</ul>
+<p>If you add a GPU resource or coroutine to the viewer page, add it there. Six hand-copied subsets used to exist and had already drifted.</p>
+<h2 id="what-to-test"><a class="anchor" href="#what-to-test" aria-label="Link to this section">#</a>What to test</h2>
+<p>The policy files are deliberately Android-free so <code>scripts/kotlinc-check/run-harness.sh</code> can assert them:</p>
+<ul>
+<li>decode priority;</li>
+<li>stuck ladder;</li>
+<li>spread geometry;</li>
+<li>memory budget;</li>
+<li>image-header validation;</li>
+<li>EXIF rotation;</li>
+<li>chapter-preload guard;</li>
+<li>continuous column width;</li>
+<li>session diagnostics.</li>
+</ul>
+<p>When changing a decision a user can see, extract the policy into a file with no Android import and add a harness case. That is the rule that keeps this pipeline testable without a device.</p>
+
+      </article>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/development/architecture/"><span class="pager-dir">Previous</span><span class="pager-title">Architecture</span></a><a class="pager-link pager-next" href="/hyoukan/development/books-engine/"><span class="pager-dir">Next</span><span class="pager-title">Book engine</span></a></nav>
+      <footer class="page-foot">
+        <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
+        <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/development/reader.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
+      </footer>
+    </div>
+  </main>
+
+  <aside class="toc" aria-label="On this page">
+    <p class="toc-heading">On this page</p>
+<ul class="toc-list"><li class="toc-l2"><a href="#entry-points">Entry points</a></li>
+<li class="toc-l2"><a href="#viewer-selection">Viewer selection</a></li>
+<li class="toc-l2"><a href="#page-loading">Page loading</a></li>
+<li class="toc-l3"><a href="#page-splitting">Page splitting</a></li>
+<li class="toc-l2"><a href="#the-two-webgpu-halves">The two WebGPU halves</a></li>
+<li class="toc-l2"><a href="#threads">Threads</a></li>
+<li class="toc-l2"><a href="#page-state-machine">Page state machine</a></li>
+<li class="toc-l2"><a href="#decode-priority">Decode priority</a></li>
+<li class="toc-l2"><a href="#pipeline-stages">Pipeline stages</a></li>
+<li class="toc-l2"><a href="#the-stuck-page-ladder">The stuck-page ladder</a></li>
+<li class="toc-l2"><a href="#retry-semantics">Retry semantics</a></li>
+<li class="toc-l2"><a href="#device-lifecycle">Device lifecycle</a></li>
+<li class="toc-l2"><a href="#fallback-and-health">Fallback and health</a></li>
+<li class="toc-l2"><a href="#memory-budget">Memory budget</a></li>
+<li class="toc-l2"><a href="#cache-and-eviction">Cache and eviction</a></li>
+<li class="toc-l2"><a href="#restore-and-progress">Restore and progress</a></li>
+<li class="toc-l2"><a href="#resource-ownership">Resource ownership</a></li>
+<li class="toc-l2"><a href="#what-to-test">What to test</a></li></ul>
+  </aside>
+</div>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search the Hyoukan wiki" hidden>
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search-input" type="search" placeholder="Search the wiki…" autocomplete="off" spellcheck="false" aria-label="Search query">
+      <button class="icon-btn" id="search-close" aria-label="Close search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-results" id="search-results" aria-live="polite">
+      <p class="search-hint">Type to search 33 pages. Use ↑ ↓ to move and Enter to open.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.HYOUKAN_BASE = "/hyoukan";</script>
+<script>/* Hyoukan wiki — theme, navigation, search, TOC and reading progress. */
+(function () {
+  'use strict';
+
+  var BASE = window.HYOUKAN_BASE || '/hyoukan';
+  var root = document.documentElement;
+
+  // --- Theme ---------------------------------------------------------------
+  var themeBtn = document.getElementById('theme-toggle');
+  function setTheme(theme) {
+    root.dataset.theme = theme;
+    try { localStorage.setItem('hyoukan-theme', theme); } catch (e) {}
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+  setTheme(root.dataset.theme || 'light');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // --- Mobile sidebar ------------------------------------------------------
+  var menuBtn = document.getElementById('menu-btn');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('sidebar-backdrop');
+
+  function setMenu(open) {
+    if (!sidebar) return;
+    sidebar.classList.toggle('is-open', open);
+    if (backdrop) backdrop.hidden = !open;
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function () {
+      setMenu(!sidebar.classList.contains('is-open'));
+    });
+  }
+  if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
+  if (sidebar) {
+    sidebar.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setMenu(false);
+    });
+  }
+
+  // --- Reading progress ----------------------------------------------------
+  var progress = document.getElementById('progress-bar');
+  if (progress) {
+    var ticking = false;
+    function updateProgress() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+      progress.style.width = pct.toFixed(2) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+    updateProgress();
+  }
+
+  // --- TOC scroll spy ------------------------------------------------------
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-list a'));
+  var tocTargets = tocLinks
+    .map(function (link) {
+      var id = decodeURIComponent(link.getAttribute('href').slice(1));
+      var el = document.getElementById(id);
+      return el ? { link: link, el: el } : null;
+    })
+    .filter(Boolean);
+
+  if (tocTargets.length && 'IntersectionObserver' in window) {
+    var visible = new Map();
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) visible.set(entry.target.id, entry.boundingClientRect.top);
+        else visible.delete(entry.target.id);
+      });
+      var best = null;
+      tocTargets.forEach(function (t) {
+        if (visible.has(t.el.id)) {
+          var top = visible.get(t.el.id);
+          if (best === null || top < best.top) best = { top: top, link: t.link };
+        }
+      });
+      if (best) {
+        tocLinks.forEach(function (l) { l.classList.remove('is-active'); });
+        best.link.classList.add('is-active');
+      }
+    }, { rootMargin: '-88px 0px -65% 0px', threshold: [0, 1] });
+    tocTargets.forEach(function (t) { observer.observe(t.el); });
+  }
+
+  // --- Copy code buttons ---------------------------------------------------
+  document.querySelectorAll('.prose pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-code';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(area);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  // --- Search --------------------------------------------------------------
+  var overlay = document.getElementById('search-overlay');
+  var trigger = document.getElementById('search-trigger');
+  var closeBtn = document.getElementById('search-close');
+  var input = document.getElementById('search-input');
+  var resultsEl = document.getElementById('search-results');
+  var index = null;
+  var loading = null;
+  var selected = -1;
+  var currentResults = [];
+  var lastFocus = null;
+
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (loading) return loading;
+    loading = fetch(BASE + '/search-index.json', { cache: 'no-cache' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { index = data; return data; })
+      .catch(function () { index = []; return index; });
+    return loading;
+  }
+
+  function tokenize(q) {
+    return q.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function highlight(text, tokens) {
+    var safe = escapeHtml(text);
+    tokens.forEach(function (token) {
+      if (!token) return;
+      var re = new RegExp('(' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      safe = safe.replace(re, '<mark>$1</mark>');
+    });
+    return safe;
+  }
+
+  function snippet(text, tokens) {
+    if (!text) return '';
+    var lower = text.toLowerCase();
+    var at = -1;
+    for (var i = 0; i < tokens.length; i++) {
+      var p = lower.indexOf(tokens[i]);
+      if (p !== -1 && (at === -1 || p < at)) at = p;
+    }
+    if (at === -1) at = 0;
+    var start = Math.max(0, at - 70);
+    var end = Math.min(text.length, at + 190);
+    return (start > 0 ? '…' : '') + text.slice(start, end).trim() + (end < text.length ? '…' : '');
+  }
+
+  function score(page, tokens) {
+    var title = page.title.toLowerCase();
+    var headings = (page.headings || []).join(' ').toLowerCase();
+    var description = (page.description || '').toLowerCase();
+    var text = (page.text || '').toLowerCase();
+    var total = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      var s = 0;
+      if (title === t) s = 120;
+      else if (title.indexOf(t) === 0) s = 80;
+      else if (title.indexOf(t) !== -1) s = 55;
+      else if (headings.indexOf(t) !== -1) s = 24;
+      else if (description.indexOf(t) !== -1) s = 14;
+      else if (text.indexOf(t) !== -1) s = 6;
+      if (s === 0) return 0;
+
+      // Repeated mentions are a useful relevance hint once the token matches at all.
+      var count = 0;
+      var at = text.indexOf(t);
+      while (at !== -1 && count < 8) {
+        count++;
+        at = text.indexOf(t, at + t.length);
+      }
+      total += s + count;
+    }
+    return total;
+  }
+
+  function renderResults(query) {
+    var tokens = tokenize(query);
+    if (!tokens.length) {
+      resultsEl.innerHTML = '<p class="search-hint">Type to search ' + (index ? index.length : '') +
+        ' pages. Use ↑ ↓ to move and Enter to open.</p>';
+      currentResults = [];
+      selected = -1;
+      return;
+    }
+    if (!index) {
+      resultsEl.innerHTML = '<p class="search-hint">Loading index…</p>';
+      return;
+    }
+    var scored = index.map(function (page) {
+      return { page: page, score: score(page, tokens) };
+    }).filter(function (r) { return r.score > 0; });
+    scored.sort(function (a, b) { return b.score - a.score || a.page.title.localeCompare(b.page.title); });
+    currentResults = scored.slice(0, 18);
+    selected = currentResults.length ? 0 : -1;
+
+    if (!currentResults.length) {
+      resultsEl.innerHTML = '<p class="search-empty">No pages match <strong>' + escapeHtml(query) + '</strong>.</p>';
+      return;
+    }
+
+    resultsEl.innerHTML = currentResults.map(function (r, i) {
+      var p = r.page;
+      return '<a class="search-result' + (i === 0 ? ' is-selected' : '') + '" href="' + p.url + '">' +
+        '<span class="search-result-title">' + highlight(p.title, tokens) +
+        '<span class="search-result-section">' + escapeHtml(p.section || '') + '</span></span>' +
+        '<span class="search-result-text">' + highlight(snippet(p.description || p.text, tokens), tokens) + '</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  function moveSelection(delta) {
+    if (!currentResults.length) return;
+    selected = (selected + delta + currentResults.length) % currentResults.length;
+    Array.prototype.forEach.call(resultsEl.querySelectorAll('.search-result'), function (el, i) {
+      el.classList.toggle('is-selected', i === selected);
+      if (i === selected) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  function openSearch() {
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    renderResults('');
+    loadIndex().then(function () { renderResults(input.value); });
+    setTimeout(function () { input.focus(); }, 0);
+  }
+
+  function closeSearch() {
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  if (trigger) trigger.addEventListener('click', openSearch);
+  if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+  if (overlay) {
+    overlay.addEventListener('mousedown', function (e) {
+      if (e.target === overlay) closeSearch();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', function () {
+      loadIndex().then(function () { renderResults(input.value); });
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveSelection(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveSelection(-1); }
+      else if (e.key === 'Enter') {
+        var link = resultsEl.querySelector('.search-result.is-selected');
+        if (link) { e.preventDefault(); window.location.href = link.getAttribute('href'); }
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+    if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === '/' && !typing) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === 'Escape' && overlay && !overlay.hidden) {
+      closeSearch();
+    }
+  });
+
+  // --- External links get a quiet marker ----------------------------------
+  document.querySelectorAll('.prose a[target="_blank"]').forEach(function (a) {
+    a.setAttribute('rel', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>

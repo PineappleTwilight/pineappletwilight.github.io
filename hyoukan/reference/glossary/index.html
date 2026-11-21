@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glossary · Hyoukan Wiki</title>
+<meta name="description" content="The vocabulary used across Hyoukan, its documentation and its code.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e7490'/%3E%3Cpath d='M32 12l5 14h15l-12 9 4 15-12-9-12 9 4-15-12-9h15z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/hyoukan/assets/wiki.css">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('hyoukan-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  } catch (e) { document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="progress-bar" id="progress-bar" aria-hidden="true"></div>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="/hyoukan/">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><path d="M16 3l3.2 8.1L28 14l-8.8 2.9L16 25l-3.2-8.1L4 14l8.8-2.9z" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">Hyoukan</span><span class="brand-sub">Wiki</span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <button class="search-trigger" id="search-trigger" aria-label="Search the wiki">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <span class="search-label">Search</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+  <a class="icon-btn" href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener" aria-label="Hyoukan on GitHub">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5 4-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg>
+  </a>
+  <button class="icon-btn" id="theme-toggle" aria-label="Switch colour theme">
+    <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+  </button>
+</header>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Wiki navigation">
+      <div class="nav-section">
+  <p class="nav-heading">Overview</p>
+  <ul><li><a href="/hyoukan/">Home</a></li>
+<li><a href="/hyoukan/getting-started/">Getting started</a></li>
+<li><a href="/hyoukan/features/">Feature tour</a></li>
+<li><a href="/hyoukan/faq/">FAQ</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">User guide</p>
+  <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
+<li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
+<li><a href="/hyoukan/guide/books/">Reading books</a></li>
+<li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
+<li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
+<li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/translation/">AI translation</a></li>
+<li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
+<li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
+<li><a href="/hyoukan/guide/appearance/">Appearance &amp; identity</a></li>
+<li><a href="/hyoukan/guide/connections/">Connections</a></li>
+<li><a href="/hyoukan/guide/privacy/">Privacy &amp; security</a></li>
+<li><a href="/hyoukan/guide/troubleshooting/">Troubleshooting</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Development</p>
+  <ul><li><a href="/hyoukan/development/architecture/">Architecture</a></li>
+<li><a href="/hyoukan/development/reader/">Reader &amp; WebGPU</a></li>
+<li><a href="/hyoukan/development/books-engine/">Book engine</a></li>
+<li><a href="/hyoukan/development/data/">Data &amp; database</a></li>
+<li><a href="/hyoukan/development/extensions/">Extensions &amp; source API</a></li>
+<li><a href="/hyoukan/development/translation-upscaling/">Translation &amp; upscaling</a></li>
+<li><a href="/hyoukan/development/settings/">Settings framework</a></li>
+<li><a href="/hyoukan/development/build/">Build &amp; release</a></li>
+<li><a href="/hyoukan/development/testing/">Testing &amp; conventions</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Reference</p>
+  <ul><li><a href="/hyoukan/reference/settings/">Settings index</a></li>
+<li><a href="/hyoukan/reference/formats/">Files &amp; formats</a></li>
+<li><a href="/hyoukan/reference/glossary/" aria-current="page">Glossary</a></li>
+<li><a href="/hyoukan/reference/versions/">Versions &amp; channels</a></li>
+<li><a href="/hyoukan/reference/history/">Project history</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Contributing</p>
+  <ul><li><a href="/hyoukan/contributing/">Contributing</a></li></ul>
+</div>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="version-pill">v1.25.3</span>
+      <span>Updated November 2026</span>
+    </div>
+  </aside>
+
+  <main class="main" id="content">
+    <div class="page">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/hyoukan/">Wiki</a><span aria-hidden="true">/</span><span>Reference</span><span aria-hidden="true">/</span><span aria-current="page">Glossary</span>
+</nav>
+      <article class="prose">
+        <h1>Glossary</h1><p class="page-lede">The vocabulary used across Hyoukan, its documentation and its code.</p>
+        <h2 id="ac"><a class="anchor" href="#ac" aria-label="Link to this section">#</a>A–C</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>ABI</strong></td>
+<td>The CPU instruction set an APK targets: <code>arm64-v8a</code>, <code>armeabi-v7a</code>, <code>x86</code>, <code>x86_64</code>. Extensions and native features depend on it.</td>
+</tr>
+<tr>
+<td><strong>Achievement</strong></td>
+<td>An optional collectible milestone. Positive, secret, negative or rotating.</td>
+</tr>
+<tr>
+<td><strong>Activity</strong></td>
+<td>An Android screen with its own lifecycle. The reader and main UI are activities; most other screens are Navigation 3 routes.</td>
+</tr>
+<tr>
+<td><strong>AdaptiveSheet</strong></td>
+<td>A Compose bottom sheet that adapts to phone/tablet layouts. Used for dialogs inside tabs.</td>
+</tr>
+<tr>
+<td><strong>Archive</strong></td>
+<td>A container of pages: ZIP/CBZ, RAR/CBR, 7z, EPUB. Read through libarchive.</td>
+</tr>
+<tr>
+<td><strong>AST search</strong></td>
+<td>The library&#39;s field-aware query syntax (<code>author:</code>, <code>tag:</code>, <code>NOT</code>, quotes). Toggleable.</td>
+</tr>
+<tr>
+<td><strong>Auto webtoon</strong></td>
+<td>Automatically using the continuous viewer for entries whose pages look like a long strip.</td>
+</tr>
+<tr>
+<td><strong>Backup</strong></td>
+<td>A <code>.tachibk</code> protobuf snapshot of library data and selected settings.</td>
+</tr>
+<tr>
+<td><strong>Beta</strong></td>
+<td>A minified preview build published from every <code>master</code> push as <code>r&lt;commitCount&gt;</code>.</td>
+</tr>
+<tr>
+<td><strong>Blacklist (chapter)</strong></td>
+<td>A per-entry list of chapters hidden from the chapter list and update counts.</td>
+</tr>
+<tr>
+<td><strong>Book</strong></td>
+<td>A text entry rendered by the novel viewer, usually an EPUB. Contrast <strong>Comic</strong>.</td>
+</tr>
+<tr>
+<td><strong>Catalogue</strong></td>
+<td>A source&#39;s browse/search listing of entries.</td>
+</tr>
+<tr>
+<td><strong>Category</strong></td>
+<td>A library label. Can contain subcategories.</td>
+</tr>
+<tr>
+<td><strong>CBZ</strong></td>
+<td>A ZIP archive of images, optionally encrypted.</td>
+</tr>
+<tr>
+<td><strong>Chapter</strong></td>
+<td>A unit inside an entry. An image chapter has pages; a book chapter has text documents.</td>
+</tr>
+<tr>
+<td><strong>Chapter cache</strong></td>
+<td>Pages cached while reading, evictable and separate from downloads.</td>
+</tr>
+<tr>
+<td><strong>Cloudflare challenge</strong></td>
+<td>A bot check in front of a site; solved by a WebView, FlareSolverr or a visible Turnstile popup.</td>
+</tr>
+<tr>
+<td><strong>ComicInfo.xml</strong></td>
+<td>The ComicRack metadata file read from local folders and archives.</td>
+</tr>
+<tr>
+<td><strong>Compose</strong></td>
+<td>Jetpack Compose, the UI toolkit used for all app screens.</td>
+</tr>
+<tr>
+<td><strong>ConfigurableSource</strong></td>
+<td>A source with its own preferences in <code>source_$id</code>.</td>
+</tr>
+<tr>
+<td><strong>Continuous vertical</strong></td>
+<td>A long-strip reading mode.</td>
+</tr>
+<tr>
+<td><strong>Cover-based theme</strong></td>
+<td>A palette derived from the open entry&#39;s cover.</td>
+</tr>
+</tbody></table></div>
+<h2 id="dh"><a class="anchor" href="#dh" aria-label="Link to this section">#</a>D–H</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>DB (database)</strong></td>
+<td>The SQLite database holding entries, chapters, categories, history and tracking.</td>
+</tr>
+<tr>
+<td><strong>Delegated source</strong></td>
+<td>An installed extension served by an in-app implementation (notably Komga).</td>
+</tr>
+<tr>
+<td><strong>DoH</strong></td>
+<td>DNS over HTTPS. Twelve providers are selectable.</td>
+</tr>
+<tr>
+<td><strong>Download</strong></td>
+<td>An explicitly saved chapter, kept until deleted. Contrast <strong>chapter cache</strong>.</td>
+</tr>
+<tr>
+<td><strong>Dual page</strong></td>
+<td>Two pages side by side, with height matching.</td>
+</tr>
+<tr>
+<td><strong>Enhanced tracker</strong></td>
+<td>A tracker discovered from a server (Kavita, Komga, Suwayomi) rather than logged into.</td>
+</tr>
+<tr>
+<td><strong>Entry</strong></td>
+<td>A series, book or one-shot in the library or in a source.</td>
+</tr>
+<tr>
+<td><strong>EPUB</strong></td>
+<td>An open ebook format: OPF package, spine documents, resources and a TOC.</td>
+</tr>
+<tr>
+<td><strong>Extension</strong></td>
+<td>A separately installed APK that provides one or more sources.</td>
+</tr>
+<tr>
+<td><strong>Extension store</strong></td>
+<td>A repository index of extensions, with a signing key for verification.</td>
+</tr>
+<tr>
+<td><strong>Feed</strong></td>
+<td>A multi-source stream of latest entries and saved searches.</td>
+</tr>
+<tr>
+<td><strong>FlareSolverr</strong></td>
+<td>An external Cloudflare-solving service the app can use.</td>
+</tr>
+<tr>
+<td><strong>Force dark</strong></td>
+<td>A palette rewrite for books, not a colour filter.</td>
+</tr>
+<tr>
+<td><strong>Global search</strong></td>
+<td>A search across every enabled source.</td>
+</tr>
+<tr>
+<td><strong>GPU device</strong></td>
+<td>The Vulkan/WebGPU device used by the hardware reader. A lost device triggers recovery.</td>
+</tr>
+<tr>
+<td><strong>HDR</strong></td>
+<td>High dynamic range pages (PQ, HLG, UltraHDR), rendered at full brightness by WebGPU.</td>
+</tr>
+<tr>
+<td><strong>Hyoukan</strong></td>
+<td>This app. Formerly Houri, and before that a Komikku fork.</td>
+</tr>
+</tbody></table></div>
+<h2 id="im"><a class="anchor" href="#im" aria-label="Link to this section">#</a>I–M</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Incognito</strong></td>
+<td>A session mode that writes no history or progress.</td>
+</tr>
+<tr>
+<td><strong>Installer (extension)</strong></td>
+<td>Private, Shizuku, Legacy or Package installer.</td>
+</tr>
+<tr>
+<td><strong>Interactor</strong></td>
+<td>A domain use case (<code>GetManga</code>, <code>SetMangaChapterFlags</code>).</td>
+</tr>
+<tr>
+<td><strong>JXL</strong></td>
+<td>JPEG XL, a modern image format the decoder supports.</td>
+</tr>
+<tr>
+<td><strong>Komga</strong></td>
+<td>A self-hosted comic/manga/ebook server, supported as a built-in source and tracker.</td>
+</tr>
+<tr>
+<td><strong>Library</strong></td>
+<td>The set of entries you saved, plus their organisation.</td>
+</tr>
+<tr>
+<td><strong>Library update</strong></td>
+<td>A scheduled refresh that fetches new chapters and metadata.</td>
+</tr>
+<tr>
+<td><strong>Local source</strong></td>
+<td>The built-in source that reads folders, archives and EPUBs on the device.</td>
+</tr>
+<tr>
+<td><strong>Long strip</strong></td>
+<td>A continuous vertical reading mode (webtoon).</td>
+</tr>
+<tr>
+<td><strong>LUT</strong></td>
+<td>Look-up table for colour grading. Presets and custom <code>.cube</code>/<code>.3dlut</code> files.</td>
+</tr>
+<tr>
+<td><strong>Merge</strong></td>
+<td>Combining several source entries into one library entry.</td>
+</tr>
+<tr>
+<td><strong>Metro</strong></td>
+<td>The dependency-injection framework used by the app.</td>
+</tr>
+<tr>
+<td><strong>Migration</strong></td>
+<td>Moving an entry to another source, or a database schema change (<code>.sqm</code>).</td>
+</tr>
+<tr>
+<td><strong>Mihon</strong></td>
+<td>The upstream reader Hyoukan ultimately derives from, alongside TachiyomiSY.</td>
+</tr>
+<tr>
+<td><strong>Moko resources</strong></td>
+<td>The string-resource system (<code>MR</code>, <code>KMR</code>, <code>SYMR</code>).</td>
+</tr>
+<tr>
+<td><strong>MTL</strong></td>
+<td>Machine translation — the page-translation pipeline.</td>
+</tr>
+<tr>
+<td><strong>MangaBaka</strong></td>
+<td>A tracker with full progress sync.</td>
+</tr>
+</tbody></table></div>
+<h2 id="nr"><a class="anchor" href="#nr" aria-label="Link to this section">#</a>N–R</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Navigation 3</strong></td>
+<td>AndroidX&#39;s navigation library; every screen is a serializable route.</td>
+</tr>
+<tr>
+<td><strong>Negative achievement</strong></td>
+<td>A &quot;shame&quot; achievement that does not count toward rank.</td>
+</tr>
+<tr>
+<td><strong>NCNN</strong></td>
+<td>A neural-network inference framework used by the upscaler and the translation detector/inpainter.</td>
+</tr>
+<tr>
+<td><strong>Nomtl</strong></td>
+<td>The build flavour without the translation engine.</td>
+</tr>
+<tr>
+<td><strong>Novel viewer</strong></td>
+<td>The WebView-based book renderer.</td>
+</tr>
+<tr>
+<td><strong>ONNX</strong></td>
+<td>An open model format; used by OCR, the NPU upscaler and imported models.</td>
+</tr>
+<tr>
+<td><strong>OPF</strong></td>
+<td>The EPUB package document (<code>content.opf</code>) listing metadata, manifest and spine.</td>
+</tr>
+<tr>
+<td><strong>Page</strong></td>
+<td>An image unit with a load state and a stream.</td>
+</tr>
+<tr>
+<td><strong>Page split</strong></td>
+<td>Cutting a too-tall page into segments that replace it in the page list.</td>
+</tr>
+<tr>
+<td><strong>Preference</strong></td>
+<td>A persisted setting (<code>Preference&lt;T&gt;</code> / <code>SettingKey&lt;T&gt;</code>).</td>
+</tr>
+<tr>
+<td><strong>Private installer</strong></td>
+<td>The extension installer that needs no install permission and verifies signatures.</td>
+</tr>
+<tr>
+<td><strong>Provider (MTL)</strong></td>
+<td>A translation backend: Ichigo, Gemini Nano, local GGUF or cloud.</td>
+</tr>
+<tr>
+<td><strong>Reader cache</strong></td>
+<td>The image cache used while reading.</td>
+</tr>
+<tr>
+<td><strong>Reread</strong></td>
+<td>A tracked repeat read of an entry, with tracker support.</td>
+</tr>
+<tr>
+<td><strong>Rotating achievement</strong></td>
+<td>A daily or weekly challenge drawn from a pool.</td>
+</tr>
+</tbody></table></div>
+<h2 id="sz"><a class="anchor" href="#sz" aria-label="Link to this section">#</a>S–Z</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Scanlator</strong></td>
+<td>The group that translated/released a chapter. Used for filtering and priority.</td>
+</tr>
+<tr>
+<td><strong>Secret achievement</strong></td>
+<td>An achievement hidden as <code>???</code> until unlocked.</td>
+</tr>
+<tr>
+<td><strong>Secure screen</strong></td>
+<td><code>FLAG_SECURE</code>: hides recents and blocks screenshots.</td>
+</tr>
+<tr>
+<td><strong>Series</strong></td>
+<td>A group of books, or a manga entry; the library&#39;s main object.</td>
+</tr>
+<tr>
+<td><strong>Shizuku</strong></td>
+<td>An Android service that lets the app install extensions with shell identity.</td>
+</tr>
+<tr>
+<td><strong>Smart category</strong></td>
+<td>A category bound to a tracker status that moves entries automatically.</td>
+</tr>
+<tr>
+<td><strong>Smart scanlator filter</strong></td>
+<td>Deduplicating chapters across groups, preferring the most complete coverage.</td>
+</tr>
+<tr>
+<td><strong>Source</strong></td>
+<td>A provider of entries, chapters and pages.</td>
+</tr>
+<tr>
+<td><strong>Source API</strong></td>
+<td>The extension-facing contract in <code>source-api</code>.</td>
+</tr>
+<tr>
+<td><strong>Spine</strong></td>
+<td>The ordered list of EPUB documents that make up a book.</td>
+</tr>
+<tr>
+<td><strong>SQLDelight</strong></td>
+<td>The database code generator used by the data module.</td>
+</tr>
+<tr>
+<td><strong>SQLCipher</strong></td>
+<td>Optional encryption for the SQLite database.</td>
+</tr>
+<tr>
+<td><strong>Stuck page</strong></td>
+<td>A page whose decode/load state has stalled; recovered by the stuck-page ladder or a tap.</td>
+</tr>
+<tr>
+<td><strong>SyncYomi</strong></td>
+<td>The hosted library-sync protocol, v1 or v2.</td>
+</tr>
+<tr>
+<td><strong>Text page</strong></td>
+<td>A unit of book text (<code>TextPage</code>), not an image page.</td>
+</tr>
+<tr>
+<td><strong>TextSource</strong></td>
+<td>The extension interface for EPUB/web-novel content.</td>
+</tr>
+<tr>
+<td><strong>Tier (device)</strong></td>
+<td>TINY → XLARGE, derived from RAM, low-RAM flag and ABI.</td>
+</tr>
+<tr>
+<td><strong>Tombstone</strong></td>
+<td>A sync record marking a deleted category or chapter in protocol v2.</td>
+</tr>
+<tr>
+<td><strong>Tracker</strong></td>
+<td>An external service that records reading progress and scores.</td>
+</tr>
+<tr>
+<td><strong>Turnstile</strong></td>
+<td>Cloudflare&#39;s visible human-check widget.</td>
+</tr>
+<tr>
+<td><strong>Upscaler</strong></td>
+<td>The super-resolution pipeline for page images.</td>
+</tr>
+<tr>
+<td><strong>Vulkan</strong></td>
+<td>The GPU API used by WebGPU and NCNN.</td>
+</tr>
+<tr>
+<td><strong>WebGPU</strong></td>
+<td>The hardware-accelerated page renderer.</td>
+</tr>
+<tr>
+<td><strong>Webtoon</strong></td>
+<td>A vertical long-strip comic format.</td>
+</tr>
+<tr>
+<td><strong>WebView</strong></td>
+<td>The Android browser component used for book rendering and login flows.</td>
+</tr>
+<tr>
+<td><strong>XLog</strong></td>
+<td>The app&#39;s logging library.</td>
+</tr>
+<tr>
+<td><strong><code>__PRIVATE_</code></strong></td>
+<td>Preference-key prefix for values excluded from backups by default.</td>
+</tr>
+<tr>
+<td><strong><code>__APP_STATE_</code></strong></td>
+<td>Preference-key prefix for internal state that is never backed up.</td>
+</tr>
+</tbody></table></div>
+<h2 id="notation"><a class="anchor" href="#notation" aria-label="Link to this section">#</a>Notation</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>.tachibk</code></td>
+<td>Backup file extension</td>
+</tr>
+<tr>
+<td><code>.sqm</code></td>
+<td>SQLDelight migration</td>
+</tr>
+<tr>
+<td><code>app.houri</code></td>
+<td>The Android application ID (legacy name, kept for upgrade compatibility)</td>
+</tr>
+<tr>
+<td><code>KMR</code> / <code>MR</code> / <code>SYMR</code></td>
+<td>Hyoukan / Mihon / TachiyomiSY string resource classes</td>
+</tr>
+<tr>
+<td><code>// KMK</code></td>
+<td>Hyoukan/Komikku fork marker</td>
+</tr>
+</tbody></table></div>
+
+      </article>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/reference/formats/"><span class="pager-dir">Previous</span><span class="pager-title">Files &amp; formats</span></a><a class="pager-link pager-next" href="/hyoukan/reference/versions/"><span class="pager-dir">Next</span><span class="pager-title">Versions &amp; channels</span></a></nav>
+      <footer class="page-foot">
+        <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
+        <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/reference/glossary.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
+      </footer>
+    </div>
+  </main>
+
+  <aside class="toc" aria-label="On this page">
+    <p class="toc-heading">On this page</p>
+<ul class="toc-list"><li class="toc-l2"><a href="#ac">A–C</a></li>
+<li class="toc-l2"><a href="#dh">D–H</a></li>
+<li class="toc-l2"><a href="#im">I–M</a></li>
+<li class="toc-l2"><a href="#nr">N–R</a></li>
+<li class="toc-l2"><a href="#sz">S–Z</a></li>
+<li class="toc-l2"><a href="#notation">Notation</a></li></ul>
+  </aside>
+</div>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search the Hyoukan wiki" hidden>
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search-input" type="search" placeholder="Search the wiki…" autocomplete="off" spellcheck="false" aria-label="Search query">
+      <button class="icon-btn" id="search-close" aria-label="Close search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-results" id="search-results" aria-live="polite">
+      <p class="search-hint">Type to search 33 pages. Use ↑ ↓ to move and Enter to open.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.HYOUKAN_BASE = "/hyoukan";</script>
+<script>/* Hyoukan wiki — theme, navigation, search, TOC and reading progress. */
+(function () {
+  'use strict';
+
+  var BASE = window.HYOUKAN_BASE || '/hyoukan';
+  var root = document.documentElement;
+
+  // --- Theme ---------------------------------------------------------------
+  var themeBtn = document.getElementById('theme-toggle');
+  function setTheme(theme) {
+    root.dataset.theme = theme;
+    try { localStorage.setItem('hyoukan-theme', theme); } catch (e) {}
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+  setTheme(root.dataset.theme || 'light');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // --- Mobile sidebar ------------------------------------------------------
+  var menuBtn = document.getElementById('menu-btn');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('sidebar-backdrop');
+
+  function setMenu(open) {
+    if (!sidebar) return;
+    sidebar.classList.toggle('is-open', open);
+    if (backdrop) backdrop.hidden = !open;
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function () {
+      setMenu(!sidebar.classList.contains('is-open'));
+    });
+  }
+  if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
+  if (sidebar) {
+    sidebar.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setMenu(false);
+    });
+  }
+
+  // --- Reading progress ----------------------------------------------------
+  var progress = document.getElementById('progress-bar');
+  if (progress) {
+    var ticking = false;
+    function updateProgress() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+      progress.style.width = pct.toFixed(2) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+    updateProgress();
+  }
+
+  // --- TOC scroll spy ------------------------------------------------------
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-list a'));
+  var tocTargets = tocLinks
+    .map(function (link) {
+      var id = decodeURIComponent(link.getAttribute('href').slice(1));
+      var el = document.getElementById(id);
+      return el ? { link: link, el: el } : null;
+    })
+    .filter(Boolean);
+
+  if (tocTargets.length && 'IntersectionObserver' in window) {
+    var visible = new Map();
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) visible.set(entry.target.id, entry.boundingClientRect.top);
+        else visible.delete(entry.target.id);
+      });
+      var best = null;
+      tocTargets.forEach(function (t) {
+        if (visible.has(t.el.id)) {
+          var top = visible.get(t.el.id);
+          if (best === null || top < best.top) best = { top: top, link: t.link };
+        }
+      });
+      if (best) {
+        tocLinks.forEach(function (l) { l.classList.remove('is-active'); });
+        best.link.classList.add('is-active');
+      }
+    }, { rootMargin: '-88px 0px -65% 0px', threshold: [0, 1] });
+    tocTargets.forEach(function (t) { observer.observe(t.el); });
+  }
+
+  // --- Copy code buttons ---------------------------------------------------
+  document.querySelectorAll('.prose pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-code';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(area);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  // --- Search --------------------------------------------------------------
+  var overlay = document.getElementById('search-overlay');
+  var trigger = document.getElementById('search-trigger');
+  var closeBtn = document.getElementById('search-close');
+  var input = document.getElementById('search-input');
+  var resultsEl = document.getElementById('search-results');
+  var index = null;
+  var loading = null;
+  var selected = -1;
+  var currentResults = [];
+  var lastFocus = null;
+
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (loading) return loading;
+    loading = fetch(BASE + '/search-index.json', { cache: 'no-cache' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { index = data; return data; })
+      .catch(function () { index = []; return index; });
+    return loading;
+  }
+
+  function tokenize(q) {
+    return q.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function highlight(text, tokens) {
+    var safe = escapeHtml(text);
+    tokens.forEach(function (token) {
+      if (!token) return;
+      var re = new RegExp('(' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      safe = safe.replace(re, '<mark>$1</mark>');
+    });
+    return safe;
+  }
+
+  function snippet(text, tokens) {
+    if (!text) return '';
+    var lower = text.toLowerCase();
+    var at = -1;
+    for (var i = 0; i < tokens.length; i++) {
+      var p = lower.indexOf(tokens[i]);
+      if (p !== -1 && (at === -1 || p < at)) at = p;
+    }
+    if (at === -1) at = 0;
+    var start = Math.max(0, at - 70);
+    var end = Math.min(text.length, at + 190);
+    return (start > 0 ? '…' : '') + text.slice(start, end).trim() + (end < text.length ? '…' : '');
+  }
+
+  function score(page, tokens) {
+    var title = page.title.toLowerCase();
+    var headings = (page.headings || []).join(' ').toLowerCase();
+    var description = (page.description || '').toLowerCase();
+    var text = (page.text || '').toLowerCase();
+    var total = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      var s = 0;
+      if (title === t) s = 120;
+      else if (title.indexOf(t) === 0) s = 80;
+      else if (title.indexOf(t) !== -1) s = 55;
+      else if (headings.indexOf(t) !== -1) s = 24;
+      else if (description.indexOf(t) !== -1) s = 14;
+      else if (text.indexOf(t) !== -1) s = 6;
+      if (s === 0) return 0;
+
+      // Repeated mentions are a useful relevance hint once the token matches at all.
+      var count = 0;
+      var at = text.indexOf(t);
+      while (at !== -1 && count < 8) {
+        count++;
+        at = text.indexOf(t, at + t.length);
+      }
+      total += s + count;
+    }
+    return total;
+  }
+
+  function renderResults(query) {
+    var tokens = tokenize(query);
+    if (!tokens.length) {
+      resultsEl.innerHTML = '<p class="search-hint">Type to search ' + (index ? index.length : '') +
+        ' pages. Use ↑ ↓ to move and Enter to open.</p>';
+      currentResults = [];
+      selected = -1;
+      return;
+    }
+    if (!index) {
+      resultsEl.innerHTML = '<p class="search-hint">Loading index…</p>';
+      return;
+    }
+    var scored = index.map(function (page) {
+      return { page: page, score: score(page, tokens) };
+    }).filter(function (r) { return r.score > 0; });
+    scored.sort(function (a, b) { return b.score - a.score || a.page.title.localeCompare(b.page.title); });
+    currentResults = scored.slice(0, 18);
+    selected = currentResults.length ? 0 : -1;
+
+    if (!currentResults.length) {
+      resultsEl.innerHTML = '<p class="search-empty">No pages match <strong>' + escapeHtml(query) + '</strong>.</p>';
+      return;
+    }
+
+    resultsEl.innerHTML = currentResults.map(function (r, i) {
+      var p = r.page;
+      return '<a class="search-result' + (i === 0 ? ' is-selected' : '') + '" href="' + p.url + '">' +
+        '<span class="search-result-title">' + highlight(p.title, tokens) +
+        '<span class="search-result-section">' + escapeHtml(p.section || '') + '</span></span>' +
+        '<span class="search-result-text">' + highlight(snippet(p.description || p.text, tokens), tokens) + '</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  function moveSelection(delta) {
+    if (!currentResults.length) return;
+    selected = (selected + delta + currentResults.length) % currentResults.length;
+    Array.prototype.forEach.call(resultsEl.querySelectorAll('.search-result'), function (el, i) {
+      el.classList.toggle('is-selected', i === selected);
+      if (i === selected) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  function openSearch() {
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    renderResults('');
+    loadIndex().then(function () { renderResults(input.value); });
+    setTimeout(function () { input.focus(); }, 0);
+  }
+
+  function closeSearch() {
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  if (trigger) trigger.addEventListener('click', openSearch);
+  if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+  if (overlay) {
+    overlay.addEventListener('mousedown', function (e) {
+      if (e.target === overlay) closeSearch();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', function () {
+      loadIndex().then(function () { renderResults(input.value); });
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveSelection(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveSelection(-1); }
+      else if (e.key === 'Enter') {
+        var link = resultsEl.querySelector('.search-result.is-selected');
+        if (link) { e.preventDefault(); window.location.href = link.getAttribute('href'); }
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+    if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === '/' && !typing) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === 'Escape' && overlay && !overlay.hidden) {
+      closeSearch();
+    }
+  });
+
+  // --- External links get a quiet marker ----------------------------------
+  document.querySelectorAll('.prose a[target="_blank"]').forEach(function (a) {
+    a.setAttribute('rel', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>

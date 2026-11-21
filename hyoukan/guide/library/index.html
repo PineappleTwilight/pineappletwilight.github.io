@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Library &amp; categories · Hyoukan Wiki</title>
+<meta name="description" content="Organise a library of thousands with categories, smart shelves and per-category rules.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e7490'/%3E%3Cpath d='M32 12l5 14h15l-12 9 4 15-12-9-12 9 4-15-12-9h15z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/hyoukan/assets/wiki.css">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('hyoukan-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  } catch (e) { document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="progress-bar" id="progress-bar" aria-hidden="true"></div>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="/hyoukan/">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><path d="M16 3l3.2 8.1L28 14l-8.8 2.9L16 25l-3.2-8.1L4 14l8.8-2.9z" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">Hyoukan</span><span class="brand-sub">Wiki</span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <button class="search-trigger" id="search-trigger" aria-label="Search the wiki">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <span class="search-label">Search</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+  <a class="icon-btn" href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener" aria-label="Hyoukan on GitHub">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5 4-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg>
+  </a>
+  <button class="icon-btn" id="theme-toggle" aria-label="Switch colour theme">
+    <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+  </button>
+</header>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Wiki navigation">
+      <div class="nav-section">
+  <p class="nav-heading">Overview</p>
+  <ul><li><a href="/hyoukan/">Home</a></li>
+<li><a href="/hyoukan/getting-started/">Getting started</a></li>
+<li><a href="/hyoukan/features/">Feature tour</a></li>
+<li><a href="/hyoukan/faq/">FAQ</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">User guide</p>
+  <ul><li><a href="/hyoukan/guide/library/" aria-current="page">Library &amp; categories</a></li>
+<li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
+<li><a href="/hyoukan/guide/books/">Reading books</a></li>
+<li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
+<li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
+<li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/translation/">AI translation</a></li>
+<li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
+<li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
+<li><a href="/hyoukan/guide/appearance/">Appearance &amp; identity</a></li>
+<li><a href="/hyoukan/guide/connections/">Connections</a></li>
+<li><a href="/hyoukan/guide/privacy/">Privacy &amp; security</a></li>
+<li><a href="/hyoukan/guide/troubleshooting/">Troubleshooting</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Development</p>
+  <ul><li><a href="/hyoukan/development/architecture/">Architecture</a></li>
+<li><a href="/hyoukan/development/reader/">Reader &amp; WebGPU</a></li>
+<li><a href="/hyoukan/development/books-engine/">Book engine</a></li>
+<li><a href="/hyoukan/development/data/">Data &amp; database</a></li>
+<li><a href="/hyoukan/development/extensions/">Extensions &amp; source API</a></li>
+<li><a href="/hyoukan/development/translation-upscaling/">Translation &amp; upscaling</a></li>
+<li><a href="/hyoukan/development/settings/">Settings framework</a></li>
+<li><a href="/hyoukan/development/build/">Build &amp; release</a></li>
+<li><a href="/hyoukan/development/testing/">Testing &amp; conventions</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Reference</p>
+  <ul><li><a href="/hyoukan/reference/settings/">Settings index</a></li>
+<li><a href="/hyoukan/reference/formats/">Files &amp; formats</a></li>
+<li><a href="/hyoukan/reference/glossary/">Glossary</a></li>
+<li><a href="/hyoukan/reference/versions/">Versions &amp; channels</a></li>
+<li><a href="/hyoukan/reference/history/">Project history</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Contributing</p>
+  <ul><li><a href="/hyoukan/contributing/">Contributing</a></li></ul>
+</div>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="version-pill">v1.25.3</span>
+      <span>Updated November 2026</span>
+    </div>
+  </aside>
+
+  <main class="main" id="content">
+    <div class="page">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/hyoukan/">Wiki</a><span aria-hidden="true">/</span><span>User guide</span><span aria-hidden="true">/</span><span aria-current="page">Library &amp; categories</span>
+</nav>
+      <article class="prose">
+        <h1>Library &amp; categories</h1><p class="page-lede">Organise a library of thousands with categories, smart shelves and per-category rules.</p>
+        <p>The <strong>Library</strong> tab is the app&#39;s home. It is a view over one SQLite database of entries, chapters, categories, history and tracking records — not a folder of files. Everything you see here survives restarts and travels through backups.</p>
+<h2 id="the-five-tabs"><a class="anchor" href="#the-five-tabs" aria-label="Link to this section">#</a>The five tabs</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tab</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Library</strong></td>
+<td>Your saved entries, grouped by category or source</td>
+</tr>
+<tr>
+<td><strong>Updates</strong></td>
+<td>Newly fetched chapters across the library</td>
+</tr>
+<tr>
+<td><strong>History</strong></td>
+<td>What you have read, newest first</td>
+</tr>
+<tr>
+<td><strong>Browse</strong></td>
+<td>Sources, extensions, global search, migration and the feed</td>
+</tr>
+<tr>
+<td><strong>More</strong></td>
+<td>Downloads, statistics, settings, about</td>
+</tr>
+</tbody></table></div>
+<p>The Updates and History tabs can be hidden from <strong>Settings → Appearance → Navbar</strong>; the More tab keeps fallback rows for them.</p>
+<h2 id="adding-and-removing-entries"><a class="anchor" href="#adding-and-removing-entries" aria-label="Link to this section">#</a>Adding and removing entries</h2>
+<ul>
+<li><strong>Add</strong> from a source&#39;s browse screen, a search result, global search, or a URL import.</li>
+<li>On adding, Hyoukan can optionally fetch the entry&#39;s metadata and chapter list immediately (<strong>Settings → Library → Fetch metadata/chapters when adding</strong>).</li>
+<li><strong>Remove</strong> from the entry&#39;s menu. Removing from the library does not delete downloaded chapters; clean those up under <strong>Data and storage → Downloaded and cached content</strong>.</li>
+</ul>
+<p>An entry is identified by its <strong>source + URL</strong>, so the same series from two sources is two entries until you merge them.</p>
+<h2 id="finding-things"><a class="anchor" href="#finding-things" aria-label="Link to this section">#</a>Finding things</h2>
+<p>The library search field understands a small query language:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>word</code></td>
+<td>Match title (and indexed fields)</td>
+</tr>
+<tr>
+<td><code>&quot;exact phrase&quot;</code></td>
+<td>Keep the phrase together</td>
+</tr>
+<tr>
+<td><code>-word</code> or <code>NOT word</code></td>
+<td>Exclude</td>
+</tr>
+<tr>
+<td><code>word1 AND word2</code>, <code>word1 OR word2</code></td>
+<td>Boolean separators; lowercase <code>and</code>/<code>or</code> stay literal text</td>
+</tr>
+<tr>
+<td><code>$word</code></td>
+<td>Exact term</td>
+</tr>
+<tr>
+<td><code>title:</code>, <code>author:</code>, <code>artist:</code></td>
+<td>Field filters</td>
+</tr>
+<tr>
+<td><code>tag:</code> / <code>tags:</code>, <code>genre:</code></td>
+<td>Tag filters</td>
+</tr>
+<tr>
+<td><code>source:</code>, <code>id:</code> / <code>src:</code></td>
+<td>Source filters</td>
+</tr>
+<tr>
+<td><code>status:</code>, <code>tracker:</code></td>
+<td>Tracking filters</td>
+</tr>
+<tr>
+<td><code>desc:</code> / <code>description:</code>, <code>uploader:</code></td>
+<td>Description and uploader</td>
+</tr>
+<tr>
+<td><code>category:</code> / <code>cat:</code>, <code>subcategory:</code> / <code>sub:</code></td>
+<td>Category and subcategory</td>
+</tr>
+<tr>
+<td><code>artist:</code>, <code>character:</code>, <code>female:</code>, <code>male:</code>, <code>group:</code>, <code>parody:</code>, <code>language:</code>, <code>reclass:</code></td>
+<td>E-Hentai metadata namespaces</td>
+</tr>
+</tbody></table></div>
+<p><strong>Advanced search (colons)</strong> is a setting. When it is off, colons are ordinary text so titles like <em>Re:Zero</em> search normally.</p>
+<blockquote class="callout callout-tip"><p class="callout-title">Tip</p>
+<p>Search is applied within the current category and grouping. Clearing the field restores the full shelf.</p>
+</blockquote>
+<h2 id="sorting-display-and-grouping"><a class="anchor" href="#sorting-display-and-grouping" aria-label="Link to this section">#</a>Sorting, display and grouping</h2>
+<p><strong>Sort types:</strong> alphabetical (article-aware — &quot;A Sign of Affection&quot; sorts under S), last read, last update, unread count, total chapters, latest chapter, chapter fetch date, date added, tracker mean score, tag list and random.</p>
+<p><strong>Display modes:</strong> grid, compact grid, list, staggered grid and panorama cover flow. Covers can be shown in landscape, aligned to the top, with or without a loading spinner.</p>
+<p><strong>Grouping:</strong> by category, by source, by track status, or ungrouped. The choice is per library view and can be overridden per category.</p>
+<p><strong>Badges:</strong> unread counts, source and language badges, download state and content warnings are all toggleable.</p>
+<h2 id="categories-and-subcategories"><a class="anchor" href="#categories-and-subcategories" aria-label="Link to this section">#</a>Categories and subcategories</h2>
+<p>Categories are the library&#39;s primary organisation. Open <strong>More → Categories</strong> or <strong>Settings → Library → Edit categories</strong>.</p>
+<ul>
+<li>Create, rename, reorder and delete categories.</li>
+<li>A category can contain <strong>subcategories</strong>, nested to any depth.</li>
+<li><strong>Folder layout</strong> renders subcategories as home-screen-style folders inside their category; entries not in a subcategory stay alongside them.</li>
+<li>The virtual <strong>All</strong> subcategory can be hidden per category.</li>
+<li>The default category for new entries is configurable.</li>
+<li><strong>Per-category sort</strong> can differ from the global sort.</li>
+<li><strong>Category-scoped refresh</strong> updates only one shelf without touching the rest.</li>
+<li><strong>Orphan cleanup</strong> removes categories with no entries when you ask for it.</li>
+<li>Categories and their hierarchy are included in backups and sync.</li>
+</ul>
+<p>An entry can live in several categories at once. A category is a label, not a folder on disk.</p>
+<h3 id="per-category-reader-settings"><a class="anchor" href="#per-category-reader-settings" aria-label="Link to this section">#</a>Per-category reader settings</h3>
+<p>A category can pin a reading mode and orientation for everything on that shelf — useful for a webtoon-only or manga-only collection. The resolution order is <strong>entry override → first matching category → global default</strong>.</p>
+<h3 id="per-category-update-schedules"><a class="anchor" href="#per-category-update-schedules" aria-label="Link to this section">#</a>Per-category update schedules</h3>
+<p>Each category can set its own library-update interval, from daily to monthly. The shortest interval among the categories an entry belongs to wins. A category with no schedule follows the global one.</p>
+<h2 id="smart-categories"><a class="anchor" href="#smart-categories" aria-label="Link to this section">#</a>Smart categories</h2>
+<p>A smart category is bound to a tracker status. When an entry&#39;s status changes on a tracker — or when you finish the first chapter of something in <em>Wish to read</em> — it moves to the matching category automatically.</p>
+<ul>
+<li>Only categories you explicitly bind are touched.</li>
+<li>The binding is one-way and idempotent: an entry can be in several categories, and smart categories never remove it from unrelated ones.</li>
+<li>Categories without a binding are never modified.</li>
+</ul>
+<p>This is how a &quot;Reading&quot;, &quot;Completed&quot; or &quot;On hold&quot; shelf stays current without manual dragging.</p>
+<h2 id="library-updates"><a class="anchor" href="#library-updates" aria-label="Link to this section">#</a>Library updates</h2>
+<p><strong>Settings → Library → Global update</strong> controls the scheduled refresh.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Automatic updates</td>
+<td>Off, every 12 hours, daily, every 2/3 days, weekly</td>
+</tr>
+<tr>
+<td>Device restrictions</td>
+<td>Wi-Fi only, unmetered only, charging only, battery not low</td>
+</tr>
+<tr>
+<td>Launch behaviour</td>
+<td>Always run a global update, or only for ungrouped entries while categories update themselves</td>
+</tr>
+<tr>
+<td>Refresh metadata</td>
+<td>Re-fetch cover and details during an update</td>
+</tr>
+<tr>
+<td>Subcategory scope</td>
+<td>Refresh the entire category or only the selected subcategory</td>
+</tr>
+<tr>
+<td>Skip rules</td>
+<td>Skip entries with unread chapters, unstarted entries, or completed entries</td>
+</tr>
+<tr>
+<td>Smart update</td>
+<td>Predict the next release date from the entry&#39;s release calendar instead of counting days</td>
+</tr>
+<tr>
+<td>Progress banner</td>
+<td>Show or hide the updating banner</td>
+</tr>
+<tr>
+<td>Unread badge</td>
+<td>Show the unread count on the Updates icon</td>
+</tr>
+</tbody></table></div>
+<p><strong>Smart update</strong> understands fixed weekdays, days of the month, twice-monthly and batch-release patterns, and keeps counting from a missed release instead of resetting. Excluded scanlators do not skew the estimate.</p>
+<p><strong>Excluded scanlators</strong> are configured per entry from the chapter list. If every chapter of a series comes from an excluded group, that series is skipped during updates.</p>
+<p>Failed updates are collected in <strong>More → Library update errors</strong>, with the failing source, message and entry context. HTTP 401/404 are recorded as extension errors; Cloudflare challenges and rate limits are logged but not treated as failures.</p>
+<h2 id="the-entry-screen"><a class="anchor" href="#the-entry-screen" aria-label="Link to this section">#</a>The entry screen</h2>
+<p>Tapping an entry opens its details page. From here you can:</p>
+<ul>
+<li><strong>Read</strong> — continue from the last chapter, or open a specific chapter.</li>
+<li><strong>Track</strong> — link the entry to one or more trackers and set status, score, progress and dates.</li>
+<li><strong>Download</strong> — queue chapters, or manage the downloaded ones.</li>
+<li><strong>Edit</strong> — change the title, author, artist, description, tags, status and cover; edits are stored in <code>custom_manga_info</code> and survive source refreshes.</li>
+<li><strong>Notes</strong> — keep private notes per entry.</li>
+<li><strong>Related</strong> — see sequel/prequel relations from trackers, with a MangaDex fallback.</li>
+<li><strong>Recommendations</strong> — similar series from AniList, MAL, MangaUpdates and ComicK.</li>
+<li><strong>Merge / Migrate</strong> — combine or move the entry to another source.</li>
+<li><strong>Palette</strong> — inspect the cover&#39;s colour palette.</li>
+<li><strong>Share</strong> — share the entry or its cover.</li>
+<li><strong>Refresh</strong> — re-fetch details and chapters without a full library update.</li>
+<li><strong>Incognito</strong> — read this entry without recording history.</li>
+</ul>
+<p>The chapter list below the details is the main working surface: filters, sorting, download state, bookmark colours, scanlator priority and read/unread actions all live there.</p>
+<h2 id="duplicates-merge-and-migration"><a class="anchor" href="#duplicates-merge-and-migration" aria-label="Link to this section">#</a>Duplicates, merge and migration</h2>
+<ul>
+<li><strong>Find duplicates</strong> (More → Duplicates) lists every entry with more than one copy, with side-by-side opening and a jump to migration.</li>
+<li><strong>Merge</strong> combines several source entries into one library entry. Chapters from all sources appear together; the merged entry keeps a synthetic source id internally so views and backups stay consistent.</li>
+<li><strong>Migrate</strong> moves entries to another source, individually or in bulk. Migration can compare chapter counts, search the target source, and preserve categories, tracking and read state.</li>
+</ul>
+<p>Merged entries are excluded from orphaned-download cleanup so their files are never deleted by accident.</p>
+<h2 id="covers-and-presentation"><a class="anchor" href="#covers-and-presentation" aria-label="Link to this section">#</a>Covers and presentation</h2>
+<ul>
+<li><strong>Custom covers:</strong> pick an image, crop or fit, then nudge and zoom. Covers can be included in backups.</li>
+<li><strong>Cover cache retention:</strong> how long a removed entry&#39;s cover is kept before it is deleted.</li>
+<li><strong>Panorama cover flow:</strong> a large cover view for landscape and wide images.</li>
+<li><strong>Censor lewd manga:</strong> blur thumbnails and redact titles, tags and descriptions in the library, catalogue and details. It is a display filter, not an access control.</li>
+<li><strong>Relative timestamps and date format:</strong> configure how dates appear.</li>
+<li><strong>Images in descriptions:</strong> render remote images inside entry descriptions, or show text only.</li>
+</ul>
+<h2 id="the-feed"><a class="anchor" href="#the-feed" aria-label="Link to this section">#</a>The Feed</h2>
+<p>The <strong>Feed</strong> tab (Browse → Feed) shows the latest entries and saved searches from several sources in one stream. It can be hidden, moved to the front of Browse, and filtered to hide entries already in the library. Feed sources are saved searches, so a feed is built from searches you already trust.</p>
+<h2 id="history-and-statistics"><a class="anchor" href="#history-and-statistics" aria-label="Link to this section">#</a>History and statistics</h2>
+<ul>
+<li><strong>History</strong> tracks every chapter opened, with the entry, chapter, timestamp and progress. Entries can be removed from history without removing them from the library.</li>
+<li><strong>Statistics</strong> shows library counts and reading totals, with a square or book-style cover presentation.</li>
+<li>Non-library history is cleaned from <strong>Settings → Advanced → Clear database</strong>, which can keep entries that have read chapters.</li>
+</ul>
+<h2 id="local-content-in-the-library"><a class="anchor" href="#local-content-in-the-library" aria-label="Link to this section">#</a>Local content in the library</h2>
+<p>The local source presents folders as entries:</p>
+<pre><code>Hyoukan/local/
+  Series Name/
+    cover.jpg
+    details.json          (optional metadata)
+    ComicInfo.xml         (optional metadata)
+    Chapter 1/
+      001.jpg
+      002.jpg
+    Chapter 2.cbz
+  A Novel/
+    Book.epub
+</code></pre>
+<p>A folder containing only EPUB files is treated as a <strong>book</strong> series; a mixed folder is treated as a comic. You can override the entry type per entry (&quot;Render as book&quot; / &quot;Render as comic&quot;) and the choice survives library updates. See <a href="/hyoukan/reference/formats/">Files &amp; formats</a> for the metadata fields.</p>
+<h2 id="what-to-do-next"><a class="anchor" href="#what-to-do-next" aria-label="Link to this section">#</a>What to do next</h2>
+<ul>
+<li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a> — where the entries come from.</li>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a> and <a href="/hyoukan/guide/books/">Reading books</a> — the two readers.</li>
+<li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a> — keep the library safe.</li>
+</ul>
+
+      </article>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/faq/"><span class="pager-dir">Previous</span><span class="pager-title">FAQ</span></a><a class="pager-link pager-next" href="/hyoukan/guide/sources/"><span class="pager-dir">Next</span><span class="pager-title">Sources &amp; extensions</span></a></nav>
+      <footer class="page-foot">
+        <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
+        <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/guide/library.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
+      </footer>
+    </div>
+  </main>
+
+  <aside class="toc" aria-label="On this page">
+    <p class="toc-heading">On this page</p>
+<ul class="toc-list"><li class="toc-l2"><a href="#the-five-tabs">The five tabs</a></li>
+<li class="toc-l2"><a href="#adding-and-removing-entries">Adding and removing entries</a></li>
+<li class="toc-l2"><a href="#finding-things">Finding things</a></li>
+<li class="toc-l2"><a href="#sorting-display-and-grouping">Sorting, display and grouping</a></li>
+<li class="toc-l2"><a href="#categories-and-subcategories">Categories and subcategories</a></li>
+<li class="toc-l3"><a href="#per-category-reader-settings">Per-category reader settings</a></li>
+<li class="toc-l3"><a href="#per-category-update-schedules">Per-category update schedules</a></li>
+<li class="toc-l2"><a href="#smart-categories">Smart categories</a></li>
+<li class="toc-l2"><a href="#library-updates">Library updates</a></li>
+<li class="toc-l2"><a href="#the-entry-screen">The entry screen</a></li>
+<li class="toc-l2"><a href="#duplicates-merge-and-migration">Duplicates, merge and migration</a></li>
+<li class="toc-l2"><a href="#covers-and-presentation">Covers and presentation</a></li>
+<li class="toc-l2"><a href="#the-feed">The Feed</a></li>
+<li class="toc-l2"><a href="#history-and-statistics">History and statistics</a></li>
+<li class="toc-l2"><a href="#local-content-in-the-library">Local content in the library</a></li>
+<li class="toc-l2"><a href="#what-to-do-next">What to do next</a></li></ul>
+  </aside>
+</div>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search the Hyoukan wiki" hidden>
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search-input" type="search" placeholder="Search the wiki…" autocomplete="off" spellcheck="false" aria-label="Search query">
+      <button class="icon-btn" id="search-close" aria-label="Close search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-results" id="search-results" aria-live="polite">
+      <p class="search-hint">Type to search 33 pages. Use ↑ ↓ to move and Enter to open.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.HYOUKAN_BASE = "/hyoukan";</script>
+<script>/* Hyoukan wiki — theme, navigation, search, TOC and reading progress. */
+(function () {
+  'use strict';
+
+  var BASE = window.HYOUKAN_BASE || '/hyoukan';
+  var root = document.documentElement;
+
+  // --- Theme ---------------------------------------------------------------
+  var themeBtn = document.getElementById('theme-toggle');
+  function setTheme(theme) {
+    root.dataset.theme = theme;
+    try { localStorage.setItem('hyoukan-theme', theme); } catch (e) {}
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+  setTheme(root.dataset.theme || 'light');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // --- Mobile sidebar ------------------------------------------------------
+  var menuBtn = document.getElementById('menu-btn');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('sidebar-backdrop');
+
+  function setMenu(open) {
+    if (!sidebar) return;
+    sidebar.classList.toggle('is-open', open);
+    if (backdrop) backdrop.hidden = !open;
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function () {
+      setMenu(!sidebar.classList.contains('is-open'));
+    });
+  }
+  if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
+  if (sidebar) {
+    sidebar.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setMenu(false);
+    });
+  }
+
+  // --- Reading progress ----------------------------------------------------
+  var progress = document.getElementById('progress-bar');
+  if (progress) {
+    var ticking = false;
+    function updateProgress() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+      progress.style.width = pct.toFixed(2) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+    updateProgress();
+  }
+
+  // --- TOC scroll spy ------------------------------------------------------
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-list a'));
+  var tocTargets = tocLinks
+    .map(function (link) {
+      var id = decodeURIComponent(link.getAttribute('href').slice(1));
+      var el = document.getElementById(id);
+      return el ? { link: link, el: el } : null;
+    })
+    .filter(Boolean);
+
+  if (tocTargets.length && 'IntersectionObserver' in window) {
+    var visible = new Map();
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) visible.set(entry.target.id, entry.boundingClientRect.top);
+        else visible.delete(entry.target.id);
+      });
+      var best = null;
+      tocTargets.forEach(function (t) {
+        if (visible.has(t.el.id)) {
+          var top = visible.get(t.el.id);
+          if (best === null || top < best.top) best = { top: top, link: t.link };
+        }
+      });
+      if (best) {
+        tocLinks.forEach(function (l) { l.classList.remove('is-active'); });
+        best.link.classList.add('is-active');
+      }
+    }, { rootMargin: '-88px 0px -65% 0px', threshold: [0, 1] });
+    tocTargets.forEach(function (t) { observer.observe(t.el); });
+  }
+
+  // --- Copy code buttons ---------------------------------------------------
+  document.querySelectorAll('.prose pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-code';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(area);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  // --- Search --------------------------------------------------------------
+  var overlay = document.getElementById('search-overlay');
+  var trigger = document.getElementById('search-trigger');
+  var closeBtn = document.getElementById('search-close');
+  var input = document.getElementById('search-input');
+  var resultsEl = document.getElementById('search-results');
+  var index = null;
+  var loading = null;
+  var selected = -1;
+  var currentResults = [];
+  var lastFocus = null;
+
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (loading) return loading;
+    loading = fetch(BASE + '/search-index.json', { cache: 'no-cache' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { index = data; return data; })
+      .catch(function () { index = []; return index; });
+    return loading;
+  }
+
+  function tokenize(q) {
+    return q.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function highlight(text, tokens) {
+    var safe = escapeHtml(text);
+    tokens.forEach(function (token) {
+      if (!token) return;
+      var re = new RegExp('(' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      safe = safe.replace(re, '<mark>$1</mark>');
+    });
+    return safe;
+  }
+
+  function snippet(text, tokens) {
+    if (!text) return '';
+    var lower = text.toLowerCase();
+    var at = -1;
+    for (var i = 0; i < tokens.length; i++) {
+      var p = lower.indexOf(tokens[i]);
+      if (p !== -1 && (at === -1 || p < at)) at = p;
+    }
+    if (at === -1) at = 0;
+    var start = Math.max(0, at - 70);
+    var end = Math.min(text.length, at + 190);
+    return (start > 0 ? '…' : '') + text.slice(start, end).trim() + (end < text.length ? '…' : '');
+  }
+
+  function score(page, tokens) {
+    var title = page.title.toLowerCase();
+    var headings = (page.headings || []).join(' ').toLowerCase();
+    var description = (page.description || '').toLowerCase();
+    var text = (page.text || '').toLowerCase();
+    var total = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      var s = 0;
+      if (title === t) s = 120;
+      else if (title.indexOf(t) === 0) s = 80;
+      else if (title.indexOf(t) !== -1) s = 55;
+      else if (headings.indexOf(t) !== -1) s = 24;
+      else if (description.indexOf(t) !== -1) s = 14;
+      else if (text.indexOf(t) !== -1) s = 6;
+      if (s === 0) return 0;
+
+      // Repeated mentions are a useful relevance hint once the token matches at all.
+      var count = 0;
+      var at = text.indexOf(t);
+      while (at !== -1 && count < 8) {
+        count++;
+        at = text.indexOf(t, at + t.length);
+      }
+      total += s + count;
+    }
+    return total;
+  }
+
+  function renderResults(query) {
+    var tokens = tokenize(query);
+    if (!tokens.length) {
+      resultsEl.innerHTML = '<p class="search-hint">Type to search ' + (index ? index.length : '') +
+        ' pages. Use ↑ ↓ to move and Enter to open.</p>';
+      currentResults = [];
+      selected = -1;
+      return;
+    }
+    if (!index) {
+      resultsEl.innerHTML = '<p class="search-hint">Loading index…</p>';
+      return;
+    }
+    var scored = index.map(function (page) {
+      return { page: page, score: score(page, tokens) };
+    }).filter(function (r) { return r.score > 0; });
+    scored.sort(function (a, b) { return b.score - a.score || a.page.title.localeCompare(b.page.title); });
+    currentResults = scored.slice(0, 18);
+    selected = currentResults.length ? 0 : -1;
+
+    if (!currentResults.length) {
+      resultsEl.innerHTML = '<p class="search-empty">No pages match <strong>' + escapeHtml(query) + '</strong>.</p>';
+      return;
+    }
+
+    resultsEl.innerHTML = currentResults.map(function (r, i) {
+      var p = r.page;
+      return '<a class="search-result' + (i === 0 ? ' is-selected' : '') + '" href="' + p.url + '">' +
+        '<span class="search-result-title">' + highlight(p.title, tokens) +
+        '<span class="search-result-section">' + escapeHtml(p.section || '') + '</span></span>' +
+        '<span class="search-result-text">' + highlight(snippet(p.description || p.text, tokens), tokens) + '</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  function moveSelection(delta) {
+    if (!currentResults.length) return;
+    selected = (selected + delta + currentResults.length) % currentResults.length;
+    Array.prototype.forEach.call(resultsEl.querySelectorAll('.search-result'), function (el, i) {
+      el.classList.toggle('is-selected', i === selected);
+      if (i === selected) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  function openSearch() {
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    renderResults('');
+    loadIndex().then(function () { renderResults(input.value); });
+    setTimeout(function () { input.focus(); }, 0);
+  }
+
+  function closeSearch() {
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  if (trigger) trigger.addEventListener('click', openSearch);
+  if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+  if (overlay) {
+    overlay.addEventListener('mousedown', function (e) {
+      if (e.target === overlay) closeSearch();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', function () {
+      loadIndex().then(function () { renderResults(input.value); });
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveSelection(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveSelection(-1); }
+      else if (e.key === 'Enter') {
+        var link = resultsEl.querySelector('.search-result.is-selected');
+        if (link) { e.preventDefault(); window.location.href = link.getAttribute('href'); }
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+    if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === '/' && !typing) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === 'Escape' && overlay && !overlay.hidden) {
+      closeSearch();
+    }
+  });
+
+  // --- External links get a quiet marker ----------------------------------
+  document.querySelectorAll('.prose a[target="_blank"]').forEach(function (a) {
+    a.setAttribute('rel', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>

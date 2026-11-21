@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Extensions &amp; source API · Hyoukan Wiki</title>
+<meta name="description" content="The contract third-party sources implement, the text/EPUB interfaces, and how extension APKs are built and published.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e7490'/%3E%3Cpath d='M32 12l5 14h15l-12 9 4 15-12-9-12 9 4-15-12-9h15z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/hyoukan/assets/wiki.css">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('hyoukan-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  } catch (e) { document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="progress-bar" id="progress-bar" aria-hidden="true"></div>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="/hyoukan/">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><path d="M16 3l3.2 8.1L28 14l-8.8 2.9L16 25l-3.2-8.1L4 14l8.8-2.9z" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">Hyoukan</span><span class="brand-sub">Wiki</span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <button class="search-trigger" id="search-trigger" aria-label="Search the wiki">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <span class="search-label">Search</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+  <a class="icon-btn" href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener" aria-label="Hyoukan on GitHub">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5 4-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg>
+  </a>
+  <button class="icon-btn" id="theme-toggle" aria-label="Switch colour theme">
+    <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+  </button>
+</header>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Wiki navigation">
+      <div class="nav-section">
+  <p class="nav-heading">Overview</p>
+  <ul><li><a href="/hyoukan/">Home</a></li>
+<li><a href="/hyoukan/getting-started/">Getting started</a></li>
+<li><a href="/hyoukan/features/">Feature tour</a></li>
+<li><a href="/hyoukan/faq/">FAQ</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">User guide</p>
+  <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
+<li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
+<li><a href="/hyoukan/guide/books/">Reading books</a></li>
+<li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
+<li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
+<li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/translation/">AI translation</a></li>
+<li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
+<li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
+<li><a href="/hyoukan/guide/appearance/">Appearance &amp; identity</a></li>
+<li><a href="/hyoukan/guide/connections/">Connections</a></li>
+<li><a href="/hyoukan/guide/privacy/">Privacy &amp; security</a></li>
+<li><a href="/hyoukan/guide/troubleshooting/">Troubleshooting</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Development</p>
+  <ul><li><a href="/hyoukan/development/architecture/">Architecture</a></li>
+<li><a href="/hyoukan/development/reader/">Reader &amp; WebGPU</a></li>
+<li><a href="/hyoukan/development/books-engine/">Book engine</a></li>
+<li><a href="/hyoukan/development/data/">Data &amp; database</a></li>
+<li><a href="/hyoukan/development/extensions/" aria-current="page">Extensions &amp; source API</a></li>
+<li><a href="/hyoukan/development/translation-upscaling/">Translation &amp; upscaling</a></li>
+<li><a href="/hyoukan/development/settings/">Settings framework</a></li>
+<li><a href="/hyoukan/development/build/">Build &amp; release</a></li>
+<li><a href="/hyoukan/development/testing/">Testing &amp; conventions</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Reference</p>
+  <ul><li><a href="/hyoukan/reference/settings/">Settings index</a></li>
+<li><a href="/hyoukan/reference/formats/">Files &amp; formats</a></li>
+<li><a href="/hyoukan/reference/glossary/">Glossary</a></li>
+<li><a href="/hyoukan/reference/versions/">Versions &amp; channels</a></li>
+<li><a href="/hyoukan/reference/history/">Project history</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Contributing</p>
+  <ul><li><a href="/hyoukan/contributing/">Contributing</a></li></ul>
+</div>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="version-pill">v1.25.3</span>
+      <span>Updated November 2026</span>
+    </div>
+  </aside>
+
+  <main class="main" id="content">
+    <div class="page">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/hyoukan/">Wiki</a><span aria-hidden="true">/</span><span>Development</span><span aria-hidden="true">/</span><span aria-current="page">Extensions &amp; source API</span>
+</nav>
+      <article class="prose">
+        <h1>Extensions &amp; source API</h1><p class="page-lede">The contract third-party sources implement, the text/EPUB interfaces, and how extension APKs are built and published.</p>
+        <p>Hyoukan&#39;s extension API is the Tachiyomi/Mihon <code>Source</code> API plus Hyoukan&#39;s text-source additions. Extensions are separate APKs loaded through a classloader; they are not linked into the app, and the app cannot see their implementations at R8 time. That fact drives every rule on this page.</p>
+<h2 id="the-contract"><a class="anchor" href="#the-contract" aria-label="Link to this section">#</a>The contract</h2>
+<p>Package: <code>eu.kanade.tachiyomi.source.*</code> (Kotlin Multiplatform, <code>commonMain</code>).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Interface</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Source</code></td>
+<td>The base: id, name, language, browse/search, details/chapters, page list</td>
+</tr>
+<tr>
+<td><code>CatalogueSource</code></td>
+<td>Sources with browse and search</td>
+</tr>
+<tr>
+<td><code>HttpSource</code></td>
+<td>An OkHttp-backed source with request/response helpers</td>
+</tr>
+<tr>
+<td><code>ConfigurableSource</code></td>
+<td>Per-source preferences (<code>source_$id</code>)</td>
+</tr>
+<tr>
+<td><code>MetadataSource&lt;M, R&gt;</code></td>
+<td>Structured metadata</td>
+</tr>
+<tr>
+<td><code>UrlImportableSource</code></td>
+<td>URL import</td>
+</tr>
+<tr>
+<td><code>NamespaceSource</code></td>
+<td>Tag namespaces</td>
+</tr>
+<tr>
+<td><code>PagePreviewSource</code></td>
+<td>Page-preview thumbnails</td>
+</tr>
+<tr>
+<td><code>UnmeteredSource</code></td>
+<td>Exempt from metered-connection restrictions</td>
+</tr>
+</tbody></table></div>
+<h3 id="source-in-brief"><a class="anchor" href="#source-in-brief" aria-label="Link to this section">#</a><code>Source</code> in brief</h3>
+<pre><code class="language-kotlin">interface Source {
+    val id: Long
+    val name: String
+    val lang: String get() = &quot;&quot;
+    val supportsLatest: Boolean
+
+    fun getFilterList(): FilterList = FilterList()
+    suspend fun getPopularManga(page: Int): MangasPage
+    suspend fun getLatestUpdates(page: Int): MangasPage
+    suspend fun getSearchManga(page: Int, query: String, filters: FilterList): MangasPage
+    suspend fun getMangaUpdate(
+        manga: SManga,
+        chapters: List&lt;SChapter&gt;,
+        fetchDetails: Boolean,
+        fetchChapters: Boolean,
+    ): SMangaUpdate
+    suspend fun getPageList(chapter: SChapter): List&lt;Page&gt;
+}
+</code></pre>
+<p>The suspend API is the current one. The old <code>Observable</code> methods remain only as deprecated stubs for binary compatibility.</p>
+<p>A source returns <code>SManga</code>, <code>SChapter</code> and <code>Page</code> models. Pages carry a status machine and a stream; the app handles loading, retries, splitting and caching.</p>
+<h2 id="abi-rules"><a class="anchor" href="#abi-rules" aria-label="Link to this section">#</a>ABI rules</h2>
+<p>The extension API is a <strong>binary contract</strong>. These rules are not style preferences:</p>
+<ol>
+<li><strong>Never add an abstract member to an existing interface.</strong> Extensions loaded through a classloader implement it; a new member breaks every extension that predates it, and R8 cannot see across the dex boundary to warn you.</li>
+<li><strong>Add a new optional interface instead.</strong> Hosts check for it. <code>TextBaseUrlSource</code> exists for exactly this reason: <code>TextResourceSource</code> can open an absolute URL, but only the source knows the base its relative references should resolve against.</li>
+<li><strong>Adding a field to a model is safe; adding a parameter without a default is not.</strong> Models are <code>@Serializable</code> data classes with defaults.</li>
+<li><strong>Keep <code>consumer-proguard.pro</code> covering every class here.</strong> Extension APKs are compiled separately.</li>
+<li><strong>Do not change method signatures or return types.</strong> A source compiled against an older API must keep loading.</li>
+</ol>
+<p>The app&#39;s own <code>Source</code> interface is versioned by the <code>tachiyomix.extensionLib</code> metadata float; a source declares the API level it was built against, and the app refuses incompatible ones with an explanation.</p>
+<h2 id="writing-an-image-source"><a class="anchor" href="#writing-an-image-source" aria-label="Link to this section">#</a>Writing an image source</h2>
+<p>A minimal HTTP source:</p>
+<pre><code class="language-kotlin">class ExampleSource : HttpSource() {
+    override val id = 1234567890L
+    override val name = &quot;Example&quot;
+    override val lang = &quot;en&quot;
+    override val supportsLatest = true
+
+    override val baseUrl = &quot;https://example.com&quot;
+
+    override fun popularMangaRequest(page: Int) =
+        GET(&quot;$baseUrl/popular?page=$page&quot;, headers)
+
+    override fun popularMangaParse(response: Response): MangasPage {
+        val document = response.asJsoup()
+        val entries = document.select(&quot;.series&quot;).map { element -&gt;
+            SManga.create().apply {
+                title = element.selectFirst(&quot;.title&quot;)!!.text()
+                url = element.selectFirst(&quot;a&quot;)!!.attr(&quot;href&quot;)
+                thumbnail_url = element.selectFirst(&quot;img&quot;)?.absUrl(&quot;src&quot;)
+            }
+        }
+        return MangasPage(entries, hasNextPage = true)
+    }
+
+    override fun searchMangaRequest(page: Int, query: String, filters: FilterList) =
+        GET(&quot;$baseUrl/search?q=${query.urlEncode()}&amp;page=$page&quot;, headers)
+
+    override fun searchMangaParse(response: Response) = popularMangaParse(response)
+
+    override fun latestUpdatesRequest(page: Int) =
+        GET(&quot;$baseUrl/latest?page=$page&quot;, headers)
+
+    override fun latestUpdatesParse(response: Response) = popularMangaParse(response)
+
+    override fun mangaDetailsParse(response: Response): SManga = SManga.create().apply {
+        val document = response.asJsoup()
+        title = document.selectFirst(&quot;h1&quot;)!!.text()
+        description = document.selectFirst(&quot;.description&quot;)?.text()
+        genre = document.select(&quot;.tags a&quot;).joinToString(&quot;, &quot;) { it.text() }
+    }
+
+    override fun chapterListParse(response: Response): List&lt;SChapter&gt; =
+        response.asJsoup().select(&quot;.chapter&quot;).map { element -&gt;
+            SChapter.create().apply {
+                name = element.text()
+                url = element.absUrl(&quot;href&quot;)
+                date_upload = element.attr(&quot;data-date&quot;).toLongOrNull() ?: 0L
+            }
+        }
+
+    override fun pageListParse(response: Response): List&lt;Page&gt; =
+        response.asJsoup().select(&quot;.reader img&quot;).mapIndexed { index, img -&gt;
+            Page(index, imageUrl = img.absUrl(&quot;src&quot;))
+        }
+
+    override fun imageUrlParse(response: Response): String = &quot;&quot;
+}
+</code></pre>
+<p>The real API offers more: filters, paging, metadata, URL import, preferences. Use the existing extension template in a repository as a starting point rather than the abbreviated example above.</p>
+<h3 id="preferences"><a class="anchor" href="#preferences" aria-label="Link to this section">#</a>Preferences</h3>
+<p><code>ConfigurableSource</code> stores preferences in a per-source SharedPreferences file named <code>source_$id</code>. The file is separate from the app&#39;s preference store by design; do not migrate it into <code>SettingKey</code>s. A source&#39;s settings screen is declared with <code>PreferenceScreen</code> and rendered by the app.</p>
+<h2 id="text-sources"><a class="anchor" href="#text-sources" aria-label="Link to this section">#</a>Text sources</h2>
+<p>The text API sits <strong>beside</strong> the image <code>Page</code> model. A text source implements <code>getTextPageList</code>; the host builds the novel reader instead of a pager.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Contract</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>TextPage.kt</code></td>
+<td>One unit of text. <code>kind</code> is <code>HTML</code> or <code>PLAIN</code>; <code>baseHref</code> resolves relative references</td>
+</tr>
+<tr>
+<td><code>TextSource.kt</code></td>
+<td><code>getTextPageList</code> + <code>textCapabilities</code></td>
+</tr>
+<tr>
+<td><code>TextCapabilities.kt</code></td>
+<td>Declares what the source implements</td>
+</tr>
+<tr>
+<td><code>TextTocSource.kt</code></td>
+<td><code>getTableOfContents</code> → nested <code>TocEntry</code></td>
+</tr>
+<tr>
+<td><code>TextSearchSource.kt</code></td>
+<td><code>searchInChapter</code> → <code>TextSearchHit</code></td>
+</tr>
+<tr>
+<td><code>TextAnnotationSource.kt</code></td>
+<td>Highlights, bookmarks and notes persistence</td>
+</tr>
+<tr>
+<td><code>TextResourceSource.kt</code></td>
+<td>Streams images, CSS and fonts</td>
+</tr>
+<tr>
+<td><code>TextBaseUrlSource.kt</code></td>
+<td>The URL each page must be loaded at</td>
+</tr>
+<tr>
+<td><code>TextIncrementalSource.kt</code></td>
+<td><code>getTextPageIndex</code> + <code>getTextPageText</code> for lazy loading</td>
+</tr>
+<tr>
+<td><code>EpubArchiveSource.kt</code></td>
+<td>An EPUB archive opened directly</td>
+</tr>
+</tbody></table></div>
+<h3 id="what-a-text-source-must-guarantee"><a class="anchor" href="#what-a-text-source-must-guarantee" aria-label="Link to this section">#</a>What a text source must guarantee</h3>
+<ul>
+<li><strong>Stable <code>TextPage.url</code></strong> — it is the identity for reading position and annotations. No timestamps, no array indexes.</li>
+<li><strong>Self-contained <code>TextPage.text</code></strong> — the host hands it straight to a WebView. Inline the styles the page needs.</li>
+<li><strong><code>baseHref</code> whenever resources are referenced</strong> — otherwise relative image and CSS paths break.</li>
+<li><strong>Natural units</strong> — EPUB spine items, one webnovel chapter per page. Never pre-paginate by character count.</li>
+</ul>
+<h3 id="why-textpage-is-not-page"><a class="anchor" href="#why-textpage-is-not-page" aria-label="Link to this section">#</a>Why <code>TextPage</code> is not <code>Page</code></h3>
+<p>An image has progressive states, a progress flow and a retry path. Text arrives with the chapter list. Modelling it as a <code>Page</code> would make every host carry a status machine for a failure mode that cannot occur.</p>
+<h3 id="optional-capabilities"><a class="anchor" href="#optional-capabilities" aria-label="Link to this section">#</a>Optional capabilities</h3>
+<p><code>TextCapabilities</code> is a set of booleans (<code>TOC</code>, <code>SEARCH</code>, <code>IMAGES</code>, <code>ANNOTATIONS</code>, <code>INCREMENTAL</code>, …). A host hides controls a source cannot honour rather than showing a button that opens an empty sheet.</p>
+<p>Adding a new optional interface is the correct way to extend this surface. Adding a member to <code>TextSource</code> is an ABI break.</p>
+<h2 id="extension-apk-metadata"><a class="anchor" href="#extension-apk-metadata" aria-label="Link to this section">#</a>Extension APK metadata</h2>
+<p>An extension&#39;s manifest declares:</p>
+<pre><code class="language-xml">&lt;meta-data android:name=&quot;tachiyomi.extension&quot; android:value=&quot;true&quot; /&gt;
+&lt;meta-data android:name=&quot;tachiyomi.extension.class&quot; android:value=&quot;.ExampleSource&quot; /&gt;
+&lt;meta-data android:name=&quot;tachiyomix.name&quot; android:value=&quot;Example&quot; /&gt;
+&lt;meta-data android:name=&quot;tachiyomix.extensionLib&quot; android:value=&quot;1.6&quot; /&gt;
+&lt;meta-data android:name=&quot;tachiyomix.contentWarning&quot; android:value=&quot;0&quot; /&gt;
+</code></pre>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>tachiyomi.extension</code></td>
+<td>Marks the APK as an extension</td>
+</tr>
+<tr>
+<td><code>tachiyomi.extension.class</code></td>
+<td>Source class name(s)</td>
+</tr>
+<tr>
+<td><code>tachiyomi.extension.factory</code></td>
+<td>Optional source factory</td>
+</tr>
+<tr>
+<td><code>tachiyomi.extension.nsfw</code></td>
+<td>Legacy NSFW flag</td>
+</tr>
+<tr>
+<td><code>tachiyomix.name</code></td>
+<td>Display name</td>
+</tr>
+<tr>
+<td><code>tachiyomix.extensionLib</code></td>
+<td>API level the extension was built against</td>
+</tr>
+<tr>
+<td><code>tachiyomix.contentWarning</code></td>
+<td>0 = safe, 1 = mixed, 2 = NSFW</td>
+</tr>
+</tbody></table></div>
+<p>The Private installer stores the APK as <code>&lt;package&gt;.ext</code> after verifying the repository&#39;s signing key. A staging file is renamed on success; a partial install is never loaded.</p>
+<h2 id="repository-index"><a class="anchor" href="#repository-index" aria-label="Link to this section">#</a>Repository index</h2>
+<p>A repository publishes a JSON index — commonly <code>index.min.json</code> — with entries such as:</p>
+<pre><code class="language-json">[
+  {
+    &quot;name&quot;: &quot;Example&quot;,
+    &quot;pkg&quot;: &quot;eu.kanade.tachiyomi.extension.en.example&quot;,
+    &quot;apk&quot;: &quot;example-v1.4.2.apk&quot;,
+    &quot;lang&quot;: &quot;en&quot;,
+    &quot;code&quot;: 14,
+    &quot;version&quot;: &quot;1.4.2&quot;,
+    &quot;nsfw&quot;: 0
+  }
+]
+</code></pre>
+<p>The app resolves <code>apk</code> against the store&#39;s base URL, verifies the download against the store&#39;s signing key, and installs. A store can also provide a legacy repository format with separate extension-list and APK URLs.</p>
+<h2 id="delegated-sources"><a class="anchor" href="#delegated-sources" aria-label="Link to this section">#</a>Delegated sources</h2>
+<p>An installed extension can be <strong>delegated</strong> to an in-app implementation under the same source id. The main case is Komga: the app&#39;s built-in source takes over the Keiyoushi extension&#39;s id so library entries, settings, URLs and tracker links carry over. Delegation is enabled under Developer tools and read at source-map build time, so it requires a restart.</p>
+<p>Delegation is an app-side decision; an extension does not opt in.</p>
+<h2 id="the-local-source"><a class="anchor" href="#the-local-source" aria-label="Link to this section">#</a>The local source</h2>
+<p>The local source is an in-repo implementation of the same interfaces. It reads:</p>
+<ul>
+<li>folders of images;</li>
+<li>CBZ/CBR/ZIP/RAR/7z archives;</li>
+<li>EPUB files (as books or as image chapters);</li>
+<li>optional <code>cover.jpg</code>, <code>details.json</code> and <code>ComicInfo.xml</code>.</li>
+</ul>
+<p>See <a href="/hyoukan/reference/formats/#local-source">Files &amp; formats</a> for the folder layout.</p>
+<h2 id="testing-an-extension"><a class="anchor" href="#testing-an-extension" aria-label="Link to this section">#</a>Testing an extension</h2>
+<ol>
+<li>Build the APK with the same <code>applicationId</code> and signing key you will publish.</li>
+<li>Install it through the app (Private installer is fastest).</li>
+<li>Check Browse, search, details, chapters, pages, downloads and a WebView login.</li>
+<li>Exercise the failure path: a 404, a Cloudflare challenge, an empty chapter.</li>
+<li>Confirm the content warning and language.</li>
+<li>Test on a release build, not only debug — R8 and the classloader behave differently.</li>
+</ol>
+<h2 id="publishing-checklist"><a class="anchor" href="#publishing-checklist" aria-label="Link to this section">#</a>Publishing checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Unique package name and source id.</li>
+<li><input disabled="" type="checkbox"> Correct <code>tachiyomix.extensionLib</code> for the API you compiled against.</li>
+<li><input disabled="" type="checkbox"> Content warning set honestly.</li>
+<li><input disabled="" type="checkbox"> Icon and name present.</li>
+<li><input disabled="" type="checkbox"> APK signed with the repository key.</li>
+<li><input disabled="" type="checkbox"> Index entry updated (code, version, APK, language).</li>
+<li><input disabled="" type="checkbox"> No new abstract members added to app interfaces.</li>
+<li><input disabled="" type="checkbox"> Tested through a cold app start and a library update.</li>
+</ul>
+<h2 id="compatibility-policy"><a class="anchor" href="#compatibility-policy" aria-label="Link to this section">#</a>Compatibility policy</h2>
+<p>The app aims to keep every previously published extension working. When the API must change:</p>
+<ul>
+<li>add an optional interface rather than a member;</li>
+<li>add model fields with defaults;</li>
+<li>keep deprecated methods as functional stubs;</li>
+<li>document the minimum API level in the extension&#39;s metadata.</li>
+</ul>
+<p>Breaking the ABI is treated as a release-blocking regression, not a cleanup opportunity.</p>
+
+      </article>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/development/data/"><span class="pager-dir">Previous</span><span class="pager-title">Data &amp; database</span></a><a class="pager-link pager-next" href="/hyoukan/development/translation-upscaling/"><span class="pager-dir">Next</span><span class="pager-title">Translation &amp; upscaling</span></a></nav>
+      <footer class="page-foot">
+        <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
+        <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/development/extensions.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
+      </footer>
+    </div>
+  </main>
+
+  <aside class="toc" aria-label="On this page">
+    <p class="toc-heading">On this page</p>
+<ul class="toc-list"><li class="toc-l2"><a href="#the-contract">The contract</a></li>
+<li class="toc-l3"><a href="#source-in-brief">Source in brief</a></li>
+<li class="toc-l2"><a href="#abi-rules">ABI rules</a></li>
+<li class="toc-l2"><a href="#writing-an-image-source">Writing an image source</a></li>
+<li class="toc-l3"><a href="#preferences">Preferences</a></li>
+<li class="toc-l2"><a href="#text-sources">Text sources</a></li>
+<li class="toc-l3"><a href="#what-a-text-source-must-guarantee">What a text source must guarantee</a></li>
+<li class="toc-l3"><a href="#why-textpage-is-not-page">Why TextPage is not Page</a></li>
+<li class="toc-l3"><a href="#optional-capabilities">Optional capabilities</a></li>
+<li class="toc-l2"><a href="#extension-apk-metadata">Extension APK metadata</a></li>
+<li class="toc-l2"><a href="#repository-index">Repository index</a></li>
+<li class="toc-l2"><a href="#delegated-sources">Delegated sources</a></li>
+<li class="toc-l2"><a href="#the-local-source">The local source</a></li>
+<li class="toc-l2"><a href="#testing-an-extension">Testing an extension</a></li>
+<li class="toc-l2"><a href="#publishing-checklist">Publishing checklist</a></li>
+<li class="toc-l2"><a href="#compatibility-policy">Compatibility policy</a></li></ul>
+  </aside>
+</div>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search the Hyoukan wiki" hidden>
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search-input" type="search" placeholder="Search the wiki…" autocomplete="off" spellcheck="false" aria-label="Search query">
+      <button class="icon-btn" id="search-close" aria-label="Close search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-results" id="search-results" aria-live="polite">
+      <p class="search-hint">Type to search 33 pages. Use ↑ ↓ to move and Enter to open.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.HYOUKAN_BASE = "/hyoukan";</script>
+<script>/* Hyoukan wiki — theme, navigation, search, TOC and reading progress. */
+(function () {
+  'use strict';
+
+  var BASE = window.HYOUKAN_BASE || '/hyoukan';
+  var root = document.documentElement;
+
+  // --- Theme ---------------------------------------------------------------
+  var themeBtn = document.getElementById('theme-toggle');
+  function setTheme(theme) {
+    root.dataset.theme = theme;
+    try { localStorage.setItem('hyoukan-theme', theme); } catch (e) {}
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+  setTheme(root.dataset.theme || 'light');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // --- Mobile sidebar ------------------------------------------------------
+  var menuBtn = document.getElementById('menu-btn');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('sidebar-backdrop');
+
+  function setMenu(open) {
+    if (!sidebar) return;
+    sidebar.classList.toggle('is-open', open);
+    if (backdrop) backdrop.hidden = !open;
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function () {
+      setMenu(!sidebar.classList.contains('is-open'));
+    });
+  }
+  if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
+  if (sidebar) {
+    sidebar.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setMenu(false);
+    });
+  }
+
+  // --- Reading progress ----------------------------------------------------
+  var progress = document.getElementById('progress-bar');
+  if (progress) {
+    var ticking = false;
+    function updateProgress() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+      progress.style.width = pct.toFixed(2) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+    updateProgress();
+  }
+
+  // --- TOC scroll spy ------------------------------------------------------
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-list a'));
+  var tocTargets = tocLinks
+    .map(function (link) {
+      var id = decodeURIComponent(link.getAttribute('href').slice(1));
+      var el = document.getElementById(id);
+      return el ? { link: link, el: el } : null;
+    })
+    .filter(Boolean);
+
+  if (tocTargets.length && 'IntersectionObserver' in window) {
+    var visible = new Map();
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) visible.set(entry.target.id, entry.boundingClientRect.top);
+        else visible.delete(entry.target.id);
+      });
+      var best = null;
+      tocTargets.forEach(function (t) {
+        if (visible.has(t.el.id)) {
+          var top = visible.get(t.el.id);
+          if (best === null || top < best.top) best = { top: top, link: t.link };
+        }
+      });
+      if (best) {
+        tocLinks.forEach(function (l) { l.classList.remove('is-active'); });
+        best.link.classList.add('is-active');
+      }
+    }, { rootMargin: '-88px 0px -65% 0px', threshold: [0, 1] });
+    tocTargets.forEach(function (t) { observer.observe(t.el); });
+  }
+
+  // --- Copy code buttons ---------------------------------------------------
+  document.querySelectorAll('.prose pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-code';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(area);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  // --- Search --------------------------------------------------------------
+  var overlay = document.getElementById('search-overlay');
+  var trigger = document.getElementById('search-trigger');
+  var closeBtn = document.getElementById('search-close');
+  var input = document.getElementById('search-input');
+  var resultsEl = document.getElementById('search-results');
+  var index = null;
+  var loading = null;
+  var selected = -1;
+  var currentResults = [];
+  var lastFocus = null;
+
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (loading) return loading;
+    loading = fetch(BASE + '/search-index.json', { cache: 'no-cache' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { index = data; return data; })
+      .catch(function () { index = []; return index; });
+    return loading;
+  }
+
+  function tokenize(q) {
+    return q.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function highlight(text, tokens) {
+    var safe = escapeHtml(text);
+    tokens.forEach(function (token) {
+      if (!token) return;
+      var re = new RegExp('(' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      safe = safe.replace(re, '<mark>$1</mark>');
+    });
+    return safe;
+  }
+
+  function snippet(text, tokens) {
+    if (!text) return '';
+    var lower = text.toLowerCase();
+    var at = -1;
+    for (var i = 0; i < tokens.length; i++) {
+      var p = lower.indexOf(tokens[i]);
+      if (p !== -1 && (at === -1 || p < at)) at = p;
+    }
+    if (at === -1) at = 0;
+    var start = Math.max(0, at - 70);
+    var end = Math.min(text.length, at + 190);
+    return (start > 0 ? '…' : '') + text.slice(start, end).trim() + (end < text.length ? '…' : '');
+  }
+
+  function score(page, tokens) {
+    var title = page.title.toLowerCase();
+    var headings = (page.headings || []).join(' ').toLowerCase();
+    var description = (page.description || '').toLowerCase();
+    var text = (page.text || '').toLowerCase();
+    var total = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      var s = 0;
+      if (title === t) s = 120;
+      else if (title.indexOf(t) === 0) s = 80;
+      else if (title.indexOf(t) !== -1) s = 55;
+      else if (headings.indexOf(t) !== -1) s = 24;
+      else if (description.indexOf(t) !== -1) s = 14;
+      else if (text.indexOf(t) !== -1) s = 6;
+      if (s === 0) return 0;
+
+      // Repeated mentions are a useful relevance hint once the token matches at all.
+      var count = 0;
+      var at = text.indexOf(t);
+      while (at !== -1 && count < 8) {
+        count++;
+        at = text.indexOf(t, at + t.length);
+      }
+      total += s + count;
+    }
+    return total;
+  }
+
+  function renderResults(query) {
+    var tokens = tokenize(query);
+    if (!tokens.length) {
+      resultsEl.innerHTML = '<p class="search-hint">Type to search ' + (index ? index.length : '') +
+        ' pages. Use ↑ ↓ to move and Enter to open.</p>';
+      currentResults = [];
+      selected = -1;
+      return;
+    }
+    if (!index) {
+      resultsEl.innerHTML = '<p class="search-hint">Loading index…</p>';
+      return;
+    }
+    var scored = index.map(function (page) {
+      return { page: page, score: score(page, tokens) };
+    }).filter(function (r) { return r.score > 0; });
+    scored.sort(function (a, b) { return b.score - a.score || a.page.title.localeCompare(b.page.title); });
+    currentResults = scored.slice(0, 18);
+    selected = currentResults.length ? 0 : -1;
+
+    if (!currentResults.length) {
+      resultsEl.innerHTML = '<p class="search-empty">No pages match <strong>' + escapeHtml(query) + '</strong>.</p>';
+      return;
+    }
+
+    resultsEl.innerHTML = currentResults.map(function (r, i) {
+      var p = r.page;
+      return '<a class="search-result' + (i === 0 ? ' is-selected' : '') + '" href="' + p.url + '">' +
+        '<span class="search-result-title">' + highlight(p.title, tokens) +
+        '<span class="search-result-section">' + escapeHtml(p.section || '') + '</span></span>' +
+        '<span class="search-result-text">' + highlight(snippet(p.description || p.text, tokens), tokens) + '</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  function moveSelection(delta) {
+    if (!currentResults.length) return;
+    selected = (selected + delta + currentResults.length) % currentResults.length;
+    Array.prototype.forEach.call(resultsEl.querySelectorAll('.search-result'), function (el, i) {
+      el.classList.toggle('is-selected', i === selected);
+      if (i === selected) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  function openSearch() {
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    renderResults('');
+    loadIndex().then(function () { renderResults(input.value); });
+    setTimeout(function () { input.focus(); }, 0);
+  }
+
+  function closeSearch() {
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  if (trigger) trigger.addEventListener('click', openSearch);
+  if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+  if (overlay) {
+    overlay.addEventListener('mousedown', function (e) {
+      if (e.target === overlay) closeSearch();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', function () {
+      loadIndex().then(function () { renderResults(input.value); });
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveSelection(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveSelection(-1); }
+      else if (e.key === 'Enter') {
+        var link = resultsEl.querySelector('.search-result.is-selected');
+        if (link) { e.preventDefault(); window.location.href = link.getAttribute('href'); }
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+    if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === '/' && !typing) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === 'Escape' && overlay && !overlay.hidden) {
+      closeSearch();
+    }
+  });
+
+  // --- External links get a quiet marker ----------------------------------
+  document.querySelectorAll('.prose a[target="_blank"]').forEach(function (a) {
+    a.setAttribute('rel', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>

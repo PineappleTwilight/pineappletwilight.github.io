@@ -1,0 +1,67 @@
+{
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Overview",
+      "items": [
+        { "file": "index", "title": "Home" },
+        { "file": "getting-started", "title": "Getting started" },
+        { "file": "features", "title": "Feature tour" },
+        { "file": "faq", "title": "FAQ" }
+      ]
+    },
+    {
+      "id": "guide",
+      "title": "User guide",
+      "items": [
+        { "file": "guide/library", "title": "Library & categories" },
+        { "file": "guide/sources", "title": "Sources & extensions" },
+        { "file": "guide/comics", "title": "Reading comics" },
+        { "file": "guide/books", "title": "Reading books" },
+        { "file": "guide/downloads", "title": "Downloads & storage" },
+        { "file": "guide/tracking", "title": "Tracking" },
+        { "file": "guide/backup-sync", "title": "Backup & sync" },
+        { "file": "guide/translation", "title": "AI translation" },
+        { "file": "guide/upscaling", "title": "AI upscaling" },
+        { "file": "guide/achievements", "title": "Achievements" },
+        { "file": "guide/appearance", "title": "Appearance & identity" },
+        { "file": "guide/connections", "title": "Connections" },
+        { "file": "guide/privacy", "title": "Privacy & security" },
+        { "file": "guide/troubleshooting", "title": "Troubleshooting" }
+      ]
+    },
+    {
+      "id": "development",
+      "title": "Development",
+      "items": [
+        { "file": "development/architecture", "title": "Architecture" },
+        { "file": "development/reader", "title": "Reader & WebGPU" },
+        { "file": "development/books-engine", "title": "Book engine" },
+        { "file": "development/data", "title": "Data & database" },
+        { "file": "development/extensions", "title": "Extensions & source API" },
+        { "file": "development/translation-upscaling", "title": "Translation & upscaling" },
+        { "file": "development/settings", "title": "Settings framework" },
+        { "file": "development/build", "title": "Build & release" },
+        { "file": "development/testing", "title": "Testing & conventions" }
+      ]
+    },
+    {
+      "id": "reference",
+      "title": "Reference",
+      "items": [
+        { "file": "reference/settings", "title": "Settings index" },
+        { "file": "reference/formats", "title": "Files & formats" },
+        { "file": "reference/glossary", "title": "Glossary" },
+        { "file": "reference/versions", "title": "Versions & channels" },
+        { "file": "reference/history", "title": "Project history" }
+      ]
+    },
+    {
+      "id": "contributing",
+      "title": "Contributing",
+      "items": [
+        { "file": "contributing", "title": "Contributing" }
+      ]
+    }
+  ]
+}

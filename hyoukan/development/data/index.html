@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data &amp; database · Hyoukan Wiki</title>
+<meta name="description" content="The SQLDelight schema, migration rules, repository patterns and the streaming backup format.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e7490'/%3E%3Cpath d='M32 12l5 14h15l-12 9 4 15-12-9-12 9 4-15-12-9h15z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/hyoukan/assets/wiki.css">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('hyoukan-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  } catch (e) { document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="progress-bar" id="progress-bar" aria-hidden="true"></div>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="/hyoukan/">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><path d="M16 3l3.2 8.1L28 14l-8.8 2.9L16 25l-3.2-8.1L4 14l8.8-2.9z" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">Hyoukan</span><span class="brand-sub">Wiki</span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <button class="search-trigger" id="search-trigger" aria-label="Search the wiki">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <span class="search-label">Search</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+  <a class="icon-btn" href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener" aria-label="Hyoukan on GitHub">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5 4-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg>
+  </a>
+  <button class="icon-btn" id="theme-toggle" aria-label="Switch colour theme">
+    <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+  </button>
+</header>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Wiki navigation">
+      <div class="nav-section">
+  <p class="nav-heading">Overview</p>
+  <ul><li><a href="/hyoukan/">Home</a></li>
+<li><a href="/hyoukan/getting-started/">Getting started</a></li>
+<li><a href="/hyoukan/features/">Feature tour</a></li>
+<li><a href="/hyoukan/faq/">FAQ</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">User guide</p>
+  <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
+<li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
+<li><a href="/hyoukan/guide/books/">Reading books</a></li>
+<li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
+<li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
+<li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/translation/">AI translation</a></li>
+<li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
+<li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
+<li><a href="/hyoukan/guide/appearance/">Appearance &amp; identity</a></li>
+<li><a href="/hyoukan/guide/connections/">Connections</a></li>
+<li><a href="/hyoukan/guide/privacy/">Privacy &amp; security</a></li>
+<li><a href="/hyoukan/guide/troubleshooting/">Troubleshooting</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Development</p>
+  <ul><li><a href="/hyoukan/development/architecture/">Architecture</a></li>
+<li><a href="/hyoukan/development/reader/">Reader &amp; WebGPU</a></li>
+<li><a href="/hyoukan/development/books-engine/">Book engine</a></li>
+<li><a href="/hyoukan/development/data/" aria-current="page">Data &amp; database</a></li>
+<li><a href="/hyoukan/development/extensions/">Extensions &amp; source API</a></li>
+<li><a href="/hyoukan/development/translation-upscaling/">Translation &amp; upscaling</a></li>
+<li><a href="/hyoukan/development/settings/">Settings framework</a></li>
+<li><a href="/hyoukan/development/build/">Build &amp; release</a></li>
+<li><a href="/hyoukan/development/testing/">Testing &amp; conventions</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Reference</p>
+  <ul><li><a href="/hyoukan/reference/settings/">Settings index</a></li>
+<li><a href="/hyoukan/reference/formats/">Files &amp; formats</a></li>
+<li><a href="/hyoukan/reference/glossary/">Glossary</a></li>
+<li><a href="/hyoukan/reference/versions/">Versions &amp; channels</a></li>
+<li><a href="/hyoukan/reference/history/">Project history</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Contributing</p>
+  <ul><li><a href="/hyoukan/contributing/">Contributing</a></li></ul>
+</div>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="version-pill">v1.25.3</span>
+      <span>Updated November 2026</span>
+    </div>
+  </aside>
+
+  <main class="main" id="content">
+    <div class="page">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/hyoukan/">Wiki</a><span aria-hidden="true">/</span><span>Development</span><span aria-hidden="true">/</span><span aria-current="page">Data &amp; database</span>
+</nav>
+      <article class="prose">
+        <h1>Data &amp; database</h1><p class="page-lede">The SQLDelight schema, migration rules, repository patterns and the streaming backup format.</p>
+        <p>All app state that is not a file lives in one SQLite database. This page covers the schema, the repository layer, the conventions that keep migrations safe, and how backups move that state between devices.</p>
+<h2 id="schema"><a class="anchor" href="#schema" aria-label="Link to this section">#</a>Schema</h2>
+<p>SQLDelight sources live in <code>data/src/main/sqldelight/tachiyomi/</code>:</p>
+<ul>
+<li><code>data/*.sq</code> — tables and queries.</li>
+<li><code>view/*.sq</code> — views.</li>
+<li><code>migrations/*.sqm</code> — schema migrations, currently through <code>69.sqm</code>.</li>
+</ul>
+<p>There are <strong>21 tables</strong> and <strong>4 views</strong>.</p>
+<h3 id="core-tables"><a class="anchor" href="#core-tables" aria-label="Link to this section">#</a>Core tables</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Holds</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>manga</code></td>
+<td>Library and non-library entries</td>
+</tr>
+<tr>
+<td><code>chapter</code></td>
+<td>Chapter rows, read state, bookmarks, scanlator</td>
+</tr>
+<tr>
+<td><code>manga_category</code></td>
+<td>Entry ↔ category join</td>
+</tr>
+<tr>
+<td><code>category</code></td>
+<td>Categories, flags, order, parent id</td>
+</tr>
+<tr>
+<td><code>history</code></td>
+<td>Reading history</td>
+</tr>
+<tr>
+<td><code>manga_track</code></td>
+<td>Tracker links and scores</td>
+</tr>
+<tr>
+<td><code>merged</code></td>
+<td>Merge references between entries</td>
+</tr>
+</tbody></table></div>
+<h3 id="support-tables"><a class="anchor" href="#support-tables" aria-label="Link to this section">#</a>Support tables</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Holds</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>source</code></td>
+<td>Known sources and their display data</td>
+</tr>
+<tr>
+<td><code>saved_search</code></td>
+<td>Saved source searches</td>
+</tr>
+<tr>
+<td><code>feed_saved_search</code></td>
+<td>Feed definitions</td>
+</tr>
+<tr>
+<td><code>excluded_scanlator</code></td>
+<td>Per-entry scanlator exclusions</td>
+</tr>
+<tr>
+<td><code>extension_store</code></td>
+<td>Configured repositories</td>
+</tr>
+<tr>
+<td><code>libraryUpdateError</code>, <code>libraryUpdateErrorMessage</code></td>
+<td>Update failures</td>
+</tr>
+<tr>
+<td><code>custom_manga_info</code></td>
+<td>User-edited metadata</td>
+</tr>
+<tr>
+<td><code>manga_recommendations</code></td>
+<td>Cached recommendations</td>
+</tr>
+<tr>
+<td><code>search_metadata</code>, <code>search_tags</code>, <code>search_titles</code></td>
+<td>E-Hentai metadata</td>
+</tr>
+<tr>
+<td><code>eh_favorites</code>, <code>eh_favorites_alternatives</code></td>
+<td>E-Hentai favourites</td>
+</tr>
+</tbody></table></div>
+<h3 id="views"><a class="anchor" href="#views" aria-label="Link to this section">#</a>Views</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>View</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>libraryView</code></td>
+<td>Entry + aggregated chapter stats + categories, with a <code>UNION</code> arm for the merged source</td>
+</tr>
+<tr>
+<td><code>updatesView</code></td>
+<td>Chapter updates with excluded-scanlator awareness</td>
+</tr>
+<tr>
+<td><code>historyView</code></td>
+<td>History with max-read tracking and chapter counts</td>
+</tr>
+<tr>
+<td><code>libraryUpdateErrorView</code></td>
+<td>Errors with entry metadata</td>
+</tr>
+</tbody></table></div>
+<p>Views are where a schema change most often goes wrong: <strong>SQLDelight does not recreate a view when a table changes.</strong> A migration must drop and recreate the view body verbatim.</p>
+<h2 id="migration-rules"><a class="anchor" href="#migration-rules" aria-label="Link to this section">#</a>Migration rules</h2>
+<ol>
+<li>Add a new <code>NN.sqm</code>; never edit an applied one.</li>
+<li>Include every view whose body touches a changed column.</li>
+<li>Run <code>./gradlew :data:generateSqlDelightInterface</code> after any <code>.sq</code>/<code>.sqm</code> change.</li>
+<li>Add a test or a harness assertion for data-shape changes where possible.</li>
+<li>Keep preference key strings stable: backups match on raw keys, so renaming a preference needs a <code>Migration</code> that rewrites the stored key.</li>
+</ol>
+<p>A JSON-encoded column cannot be matched by SQL text comparisons that assume the old encoding. The blacklist is the cautionary tale: <code>libraryView</code> and <code>historyView</code> kept blacklisted chapters out of the badge and history totals with <code>instr()</code> against a <code>&quot;, &quot;</code>-joined string. When the blacklist moved to JSON, those predicates matched nothing and every blacklisted chapter was counted again. Both views now test both encodings, in all three arms. Any future encoding change needs the same treatment, and the migration must carry the recreated view.</p>
+<h2 id="repositories"><a class="anchor" href="#repositories" aria-label="Link to this section">#</a>Repositories</h2>
+<p>There are 18 repository implementations in <code>tachiyomi.data.*</code>, each implementing a domain interface:</p>
+<ul>
+<li><code>MangaRepositoryImpl</code></li>
+<li><code>ChapterRepositoryImpl</code></li>
+<li><code>CategoryRepositoryImpl</code></li>
+<li><code>HistoryRepositoryImpl</code></li>
+<li><code>TrackRepositoryImpl</code></li>
+<li><code>SourceRepositoryImpl</code></li>
+<li><code>SavedSearchRepositoryImpl</code></li>
+<li><code>FeedSavedSearchRepositoryImpl</code></li>
+<li><code>MangaMergeRepositoryImpl</code></li>
+<li><code>UpdatesRepositoryImpl</code></li>
+<li><code>ExtensionStoreRepositoryImpl</code></li>
+<li><code>LibraryUpdateErrorRepositoryImpl</code></li>
+<li><code>MangaMetadataRepositoryImpl</code></li>
+<li><code>FavoritesEntryRepositoryImpl</code></li>
+<li><code>CustomMangaRepositoryImpl</code></li>
+<li>and the smaller supporting repositories</li>
+</ul>
+<h3 id="common-patterns"><a class="anchor" href="#common-patterns" aria-label="Link to this section">#</a>Common patterns</h3>
+<pre><code class="language-kotlin">// One-shot query with a mapper
+handler.awaitOne { mangasQueries.getMangaById(id, MangaMapper::mapManga) }
+
+// Reactive query
+handler.subscribeToOne { mangasQueries.getMangaById(id, MangaMapper::mapManga) }
+
+// Batched partial update
+handler.await(inTransaction = true) {
+    updates.forEach { mangasQueries.update(...) }
+}
+</code></pre>
+<ul>
+<li><strong>Coalesce updates</strong> — <code>SET col = coalesce(:param, col)</code> for partial DTOs.</li>
+<li><strong>UPSERT</strong> — <code>INSERT … ON CONFLICT DO UPDATE</code>.</li>
+<li><strong>Sync-aware versioning</strong> — triggers increment <code>version</code> only when <code>is_syncing = 0</code>.</li>
+<li><strong>Merged entries</strong> — views <code>UNION</code> the synthetic source id <code>6969</code>.</li>
+</ul>
+<h3 id="custom-metadata-cache"><a class="anchor" href="#custom-metadata-cache" aria-label="Link to this section">#</a>Custom metadata cache</h3>
+<p><code>CustomMangaRepositoryImpl</code> fronts <code>custom_manga_info</code> with a process-wide cache because <code>Manga</code> snapshots edits in a <code>@Transient</code> initializer. The cache exists to make an edited title/cover/description visible everywhere a snapshot is already held.</p>
+<h2 id="preferences"><a class="anchor" href="#preferences" aria-label="Link to this section">#</a>Preferences</h2>
+<p>Preferences are 100% SharedPreferences — no DataStore. The framework lives in <code>core:common</code>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>PreferenceStore</code></td>
+<td>Typed getters</td>
+</tr>
+<tr>
+<td><code>Preference&lt;T&gt;</code></td>
+<td>Reactive value with <code>get/set/changes()/stateIn()</code>; self-heals on type mismatch</td>
+</tr>
+<tr>
+<td><code>AndroidPreferenceStore</code></td>
+<td>Production implementation</td>
+</tr>
+<tr>
+<td><code>InMemoryPreferenceStore</code></td>
+<td>Tests and previews</td>
+</tr>
+<tr>
+<td><code>SettingKey&lt;T&gt;</code></td>
+<td>Storage key + default, the single source of truth</td>
+</tr>
+<tr>
+<td><code>SettingHost</code> / <code>SettingsRegistry</code></td>
+<td>Feature key contributions and duplicate detection</td>
+</tr>
+</tbody></table></div>
+<p>Key prefixes:</p>
+<ul>
+<li><code>__PRIVATE_</code> — excluded from backups unless the user opts in.</li>
+<li><code>__APP_STATE_</code> — internal state, not user-facing.</li>
+</ul>
+<p>Source preferences are separate: each <code>ConfigurableSource</code> gets its own <code>source_$id</code> SharedPreferences file, outside the app store. Do not migrate them into <code>SettingKey</code>s; the framework must never assume the default file.</p>
+<h2 id="backup-format"><a class="anchor" href="#backup-format" aria-label="Link to this section">#</a>Backup format</h2>
+<p>A backup is a <strong>protobuf stream</strong> with a <code>.tachibk</code> extension. It is written by <code>BackupCreator</code> and read by <code>BackupReader</code>/<code>BackupDecoder</code>.</p>
+<h3 id="creation"><a class="anchor" href="#creation" aria-label="Link to this section">#</a>Creation</h3>
+<p><code>BackupCreator</code> writes:</p>
+<ul>
+<li>metadata (counts, date, app version);</li>
+<li>categories;</li>
+<li>entries, with chapters, tracking, history and optionally custom covers;</li>
+<li>saved searches and feeds;</li>
+<li>extension stores;</li>
+<li>preferences (with <code>__APP_STATE_</code> always dropped, <code>__PRIVATE_</code> only when opted in).</li>
+</ul>
+<p>The file name is <code>&lt;applicationId&gt;_&lt;date&gt;.tachibk</code>.</p>
+<h3 id="restore"><a class="anchor" href="#restore" aria-label="Link to this section">#</a>Restore</h3>
+<p>The restore path is <strong>streaming</strong>:</p>
+<ul>
+<li><code>BackupDecoder.decodeMetadata</code> walks the entries by length to count them and hands back the stream.</li>
+<li><code>decodeEntries(uri, include)</code> yields one <code>BackupManga</code> at a time, skipping rejected entries by length.</li>
+<li><code>BackupReader</code> walks the protobuf by hand. The wire format is unchanged, so old and new backups are readable.</li>
+<li><code>decode(uri)</code> is used only for the integrity check, which needs every entry&#39;s trackers; never call it on the restore path.</li>
+</ul>
+<p>Entries are classified as <strong>NEW / EXISTING / MERGED</strong> and the file is walked twice to realise the classification. Sorting would mean holding every entry in memory.</p>
+<p><code>MangaRestorer.restore</code> takes a list and opens one transaction for the chunk, falling back to entry-by-entry if the batch throws. A large library used to do one transaction per entry — roughly 15,000 commits.</p>
+<p>The per-entry fetch-interval recompute reads the <strong>backup&#39;s own chapter list</strong>, not the table, because it runs before or independently of the rows just written.</p>
+<h3 id="preferences-in-backups"><a class="anchor" href="#preferences-in-backups" aria-label="Link to this section">#</a>Preferences in backups</h3>
+<p><code>PreferenceBackupCreator</code> snapshots <code>preferenceStore.getAll()</code> into typed <code>BackupPreference</code> values. <code>PreferenceRestorer</code> type-switches them back and special-cases:</p>
+<ul>
+<li>category-id remapping;</li>
+<li><code>LibraryPreferences</code> / <code>DownloadPreferences</code> category key sets;</li>
+<li><code>SourcePreferences.PINNED_SOURCES_PREF_KEY</code>.</li>
+</ul>
+<p>A preference rename needs a migration; the backup matches raw key strings.</p>
+<h3 id="custom-covers"><a class="anchor" href="#custom-covers" aria-label="Link to this section">#</a>Custom covers</h3>
+<p>A custom cover is a file in the cover cache, not a column. It is read separately at backup time and carried inside the entry&#39;s backup record. Sync keeps custom covers off by default so the bytes do not ride on every request.</p>
+<h2 id="database-maintenance"><a class="anchor" href="#database-maintenance" aria-label="Link to this section">#</a>Database maintenance</h2>
+<p><code>DatabaseMaintenanceManager</code> runs before the connection pool opens:</p>
+<ol>
+<li><strong>Quick check</strong> (<code>PRAGMA quick_check(1)</code>).</li>
+<li>If OK — refresh the rolling local backup, at most once a day.</li>
+<li>If corrupt — restore the latest local backup.</li>
+<li>If that fails — quarantine the database as <code>tachiyomi.db.corrupt-&lt;timestamp&gt;</code> instead of crash-looping.</li>
+</ol>
+<p>It supports both plaintext and SQLCipher databases, loading the SQLCipher library only when a passphrase is supplied.</p>
+<h3 id="exporting-a-snapshot"><a class="anchor" href="#exporting-a-snapshot" aria-label="Link to this section">#</a>Exporting a snapshot</h3>
+<p><code>prepareSnapshot()</code> folds the WAL into the main file with <code>wal_checkpoint(TRUNCATE)</code>, falling back to <code>FULL</code> when a reader is blocking, and verifies the result. Copying only the main file while the WAL holds recent commits is how an exported database silently loses the newest chapters and categories.</p>
+<h2 id="sync-versioning"><a class="anchor" href="#sync-versioning" aria-label="Link to this section">#</a>Sync versioning</h2>
+<p>Tables that participate in sync carry a <code>version</code> column and triggers:</p>
+<ul>
+<li>the version increments on update only when <code>is_syncing = 0</code>;</li>
+<li>chapter progress is versioned on the chapter, not the entry;</li>
+<li>an entry&#39;s version bumps when its categories change, not when chapters are read.</li>
+</ul>
+<p>Protocol v2 adds tombstones for deleted categories and chapters, stored as pending sets in <code>SyncPreferences</code> and drained by the next delta request.</p>
+<h2 id="query-and-ui-conventions"><a class="anchor" href="#query-and-ui-conventions" aria-label="Link to this section">#</a>Query and UI conventions</h2>
+<ul>
+<li>The library is a view over the database, not a filesystem scan. Adding an entry writes a row; downloading writes files and a download record.</li>
+<li>A non-library entry (from history, search or a deep link) still has a <code>manga</code> row; it is simply not a favorite.</li>
+<li>Clearing the database can keep entries that have read chapters; the UI explains exactly what will be lost.</li>
+</ul>
+<h2 id="testing-data-changes"><a class="anchor" href="#testing-data-changes" aria-label="Link to this section">#</a>Testing data changes</h2>
+<ul>
+<li><code>domain/src/test</code> covers search parsing, fetch intervals and model logic.</li>
+<li><code>scripts/kotlinc-check/run-harness.sh</code> covers pure mapping and policy where extracted.</li>
+<li><code>MigratorTest</code> in <code>app/src/test</code> exercises the migration chain.</li>
+<li>A schema change should come with a migration test and a note in <code>RELEASE_NOTES.md</code> if it affects users.</li>
+</ul>
+<hr>
+<p>Next: <a href="/hyoukan/development/extensions/">Extensions &amp; source API</a> — the contract that keeps third-party sources working.</p>
+
+      </article>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/development/books-engine/"><span class="pager-dir">Previous</span><span class="pager-title">Book engine</span></a><a class="pager-link pager-next" href="/hyoukan/development/extensions/"><span class="pager-dir">Next</span><span class="pager-title">Extensions &amp; source API</span></a></nav>
+      <footer class="page-foot">
+        <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
+        <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/development/data.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
+      </footer>
+    </div>
+  </main>
+
+  <aside class="toc" aria-label="On this page">
+    <p class="toc-heading">On this page</p>
+<ul class="toc-list"><li class="toc-l2"><a href="#schema">Schema</a></li>
+<li class="toc-l3"><a href="#core-tables">Core tables</a></li>
+<li class="toc-l3"><a href="#support-tables">Support tables</a></li>
+<li class="toc-l3"><a href="#views">Views</a></li>
+<li class="toc-l2"><a href="#migration-rules">Migration rules</a></li>
+<li class="toc-l2"><a href="#repositories">Repositories</a></li>
+<li class="toc-l3"><a href="#common-patterns">Common patterns</a></li>
+<li class="toc-l3"><a href="#custom-metadata-cache">Custom metadata cache</a></li>
+<li class="toc-l2"><a href="#preferences">Preferences</a></li>
+<li class="toc-l2"><a href="#backup-format">Backup format</a></li>
+<li class="toc-l3"><a href="#creation">Creation</a></li>
+<li class="toc-l3"><a href="#restore">Restore</a></li>
+<li class="toc-l3"><a href="#preferences-in-backups">Preferences in backups</a></li>
+<li class="toc-l3"><a href="#custom-covers">Custom covers</a></li>
+<li class="toc-l2"><a href="#database-maintenance">Database maintenance</a></li>
+<li class="toc-l3"><a href="#exporting-a-snapshot">Exporting a snapshot</a></li>
+<li class="toc-l2"><a href="#sync-versioning">Sync versioning</a></li>
+<li class="toc-l2"><a href="#query-and-ui-conventions">Query and UI conventions</a></li>
+<li class="toc-l2"><a href="#testing-data-changes">Testing data changes</a></li></ul>
+  </aside>
+</div>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search the Hyoukan wiki" hidden>
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search-input" type="search" placeholder="Search the wiki…" autocomplete="off" spellcheck="false" aria-label="Search query">
+      <button class="icon-btn" id="search-close" aria-label="Close search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-results" id="search-results" aria-live="polite">
+      <p class="search-hint">Type to search 33 pages. Use ↑ ↓ to move and Enter to open.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.HYOUKAN_BASE = "/hyoukan";</script>
+<script>/* Hyoukan wiki — theme, navigation, search, TOC and reading progress. */
+(function () {
+  'use strict';
+
+  var BASE = window.HYOUKAN_BASE || '/hyoukan';
+  var root = document.documentElement;
+
+  // --- Theme ---------------------------------------------------------------
+  var themeBtn = document.getElementById('theme-toggle');
+  function setTheme(theme) {
+    root.dataset.theme = theme;
+    try { localStorage.setItem('hyoukan-theme', theme); } catch (e) {}
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+  setTheme(root.dataset.theme || 'light');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // --- Mobile sidebar ------------------------------------------------------
+  var menuBtn = document.getElementById('menu-btn');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('sidebar-backdrop');
+
+  function setMenu(open) {
+    if (!sidebar) return;
+    sidebar.classList.toggle('is-open', open);
+    if (backdrop) backdrop.hidden = !open;
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function () {
+      setMenu(!sidebar.classList.contains('is-open'));
+    });
+  }
+  if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
+  if (sidebar) {
+    sidebar.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setMenu(false);
+    });
+  }
+
+  // --- Reading progress ----------------------------------------------------
+  var progress = document.getElementById('progress-bar');
+  if (progress) {
+    var ticking = false;
+    function updateProgress() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+      progress.style.width = pct.toFixed(2) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+    updateProgress();
+  }
+
+  // --- TOC scroll spy ------------------------------------------------------
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-list a'));
+  var tocTargets = tocLinks
+    .map(function (link) {
+      var id = decodeURIComponent(link.getAttribute('href').slice(1));
+      var el = document.getElementById(id);
+      return el ? { link: link, el: el } : null;
+    })
+    .filter(Boolean);
+
+  if (tocTargets.length && 'IntersectionObserver' in window) {
+    var visible = new Map();
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) visible.set(entry.target.id, entry.boundingClientRect.top);
+        else visible.delete(entry.target.id);
+      });
+      var best = null;
+      tocTargets.forEach(function (t) {
+        if (visible.has(t.el.id)) {
+          var top = visible.get(t.el.id);
+          if (best === null || top < best.top) best = { top: top, link: t.link };
+        }
+      });
+      if (best) {
+        tocLinks.forEach(function (l) { l.classList.remove('is-active'); });
+        best.link.classList.add('is-active');
+      }
+    }, { rootMargin: '-88px 0px -65% 0px', threshold: [0, 1] });
+    tocTargets.forEach(function (t) { observer.observe(t.el); });
+  }
+
+  // --- Copy code buttons ---------------------------------------------------
+  document.querySelectorAll('.prose pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-code';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(area);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  // --- Search --------------------------------------------------------------
+  var overlay = document.getElementById('search-overlay');
+  var trigger = document.getElementById('search-trigger');
+  var closeBtn = document.getElementById('search-close');
+  var input = document.getElementById('search-input');
+  var resultsEl = document.getElementById('search-results');
+  var index = null;
+  var loading = null;
+  var selected = -1;
+  var currentResults = [];
+  var lastFocus = null;
+
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (loading) return loading;
+    loading = fetch(BASE + '/search-index.json', { cache: 'no-cache' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { index = data; return data; })
+      .catch(function () { index = []; return index; });
+    return loading;
+  }
+
+  function tokenize(q) {
+    return q.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function highlight(text, tokens) {
+    var safe = escapeHtml(text);
+    tokens.forEach(function (token) {
+      if (!token) return;
+      var re = new RegExp('(' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      safe = safe.replace(re, '<mark>$1</mark>');
+    });
+    return safe;
+  }
+
+  function snippet(text, tokens) {
+    if (!text) return '';
+    var lower = text.toLowerCase();
+    var at = -1;
+    for (var i = 0; i < tokens.length; i++) {
+      var p = lower.indexOf(tokens[i]);
+      if (p !== -1 && (at === -1 || p < at)) at = p;
+    }
+    if (at === -1) at = 0;
+    var start = Math.max(0, at - 70);
+    var end = Math.min(text.length, at + 190);
+    return (start > 0 ? '…' : '') + text.slice(start, end).trim() + (end < text.length ? '…' : '');
+  }
+
+  function score(page, tokens) {
+    var title = page.title.toLowerCase();
+    var headings = (page.headings || []).join(' ').toLowerCase();
+    var description = (page.description || '').toLowerCase();
+    var text = (page.text || '').toLowerCase();
+    var total = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      var s = 0;
+      if (title === t) s = 120;
+      else if (title.indexOf(t) === 0) s = 80;
+      else if (title.indexOf(t) !== -1) s = 55;
+      else if (headings.indexOf(t) !== -1) s = 24;
+      else if (description.indexOf(t) !== -1) s = 14;
+      else if (text.indexOf(t) !== -1) s = 6;
+      if (s === 0) return 0;
+
+      // Repeated mentions are a useful relevance hint once the token matches at all.
+      var count = 0;
+      var at = text.indexOf(t);
+      while (at !== -1 && count < 8) {
+        count++;
+        at = text.indexOf(t, at + t.length);
+      }
+      total += s + count;
+    }
+    return total;
+  }
+
+  function renderResults(query) {
+    var tokens = tokenize(query);
+    if (!tokens.length) {
+      resultsEl.innerHTML = '<p class="search-hint">Type to search ' + (index ? index.length : '') +
+        ' pages. Use ↑ ↓ to move and Enter to open.</p>';
+      currentResults = [];
+      selected = -1;
+      return;
+    }
+    if (!index) {
+      resultsEl.innerHTML = '<p class="search-hint">Loading index…</p>';
+      return;
+    }
+    var scored = index.map(function (page) {
+      return { page: page, score: score(page, tokens) };
+    }).filter(function (r) { return r.score > 0; });
+    scored.sort(function (a, b) { return b.score - a.score || a.page.title.localeCompare(b.page.title); });
+    currentResults = scored.slice(0, 18);
+    selected = currentResults.length ? 0 : -1;
+
+    if (!currentResults.length) {
+      resultsEl.innerHTML = '<p class="search-empty">No pages match <strong>' + escapeHtml(query) + '</strong>.</p>';
+      return;
+    }
+
+    resultsEl.innerHTML = currentResults.map(function (r, i) {
+      var p = r.page;
+      return '<a class="search-result' + (i === 0 ? ' is-selected' : '') + '" href="' + p.url + '">' +
+        '<span class="search-result-title">' + highlight(p.title, tokens) +
+        '<span class="search-result-section">' + escapeHtml(p.section || '') + '</span></span>' +
+        '<span class="search-result-text">' + highlight(snippet(p.description || p.text, tokens), tokens) + '</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  function moveSelection(delta) {
+    if (!currentResults.length) return;
+    selected = (selected + delta + currentResults.length) % currentResults.length;
+    Array.prototype.forEach.call(resultsEl.querySelectorAll('.search-result'), function (el, i) {
+      el.classList.toggle('is-selected', i === selected);
+      if (i === selected) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  function openSearch() {
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    renderResults('');
+    loadIndex().then(function () { renderResults(input.value); });
+    setTimeout(function () { input.focus(); }, 0);
+  }
+
+  function closeSearch() {
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  if (trigger) trigger.addEventListener('click', openSearch);
+  if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+  if (overlay) {
+    overlay.addEventListener('mousedown', function (e) {
+      if (e.target === overlay) closeSearch();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', function () {
+      loadIndex().then(function () { renderResults(input.value); });
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveSelection(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveSelection(-1); }
+      else if (e.key === 'Enter') {
+        var link = resultsEl.querySelector('.search-result.is-selected');
+        if (link) { e.preventDefault(); window.location.href = link.getAttribute('href'); }
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+    if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === '/' && !typing) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === 'Escape' && overlay && !overlay.hidden) {
+      closeSearch();
+    }
+  });
+
+  // --- External links get a quiet marker ----------------------------------
+  document.querySelectorAll('.prose a[target="_blank"]').forEach(function (a) {
+    a.setAttribute('rel', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>
