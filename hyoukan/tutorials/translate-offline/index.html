@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Translate fully offline · Hyoukan Wiki</title>
+<meta name="description" content="Set up on-device detection, OCR, inpainting and a local GGUF model so no page ever leaves the device — with Gemini Nano as a second offline path.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e7490'/%3E%3Cpath d='M32 12l5 14h15l-12 9 4 15-12-9-12 9 4-15-12-9h15z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/hyoukan/assets/wiki.css">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('hyoukan-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  } catch (e) { document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="progress-bar" id="progress-bar" aria-hidden="true"></div>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="/hyoukan/">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><path d="M16 3l3.2 8.1L28 14l-8.8 2.9L16 25l-3.2-8.1L4 14l8.8-2.9z" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">Hyoukan</span><span class="brand-sub">Wiki</span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <button class="search-trigger" id="search-trigger" aria-label="Search the wiki">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <span class="search-label">Search</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+  <a class="icon-btn" href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener" aria-label="Hyoukan on GitHub">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5 4-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg>
+  </a>
+  <button class="icon-btn" id="theme-toggle" aria-label="Switch colour theme">
+    <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+  </button>
+</header>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Wiki navigation">
+      <div class="nav-section">
+  <p class="nav-heading">Overview</p>
+  <ul><li><a href="/hyoukan/">Home</a></li>
+<li><a href="/hyoukan/getting-started/">Getting started</a></li>
+<li><a href="/hyoukan/features/">Feature tour</a></li>
+<li><a href="/hyoukan/faq/">FAQ</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Tutorials</p>
+  <ul><li><a href="/hyoukan/tutorials/">All tutorials</a></li>
+<li><a href="/hyoukan/tutorials/translate-a-chapter/">Translate a chapter</a></li>
+<li><a href="/hyoukan/tutorials/translate-offline/" aria-current="page">Translate fully offline</a></li>
+<li><a href="/hyoukan/tutorials/upscale-a-series/">Upscale a series</a></li>
+<li><a href="/hyoukan/tutorials/typeset-an-epub/">Typeset an EPUB</a></li>
+<li><a href="/hyoukan/tutorials/library-autopilot/">Library on autopilot</a></li>
+<li><a href="/hyoukan/tutorials/calibrate-the-reader/">Calibrate the reader</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">User guide</p>
+  <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
+<li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
+<li><a href="/hyoukan/guide/books/">Reading books</a></li>
+<li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
+<li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
+<li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/translation/">AI translation</a></li>
+<li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
+<li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
+<li><a href="/hyoukan/guide/appearance/">Appearance &amp; identity</a></li>
+<li><a href="/hyoukan/guide/connections/">Connections</a></li>
+<li><a href="/hyoukan/guide/privacy/">Privacy &amp; security</a></li>
+<li><a href="/hyoukan/guide/troubleshooting/">Troubleshooting</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Development</p>
+  <ul><li><a href="/hyoukan/development/architecture/">Architecture</a></li>
+<li><a href="/hyoukan/development/reader/">Reader &amp; WebGPU</a></li>
+<li><a href="/hyoukan/development/books-engine/">Book engine</a></li>
+<li><a href="/hyoukan/development/data/">Data &amp; database</a></li>
+<li><a href="/hyoukan/development/extensions/">Extensions &amp; source API</a></li>
+<li><a href="/hyoukan/development/translation-upscaling/">Translation &amp; upscaling</a></li>
+<li><a href="/hyoukan/development/settings/">Settings framework</a></li>
+<li><a href="/hyoukan/development/build/">Build &amp; release</a></li>
+<li><a href="/hyoukan/development/testing/">Testing &amp; conventions</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Reference</p>
+  <ul><li><a href="/hyoukan/reference/settings/">Settings index</a></li>
+<li><a href="/hyoukan/reference/formats/">Files &amp; formats</a></li>
+<li><a href="/hyoukan/reference/glossary/">Glossary</a></li>
+<li><a href="/hyoukan/reference/versions/">Versions &amp; channels</a></li>
+<li><a href="/hyoukan/reference/history/">Project history</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Contributing</p>
+  <ul><li><a href="/hyoukan/contributing/">Contributing</a></li></ul>
+</div>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="version-pill">v1.25.3</span>
+      <span>Updated November 2026</span>
+    </div>
+  </aside>
+
+  <main class="main" id="content">
+    <div class="page">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/hyoukan/">Wiki</a><span aria-hidden="true">/</span><span>Tutorials</span><span aria-hidden="true">/</span><span aria-current="page">Translate fully offline</span>
+</nav>
+      <article class="prose">
+        <h1>Translate fully offline</h1><p class="page-lede">Set up on-device detection, OCR, inpainting and a local GGUF model so no page ever leaves the device — with Gemini Nano as a second offline path.</p>
+        <p>This tutorial configures <strong>on-device translation</strong>: the detector, OCR model, inpainter and language model all run on the phone. It is the privacy-preserving path and the one that works on a plane.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Time</strong></td>
+<td>30–45 minutes, dominated by downloads</td>
+</tr>
+<tr>
+<td><strong>Needs</strong></td>
+<td>A 3 GB+ device, an <code>arm64-v8a</code> (recommended) build, and several GB of free storage</td>
+</tr>
+<tr>
+<td><strong>Ends with</strong></td>
+<td>A local translation stack that works in airplane mode, with a model that fits the device</td>
+</tr>
+</tbody></table></div>
+<h2 id="what-youll-build"><a class="anchor" href="#what-youll-build" aria-label="Link to this section">#</a>What you&#39;ll build</h2>
+<p>The full pipeline — detect → OCR → group → translate → inpaint → typeset — runs locally. Local GGUF models do the language step; the engine models do everything else. Once configured, selecting <strong>Local (On-device LLM)</strong> as the provider means translation generates no network traffic at all.</p>
+<h2 id="before-you-start"><a class="anchor" href="#before-you-start" aria-label="Link to this section">#</a>Before you start</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Where</th>
+<th>Expected</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Standard MTL build</td>
+<td><strong>Settings → AI translation</strong></td>
+<td>Local model controls are not hidden and the screen does not say &quot;No-MTL build&quot;</td>
+</tr>
+<tr>
+<td>RAM</td>
+<td>The same screen</td>
+<td>No low-RAM warning. Local LLMs are offered by what the device can actually load</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td><strong>Settings → Data and storage → Storage usage</strong></td>
+<td>Several GB free: engine models plus one local LLM</td>
+</tr>
+<tr>
+<td>64-bit ABI</td>
+<td><strong>More → About</strong> → tap the version to copy device info</td>
+<td><code>arm64-v8a</code> gets the Vulkan build of llama.cpp; 32-bit falls back to CPU</td>
+</tr>
+</tbody></table></div>
+<blockquote class="callout callout-note"><p class="callout-title">Note</p>
+<p>The local engine models and the local LLM are separate downloads. The engine models (detector, OCR, inpainter) are a few hundred MB; a local LLM is usually one to several GB. Both are required for the fully offline path.</p>
+</blockquote>
+<h2 id="step-1-choose-the-offline-path"><a class="anchor" href="#step-1-choose-the-offline-path" aria-label="Link to this section">#</a>Step 1 — Choose the offline path</h2>
+<p>There are two genuinely offline language models in Hyoukan, plus a hybrid arrangement.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Path</th>
+<th>What it uses</th>
+<th>Choose it when</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Local GGUF</strong></td>
+<td>Bundled llama.cpp with a downloaded or imported model</td>
+<td>You want full control and the most consistent offline behaviour</td>
+</tr>
+<tr>
+<td><strong>Gemini Nano</strong></td>
+<td>Android ML Kit GenAI / AICore</td>
+<td>The device supports it (for example Pixel 8+ or Galaxy S24+) and you want a smaller download</td>
+</tr>
+<tr>
+<td><strong>Hybrid</strong></td>
+<td>Local GGUF for translation, Gemini Nano as a second on-device model</td>
+<td>You want a fallback that is still offline</td>
+</tr>
+</tbody></table></div>
+<p>Gemini Nano availability depends on the device and on AICore finishing provisioning. Local GGUF works on any device that passes the RAM gate, so it is the safer choice when portability matters.</p>
+<h2 id="step-2-point-the-provider-at-the-device"><a class="anchor" href="#step-2-point-the-provider-at-the-device" aria-label="Link to this section">#</a>Step 2 — Point the provider at the device</h2>
+<ol>
+<li>Open <strong>More → Settings → AI translation</strong>.</li>
+<li>Turn on <strong>AI Translation</strong>.</li>
+<li>Open <strong>Provider setup → Provider</strong> and choose <strong>Local (On-device LLM)</strong>.</li>
+</ol>
+<p>The cloud-only rows disappear: there is no API key or cloud model to configure. The local model controls live under <strong>Models &amp; engine</strong>.</p>
+<h2 id="step-3-download-the-engine-models"><a class="anchor" href="#step-3-download-the-engine-models" aria-label="Link to this section">#</a>Step 3 — Download the engine models</h2>
+<ol>
+<li>Open <strong>Settings → AI translation → Models &amp; engine</strong>.</li>
+<li>Tap <strong>Download AI models</strong>.</li>
+<li>Wait for the detector (DBNet), OCR and inpainter (AOT-GAN) downloads to finish. The row reports a percentage and the installed size.</li>
+</ol>
+<p>If you read <strong>English or another Latin-script source</strong>, also install <strong>Install multilingual OCR add-on</strong> (PP-OCRv5, about 16 MB). Japanese and Chinese pages are read by the base OCR model; Latin scripts need the add-on.</p>
+<blockquote class="callout callout-tip"><p class="callout-title">Tip</p>
+<p>The download is staged and only accepted when complete. If it is interrupted, start it again; a partial file is not treated as a working model.</p>
+</blockquote>
+<h2 id="step-4-get-a-local-language-model"><a class="anchor" href="#step-4-get-a-local-language-model" aria-label="Link to this section">#</a>Step 4 — Get a local language model</h2>
+<p>Under <strong>Models &amp; engine → Local (On-device LLM)</strong>:</p>
+<ol>
+<li>Open <strong>Local model</strong>. <strong>Auto</strong> resolves to the best model the device can load.</li>
+<li>Read the subtitle: quality tier, parameter count, vision support, translation fine-tune and download size.</li>
+<li>Tap <strong>Download model</strong> and wait. The row shows percentage, MB downloaded, speed and an ETA; <strong>Cancel download</strong> stops it.</li>
+</ol>
+<p>To use a model you already have:</p>
+<ol>
+<li>Tap <strong>Import GGUF from device</strong>.</li>
+<li>Pick a <code>.gguf</code> file. It is copied into private storage and appears in the model list.</li>
+<li>Select it under <strong>Local model</strong>.</li>
+</ol>
+<p>Imported models are treated like built-in ones, but you manage their deletion yourself.</p>
+<h3 id="which-model-to-pick"><a class="anchor" href="#which-model-to-pick" aria-label="Link to this section">#</a>Which model to pick</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Choice</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Best translation quality</strong></td>
+<td>A larger model marked <strong>TL finetune</strong>, if the device can load it</td>
+</tr>
+<tr>
+<td><strong>Balanced</strong></td>
+<td>The <strong>Auto</strong> pick — the catalog chooses by available RAM</td>
+</tr>
+<tr>
+<td><strong>Vision-aware pages</strong></td>
+<td>A model marked <strong>vision</strong>, with its mmproj available; it can see the page image as context</td>
+</tr>
+<tr>
+<td><strong>Lowest storage / fastest</strong></td>
+<td>The smallest model that still produces readable dialogue; expect more literal phrasing</td>
+</tr>
+</tbody></table></div>
+<p>Bigger is not automatically better on a phone. A model that does not fit stays in RAM at the expense of the reader and the rest of the system.</p>
+<h2 id="step-5-start-the-engine"><a class="anchor" href="#step-5-start-the-engine" aria-label="Link to this section">#</a>Step 5 — Start the engine</h2>
+<ol>
+<li>In the same group, tap <strong>Start engine</strong>. The subtitle changes from &quot;Stopped&quot; to &quot;Running — <em>(model)</em>&quot;.</li>
+<li>Turn on <strong>Start engine on app launch</strong>. This preloads the model so the first page of a chapter does not wait for a cold start.</li>
+</ol>
+<p>If the runtime is missing (a <code>nomtl</code> build), the row says <strong>Runtime not bundled</strong> and no local model can run.</p>
+<h2 id="step-6-set-the-language-and-opt-the-series-in"><a class="anchor" href="#step-6-set-the-language-and-opt-the-series-in" aria-label="Link to this section">#</a>Step 6 — Set the language and opt the series in</h2>
+<ol>
+<li>Back on <strong>Settings → AI translation</strong>, set <strong>Target language</strong>.</li>
+<li>Pick a <strong>Translation font</strong> that covers the target script.</li>
+<li>Open a series, and turn on <strong>Translate Manga</strong> on its details page.</li>
+<li>Open a chapter.</li>
+</ol>
+<p>The bottom chip reports <strong>Detecting · OCR</strong>, <strong>Translating</strong>, <strong>Inpainting · Typesetting</strong> and <strong>Finalizing</strong>. On a local model the &quot;Translating&quot; stage is the slow one; the other stages are native code.</p>
+<h2 id="step-7-add-gemini-nano-as-a-second-offline-model"><a class="anchor" href="#step-7-add-gemini-nano-as-a-second-offline-model" aria-label="Link to this section">#</a>Step 7 — Add Gemini Nano as a second offline model</h2>
+<ol>
+<li>Open <strong>Provider setup</strong> and turn on <strong>Use Gemini Nano (on-device)</strong>.</li>
+<li>Read <strong>Gemini Nano device status</strong>:<ul>
+<li><strong>Available — on-device translation active</strong> means it is ready.</li>
+<li><strong>Not available on this device right now</strong> means AICore is missing or still provisioning. Update <strong>Google AI Core</strong>, restart the phone, then tap <strong>Recheck</strong>.</li>
+<li><strong>AICore is still setting up (601/606…)</strong> is the same situation with a more specific error code.</li>
+</ul>
+</li>
+<li>Turn on <strong>Offline ML Kit fallback</strong> under <strong>Behavior &amp; cache</strong> so Nano is used when the cloud provider cannot serve.</li>
+</ol>
+<p>Nano is vision-aware: it receives the page image as context. It is a good companion to a local GGUF model, but it does not replace the engine models; detection, OCR and inpainting are still the on-device pipeline.</p>
+<h2 id="step-8-prove-it-is-actually-offline"><a class="anchor" href="#step-8-prove-it-is-actually-offline" aria-label="Link to this section">#</a>Step 8 — Prove it is actually offline</h2>
+<ol>
+<li>Turn on airplane mode (or disable Wi-Fi and mobile data).</li>
+<li>Open a chapter of an opted-in series.</li>
+<li>Read at least three pages.</li>
+</ol>
+<p>Pages should translate normally. If they do, nothing in the pipeline is reaching the network.</p>
+<blockquote class="callout callout-important"><p class="callout-title">Important</p>
+<p>Fully offline means the <strong>Local</strong> provider (and optionally Gemini Nano). MangaTranslator and every cloud provider send data off the device by design. Incognito and censor modes gate translation uploads, but they do not turn a cloud provider into a local one.</p>
+</blockquote>
+<h2 id="step-9-tune-speed-and-storage"><a class="anchor" href="#step-9-tune-speed-and-storage" aria-label="Link to this section">#</a>Step 9 — Tune speed and storage</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Adjustment</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>First page of every chapter is slow</td>
+<td>Turn on <strong>Start engine on app launch</strong>; the model stays loaded</td>
+</tr>
+<tr>
+<td>Every page is slow</td>
+<td>Pick a smaller model, or a lower quantization if you import your own</td>
+</tr>
+<tr>
+<td>The phone gets hot</td>
+<td>Expect this during long chapters; native inference is the expensive stage. Translate shorter sessions, or use Nano</td>
+</tr>
+<tr>
+<td>GPU offload is not used</td>
+<td>64-bit builds include Vulkan; a device without Vulkan hardware compute runs on the CPU. The log says &quot;compiled without support&quot; when llama.cpp silently falls back</td>
+</tr>
+<tr>
+<td>Storage is tight</td>
+<td><strong>Clear local model</strong> removes the LLM; <strong>Clear downloaded models</strong> removes the engine models. Both must be downloaded again</td>
+</tr>
+<tr>
+<td>Output is empty or repeats</td>
+<td>Reload the engine (<strong>Stop engine</strong>, then <strong>Start engine</strong>). If it persists, try another model</td>
+</tr>
+</tbody></table></div>
+<p>Advanced sampling, context and thread settings live under <strong>Advanced (llama.cpp)</strong>. They are unsupported knobs: the defaults are chosen for the device, and changing them can make output worse.</p>
+<h2 id="check-it-worked"><a class="anchor" href="#check-it-worked" aria-label="Link to this section">#</a>Check it worked</h2>
+<ul>
+<li><strong>Local model</strong> shows a model and <strong>Download</strong> reports &quot;Installed: … MB&quot;.</li>
+<li><strong>Start engine</strong> reports <strong>Running — <em>(model)</em></strong>.</li>
+<li>The provider status says the local model is installed, not &quot;no model yet&quot;.</li>
+<li>A chapter translates with airplane mode on.</li>
+<li>The engine stays warm: opening a second chapter starts translating without a long pause.</li>
+</ul>
+<h2 id="if-something-goes-wrong"><a class="anchor" href="#if-something-goes-wrong" aria-label="Link to this section">#</a>If something goes wrong</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&quot;No model fits this device&quot;</td>
+<td>The device is below the RAM needed for catalog models</td>
+<td>Import a smaller GGUF, or use Gemini Nano / MangaTranslator</td>
+</tr>
+<tr>
+<td>&quot;Runtime not bundled&quot;</td>
+<td><code>nomtl</code> build</td>
+<td>Install the standard build</td>
+</tr>
+<tr>
+<td>Engine will not start</td>
+<td>Model file missing or incomplete</td>
+<td>Re-download the local model, then start again</td>
+</tr>
+<tr>
+<td>Pages are erased but empty</td>
+<td>The OCR model is missing, or the page has no readable text</td>
+<td>Download the engine models; install PP-OCRv5 for Latin scripts</td>
+</tr>
+<tr>
+<td>Latin-script pages translate as gibberish</td>
+<td>Base OCR does not cover the script</td>
+<td>Install <strong>Install multilingual OCR add-on</strong></td>
+</tr>
+<tr>
+<td>Gemini Nano never becomes available</td>
+<td>AICore not installed or not provisioned</td>
+<td>Update Google AI Core, restart, <strong>Recheck</strong></td>
+</tr>
+<tr>
+<td>Everything falls back to cloud</td>
+<td>The cloud provider is still selected</td>
+<td>Select <strong>Local (On-device LLM)</strong> — the provider, not just the model, decides where translation runs</td>
+</tr>
+</tbody></table></div>
+<h2 id="where-to-go-next"><a class="anchor" href="#where-to-go-next" aria-label="Link to this section">#</a>Where to go next</h2>
+<ul>
+<li><a href="/hyoukan/tutorials/translate-a-chapter/">Translate a chapter with AI</a> — the cloud path and prompt tuning.</li>
+<li><a href="/hyoukan/guide/translation/">AI translation reference</a> — pipeline stages, model management and cache identity.</li>
+<li><a href="/hyoukan/guide/privacy/">Privacy &amp; security</a> — the on-device guarantees in context.</li>
+</ul>
+
+      </article>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/tutorials/translate-a-chapter/"><span class="pager-dir">Previous</span><span class="pager-title">Translate a chapter</span></a><a class="pager-link pager-next" href="/hyoukan/tutorials/upscale-a-series/"><span class="pager-dir">Next</span><span class="pager-title">Upscale a series</span></a></nav>
+      <footer class="page-foot">
+        <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
+        <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/tutorials/translate-offline.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
+      </footer>
+    </div>
+  </main>
+
+  <aside class="toc" aria-label="On this page">
+    <p class="toc-heading">On this page</p>
+<ul class="toc-list"><li class="toc-l2"><a href="#what-youll-build">What you'll build</a></li>
+<li class="toc-l2"><a href="#before-you-start">Before you start</a></li>
+<li class="toc-l2"><a href="#step-1-choose-the-offline-path">Step 1 — Choose the offline path</a></li>
+<li class="toc-l2"><a href="#step-2-point-the-provider-at-the-device">Step 2 — Point the provider at the device</a></li>
+<li class="toc-l2"><a href="#step-3-download-the-engine-models">Step 3 — Download the engine models</a></li>
+<li class="toc-l2"><a href="#step-4-get-a-local-language-model">Step 4 — Get a local language model</a></li>
+<li class="toc-l3"><a href="#which-model-to-pick">Which model to pick</a></li>
+<li class="toc-l2"><a href="#step-5-start-the-engine">Step 5 — Start the engine</a></li>
+<li class="toc-l2"><a href="#step-6-set-the-language-and-opt-the-series-in">Step 6 — Set the language and opt the series in</a></li>
+<li class="toc-l2"><a href="#step-7-add-gemini-nano-as-a-second-offline-model">Step 7 — Add Gemini Nano as a second offline model</a></li>
+<li class="toc-l2"><a href="#step-8-prove-it-is-actually-offline">Step 8 — Prove it is actually offline</a></li>
+<li class="toc-l2"><a href="#step-9-tune-speed-and-storage">Step 9 — Tune speed and storage</a></li>
+<li class="toc-l2"><a href="#check-it-worked">Check it worked</a></li>
+<li class="toc-l2"><a href="#if-something-goes-wrong">If something goes wrong</a></li>
+<li class="toc-l2"><a href="#where-to-go-next">Where to go next</a></li></ul>
+  </aside>
+</div>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search the Hyoukan wiki" hidden>
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search-input" type="search" placeholder="Search the wiki…" autocomplete="off" spellcheck="false" aria-label="Search query">
+      <button class="icon-btn" id="search-close" aria-label="Close search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-results" id="search-results" aria-live="polite">
+      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.HYOUKAN_BASE = "/hyoukan";</script>
+<script>/* Hyoukan wiki — theme, navigation, search, TOC and reading progress. */
+(function () {
+  'use strict';
+
+  var BASE = window.HYOUKAN_BASE || '/hyoukan';
+  var root = document.documentElement;
+
+  // --- Theme ---------------------------------------------------------------
+  var themeBtn = document.getElementById('theme-toggle');
+  function setTheme(theme) {
+    root.dataset.theme = theme;
+    try { localStorage.setItem('hyoukan-theme', theme); } catch (e) {}
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+  setTheme(root.dataset.theme || 'light');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // --- Mobile sidebar ------------------------------------------------------
+  var menuBtn = document.getElementById('menu-btn');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('sidebar-backdrop');
+
+  function setMenu(open) {
+    if (!sidebar) return;
+    sidebar.classList.toggle('is-open', open);
+    if (backdrop) backdrop.hidden = !open;
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function () {
+      setMenu(!sidebar.classList.contains('is-open'));
+    });
+  }
+  if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
+  if (sidebar) {
+    sidebar.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setMenu(false);
+    });
+  }
+
+  // --- Reading progress ----------------------------------------------------
+  var progress = document.getElementById('progress-bar');
+  if (progress) {
+    var ticking = false;
+    function updateProgress() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+      progress.style.width = pct.toFixed(2) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+    updateProgress();
+  }
+
+  // --- TOC scroll spy ------------------------------------------------------
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-list a'));
+  var tocTargets = tocLinks
+    .map(function (link) {
+      var id = decodeURIComponent(link.getAttribute('href').slice(1));
+      var el = document.getElementById(id);
+      return el ? { link: link, el: el } : null;
+    })
+    .filter(Boolean);
+
+  if (tocTargets.length && 'IntersectionObserver' in window) {
+    var visible = new Map();
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) visible.set(entry.target.id, entry.boundingClientRect.top);
+        else visible.delete(entry.target.id);
+      });
+      var best = null;
+      tocTargets.forEach(function (t) {
+        if (visible.has(t.el.id)) {
+          var top = visible.get(t.el.id);
+          if (best === null || top < best.top) best = { top: top, link: t.link };
+        }
+      });
+      if (best) {
+        tocLinks.forEach(function (l) { l.classList.remove('is-active'); });
+        best.link.classList.add('is-active');
+      }
+    }, { rootMargin: '-88px 0px -65% 0px', threshold: [0, 1] });
+    tocTargets.forEach(function (t) { observer.observe(t.el); });
+  }
+
+  // --- Copy code buttons ---------------------------------------------------
+  document.querySelectorAll('.prose pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-code';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(area);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  // --- Search --------------------------------------------------------------
+  var overlay = document.getElementById('search-overlay');
+  var trigger = document.getElementById('search-trigger');
+  var closeBtn = document.getElementById('search-close');
+  var input = document.getElementById('search-input');
+  var resultsEl = document.getElementById('search-results');
+  var index = null;
+  var loading = null;
+  var selected = -1;
+  var currentResults = [];
+  var lastFocus = null;
+
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (loading) return loading;
+    loading = fetch(BASE + '/search-index.json', { cache: 'no-cache' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { index = data; return data; })
+      .catch(function () { index = []; return index; });
+    return loading;
+  }
+
+  function tokenize(q) {
+    return q.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function highlight(text, tokens) {
+    var safe = escapeHtml(text);
+    tokens.forEach(function (token) {
+      if (!token) return;
+      var re = new RegExp('(' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      safe = safe.replace(re, '<mark>$1</mark>');
+    });
+    return safe;
+  }
+
+  function snippet(text, tokens) {
+    if (!text) return '';
+    var lower = text.toLowerCase();
+    var at = -1;
+    for (var i = 0; i < tokens.length; i++) {
+      var p = lower.indexOf(tokens[i]);
+      if (p !== -1 && (at === -1 || p < at)) at = p;
+    }
+    if (at === -1) at = 0;
+    var start = Math.max(0, at - 70);
+    var end = Math.min(text.length, at + 190);
+    return (start > 0 ? '…' : '') + text.slice(start, end).trim() + (end < text.length ? '…' : '');
+  }
+
+  function score(page, tokens) {
+    var title = page.title.toLowerCase();
+    var headings = (page.headings || []).join(' ').toLowerCase();
+    var description = (page.description || '').toLowerCase();
+    var text = (page.text || '').toLowerCase();
+    var total = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      var s = 0;
+      if (title === t) s = 120;
+      else if (title.indexOf(t) === 0) s = 80;
+      else if (title.indexOf(t) !== -1) s = 55;
+      else if (headings.indexOf(t) !== -1) s = 24;
+      else if (description.indexOf(t) !== -1) s = 14;
+      else if (text.indexOf(t) !== -1) s = 6;
+      if (s === 0) return 0;
+
+      // Repeated mentions are a useful relevance hint once the token matches at all.
+      var count = 0;
+      var at = text.indexOf(t);
+      while (at !== -1 && count < 8) {
+        count++;
+        at = text.indexOf(t, at + t.length);
+      }
+      total += s + count;
+    }
+    return total;
+  }
+
+  function renderResults(query) {
+    var tokens = tokenize(query);
+    if (!tokens.length) {
+      resultsEl.innerHTML = '<p class="search-hint">Type to search ' + (index ? index.length : '') +
+        ' pages. Use ↑ ↓ to move and Enter to open.</p>';
+      currentResults = [];
+      selected = -1;
+      return;
+    }
+    if (!index) {
+      resultsEl.innerHTML = '<p class="search-hint">Loading index…</p>';
+      return;
+    }
+    var scored = index.map(function (page) {
+      return { page: page, score: score(page, tokens) };
+    }).filter(function (r) { return r.score > 0; });
+    scored.sort(function (a, b) { return b.score - a.score || a.page.title.localeCompare(b.page.title); });
+    currentResults = scored.slice(0, 18);
+    selected = currentResults.length ? 0 : -1;
+
+    if (!currentResults.length) {
+      resultsEl.innerHTML = '<p class="search-empty">No pages match <strong>' + escapeHtml(query) + '</strong>.</p>';
+      return;
+    }
+
+    resultsEl.innerHTML = currentResults.map(function (r, i) {
+      var p = r.page;
+      return '<a class="search-result' + (i === 0 ? ' is-selected' : '') + '" href="' + p.url + '">' +
+        '<span class="search-result-title">' + highlight(p.title, tokens) +
+        '<span class="search-result-section">' + escapeHtml(p.section || '') + '</span></span>' +
+        '<span class="search-result-text">' + highlight(snippet(p.description || p.text, tokens), tokens) + '</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  function moveSelection(delta) {
+    if (!currentResults.length) return;
+    selected = (selected + delta + currentResults.length) % currentResults.length;
+    Array.prototype.forEach.call(resultsEl.querySelectorAll('.search-result'), function (el, i) {
+      el.classList.toggle('is-selected', i === selected);
+      if (i === selected) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  function openSearch() {
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    renderResults('');
+    loadIndex().then(function () { renderResults(input.value); });
+    setTimeout(function () { input.focus(); }, 0);
+  }
+
+  function closeSearch() {
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  if (trigger) trigger.addEventListener('click', openSearch);
+  if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+  if (overlay) {
+    overlay.addEventListener('mousedown', function (e) {
+      if (e.target === overlay) closeSearch();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', function () {
+      loadIndex().then(function () { renderResults(input.value); });
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveSelection(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveSelection(-1); }
+      else if (e.key === 'Enter') {
+        var link = resultsEl.querySelector('.search-result.is-selected');
+        if (link) { e.preventDefault(); window.location.href = link.getAttribute('href'); }
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+    if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === '/' && !typing) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === 'Escape' && overlay && !overlay.hidden) {
+      closeSearch();
+    }
+  });
+
+  // --- External links get a quiet marker ----------------------------------
+  document.querySelectorAll('.prose a[target="_blank"]').forEach(function (a) {
+    a.setAttribute('rel', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>

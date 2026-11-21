@@ -107,6 +107,11 @@ Hyoukan keeps the entire Mihon and TachiyomiSY feature set, carries Komikku's ad
     <span class="card-title">For developers</span>
     <span class="card-text">Modules, DI, navigation, the reader internals, the extension API and the build pipeline.</span>
   </a>
+  <a class="card" href="/hyoukan/tutorials/">
+    <span class="card-icon">🧭</span>
+    <span class="card-title">Tutorials</span>
+    <span class="card-text">Guided walkthroughs: translate a chapter, upscale a series, typeset an EPUB, automate the library and calibrate the reader.</span>
+  </a>
 </div>
 
 ## Current status

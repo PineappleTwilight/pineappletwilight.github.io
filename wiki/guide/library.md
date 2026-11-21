@@ -184,6 +184,7 @@ A folder containing only EPUB files is treated as a **book** series; a mixed fol
 
 ## What to do next
 
+- [Put your library on autopilot](/hyoukan/tutorials/library-autopilot/) — scheduled updates, auto-download, cleanup and tracker sync.
 - [Sources & extensions](/hyoukan/guide/sources/) — where the entries come from.
 - [Reading comics](/hyoukan/guide/comics/) and [Reading books](/hyoukan/guide/books/) — the two readers.
 - [Backup & sync](/hyoukan/guide/backup-sync/) — keep the library safe.

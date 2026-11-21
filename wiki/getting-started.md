@@ -130,6 +130,7 @@ Restore is streaming and resumable; a large library does not need to fit in memo
 
 ## Next steps
 
+- [Tutorials](/hyoukan/tutorials/) — guided walkthroughs for translation, upscaling, books and automation.
 - [Feature tour](/hyoukan/features/) — everything the app can do, grouped by area.
 - [Library & categories](/hyoukan/guide/library/) — make a large collection manageable.
 - [Reading comics](/hyoukan/guide/comics/) — get the reader set up properly.

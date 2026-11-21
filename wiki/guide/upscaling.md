@@ -5,6 +5,10 @@ description: Sharpen low-resolution pages with native models, ONNX or a simple r
 
 Upscaling is a separate pipeline from translation. It takes a decoded page, runs it through a super-resolution model (or a resampling filter), and returns a sharper image to the reader. It is not gated behind AI translation and works in every build, including `nomtl`.
 
+> [!TIP]
+>
+> New to the feature? [Upscale a low-resolution series](/hyoukan/tutorials/upscale-a-series/) walks through model choice, backend checks, the enablement ladder and the live status counters.
+
 ## What it can do
 
 | Model family | Character | Factors |

@@ -85,11 +85,13 @@ function parseFrontmatter(raw) {
 
 function pageUrl(file) {
   if (file === 'index') return `${BASE}/`;
+  if (file.endsWith('/index')) return `${BASE}/${file.slice(0, -'/index'.length)}/`;
   return `${BASE}/${file}/`;
 }
 
 function pageOut(file) {
   if (file === 'index') return path.join(OUT, 'index.html');
+  if (file.endsWith('/index')) return path.join(OUT, file.slice(0, -'/index'.length), 'index.html');
   return path.join(OUT, file, 'index.html');
 }
 

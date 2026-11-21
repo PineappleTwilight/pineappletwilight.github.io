@@ -5,6 +5,10 @@ description: EPUB and web-novel reading — typography, navigation, highlights, 
 
 Hyoukan treats text as a first-class reading format. An `.epub` is not rendered as a stack of screenshots; it is opened as a **book**, with the publisher's XHTML, stylesheets, fonts and illustrations intact.
 
+> [!TIP]
+>
+> For a practical setup, see [Typeset an EPUB like a printed book](/hyoukan/tutorials/typeset-an-epub/): fonts, margins, justification, dark mode and a small custom stylesheet.
+
 ## What can be read as a book
 
 | Format | How it gets here |

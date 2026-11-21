@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Put your library on autopilot · Hyoukan Wiki</title>
+<meta name="description" content="A guided walkthrough for scheduled updates, auto-download, delete-after-reading, tracker sync, the feed and a backup safety net.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e7490'/%3E%3Cpath d='M32 12l5 14h15l-12 9 4 15-12-9-12 9 4-15-12-9h15z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/hyoukan/assets/wiki.css">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('hyoukan-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  } catch (e) { document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="progress-bar" id="progress-bar" aria-hidden="true"></div>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="/hyoukan/">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><path d="M16 3l3.2 8.1L28 14l-8.8 2.9L16 25l-3.2-8.1L4 14l8.8-2.9z" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">Hyoukan</span><span class="brand-sub">Wiki</span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <button class="search-trigger" id="search-trigger" aria-label="Search the wiki">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <span class="search-label">Search</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+  <a class="icon-btn" href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener" aria-label="Hyoukan on GitHub">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5 4-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg>
+  </a>
+  <button class="icon-btn" id="theme-toggle" aria-label="Switch colour theme">
+    <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+  </button>
+</header>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Wiki navigation">
+      <div class="nav-section">
+  <p class="nav-heading">Overview</p>
+  <ul><li><a href="/hyoukan/">Home</a></li>
+<li><a href="/hyoukan/getting-started/">Getting started</a></li>
+<li><a href="/hyoukan/features/">Feature tour</a></li>
+<li><a href="/hyoukan/faq/">FAQ</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Tutorials</p>
+  <ul><li><a href="/hyoukan/tutorials/">All tutorials</a></li>
+<li><a href="/hyoukan/tutorials/translate-a-chapter/">Translate a chapter</a></li>
+<li><a href="/hyoukan/tutorials/translate-offline/">Translate fully offline</a></li>
+<li><a href="/hyoukan/tutorials/upscale-a-series/">Upscale a series</a></li>
+<li><a href="/hyoukan/tutorials/typeset-an-epub/">Typeset an EPUB</a></li>
+<li><a href="/hyoukan/tutorials/library-autopilot/" aria-current="page">Library on autopilot</a></li>
+<li><a href="/hyoukan/tutorials/calibrate-the-reader/">Calibrate the reader</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">User guide</p>
+  <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
+<li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
+<li><a href="/hyoukan/guide/books/">Reading books</a></li>
+<li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
+<li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
+<li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/translation/">AI translation</a></li>
+<li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
+<li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
+<li><a href="/hyoukan/guide/appearance/">Appearance &amp; identity</a></li>
+<li><a href="/hyoukan/guide/connections/">Connections</a></li>
+<li><a href="/hyoukan/guide/privacy/">Privacy &amp; security</a></li>
+<li><a href="/hyoukan/guide/troubleshooting/">Troubleshooting</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Development</p>
+  <ul><li><a href="/hyoukan/development/architecture/">Architecture</a></li>
+<li><a href="/hyoukan/development/reader/">Reader &amp; WebGPU</a></li>
+<li><a href="/hyoukan/development/books-engine/">Book engine</a></li>
+<li><a href="/hyoukan/development/data/">Data &amp; database</a></li>
+<li><a href="/hyoukan/development/extensions/">Extensions &amp; source API</a></li>
+<li><a href="/hyoukan/development/translation-upscaling/">Translation &amp; upscaling</a></li>
+<li><a href="/hyoukan/development/settings/">Settings framework</a></li>
+<li><a href="/hyoukan/development/build/">Build &amp; release</a></li>
+<li><a href="/hyoukan/development/testing/">Testing &amp; conventions</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Reference</p>
+  <ul><li><a href="/hyoukan/reference/settings/">Settings index</a></li>
+<li><a href="/hyoukan/reference/formats/">Files &amp; formats</a></li>
+<li><a href="/hyoukan/reference/glossary/">Glossary</a></li>
+<li><a href="/hyoukan/reference/versions/">Versions &amp; channels</a></li>
+<li><a href="/hyoukan/reference/history/">Project history</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Contributing</p>
+  <ul><li><a href="/hyoukan/contributing/">Contributing</a></li></ul>
+</div>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="version-pill">v1.25.3</span>
+      <span>Updated November 2026</span>
+    </div>
+  </aside>
+
+  <main class="main" id="content">
+    <div class="page">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/hyoukan/">Wiki</a><span aria-hidden="true">/</span><span>Tutorials</span><span aria-hidden="true">/</span><span aria-current="page">Put your library on autopilot</span>
+</nav>
+      <article class="prose">
+        <h1>Put your library on autopilot</h1><p class="page-lede">A guided walkthrough for scheduled updates, auto-download, delete-after-reading, tracker sync, the feed and a backup safety net.</p>
+        <p>This tutorial wires the library so it keeps itself current: updates run on a schedule, new chapters download before you ask, finished chapters clean themselves up, and progress reaches your tracker without a manual edit.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Time</strong></td>
+<td>20 minutes</td>
+</tr>
+<tr>
+<td><strong>Needs</strong></td>
+<td>A library with entries, at least one category, and (optionally) a tracker login</td>
+</tr>
+<tr>
+<td><strong>Ends with</strong></td>
+<td>A repeatable weekly rhythm: update → download → read → sync → clean up</td>
+</tr>
+</tbody></table></div>
+<h2 id="what-youll-build"><a class="anchor" href="#what-youll-build" aria-label="Link to this section">#</a>What you&#39;ll build</h2>
+<p>Nothing here changes how a page renders. The result is behavioural: fewer taps, less storage drift, and a library that reflects what you are actually reading.</p>
+<h2 id="before-you-start"><a class="anchor" href="#before-you-start" aria-label="Link to this section">#</a>Before you start</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Where</th>
+<th>Expected</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Storage location is set</td>
+<td><strong>Settings → Data and storage → Storage location</strong></td>
+<td>A valid folder. Downloads cannot start without it</td>
+</tr>
+<tr>
+<td>Battery optimisation is off for Hyoukan</td>
+<td><strong>Settings → Advanced → Disable battery optimization</strong></td>
+<td>Scheduled work is allowed to run</td>
+</tr>
+<tr>
+<td>A backup exists</td>
+<td><strong>Settings → Data and storage → Create backup</strong></td>
+<td>A recent <code>.tachibk</code> file</td>
+</tr>
+<tr>
+<td>Tracker (optional)</td>
+<td><strong>Settings → Tracking → Trackers</strong></td>
+<td>At least one service logged in, or an enhanced tracker discovered</td>
+</tr>
+</tbody></table></div>
+<h2 id="step-1-build-the-shelves-first"><a class="anchor" href="#step-1-build-the-shelves-first" aria-label="Link to this section">#</a>Step 1 — Build the shelves first</h2>
+<p>Automation follows categories, so the categories have to mean something.</p>
+<ol>
+<li>Open <strong>More → Categories</strong> (or <strong>Settings → Library → Edit categories</strong>).</li>
+<li>Create shelves you will actually use — for example <strong>Reading</strong>, <strong>On hold</strong>, <strong>Completed</strong>, <strong>Scans</strong>, <strong>Webtoons</strong>.</li>
+<li>Nest subcategories where it helps. A category is a label, not a folder; an entry can be in several.</li>
+<li>For each category, open its settings and set <strong>Update interval</strong>. Leave it on <strong>Use the global setting</strong> unless that shelf needs a different rhythm.</li>
+</ol>
+<p>A category can also pin a reading mode and orientation for everything on it. That is how a webtoon shelf opens in continuous mode without per-entry fiddling.</p>
+<h3 id="make-status-shelves-move-themselves"><a class="anchor" href="#make-status-shelves-move-themselves" aria-label="Link to this section">#</a>Make status shelves move themselves</h3>
+<p>A <strong>smart category</strong> is bound to a tracker status. When an entry&#39;s status changes on a tracker — or you finish the first chapter of something in <em>Wish to read</em> — it moves into the matching category.</p>
+<ul>
+<li>Only categories you explicitly bind are touched.</li>
+<li>The move is one-way and idempotent; it never removes an entry from unrelated shelves.</li>
+<li>Unbound categories are never modified.</li>
+</ul>
+<p>This is the difference between a category you maintain and a shelf that stays current.</p>
+<h2 id="step-2-schedule-updates"><a class="anchor" href="#step-2-schedule-updates" aria-label="Link to this section">#</a>Step 2 — Schedule updates</h2>
+<p>Open <strong>Settings → Library → Global update</strong>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Recommended for autopilot</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Automatic updates</strong></td>
+<td>Daily, or every 12 hours for fast-release series</td>
+</tr>
+<tr>
+<td><strong>Automatic updates device restrictions</strong></td>
+<td>Wi-Fi only and charging only, if battery matters</td>
+</tr>
+<tr>
+<td><strong>Launch behaviour</strong></td>
+<td>&quot;Launch global updates only for ungrouped, category updates for others&quot; once categories have their own intervals</td>
+</tr>
+<tr>
+<td><strong>Skip entries with unread chapter(s)</strong></td>
+<td>On, if you do not want updates to pile up chapters you have not read</td>
+</tr>
+<tr>
+<td><strong>Skip unstarted entries</strong></td>
+<td>On, if a large &quot;Plan to read&quot; shelf should stay quiet</td>
+</tr>
+<tr>
+<td><strong>Skip entries with &quot;Completed&quot; status</strong></td>
+<td>On, for a finished-series shelf</td>
+</tr>
+<tr>
+<td><strong>Smart update</strong></td>
+<td>On — predicts the next release from the series&#39; calendar instead of counting days</td>
+</tr>
+<tr>
+<td><strong>Refresh metadata</strong></td>
+<td>Optional; it re-fetches covers and details during updates</td>
+</tr>
+</tbody></table></div>
+<p>The shortest interval among an entry&#39;s categories wins. A category with no interval follows the global one.</p>
+<blockquote class="callout callout-tip"><p class="callout-title">Tip</p>
+<p>Leave <strong>Launch global updates</strong> off once every shelf has an interval. The category schedule then does the work, and a cold start is not spent refreshing the whole library.</p>
+</blockquote>
+<h2 id="step-3-decide-what-downloads-itself"><a class="anchor" href="#step-3-decide-what-downloads-itself" aria-label="Link to this section">#</a>Step 3 — Decide what downloads itself</h2>
+<p>Open <strong>Settings → Downloads</strong>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Effect</th>
+<th>Watch out for</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Download new chapters</strong></td>
+<td>Downloads chapters fetched by library updates</td>
+<td>Turns every update into network traffic and storage use</td>
+</tr>
+<tr>
+<td><strong>Download ahead</strong></td>
+<td>Pre-downloads the next chapters of what you are reading</td>
+<td>Works only when the current chapter and the next one are already downloaded</td>
+</tr>
+<tr>
+<td><strong>Auto download while reading</strong></td>
+<td>Downloads the current and next chapter as you read</td>
+<td>Only starts when both are already partially available</td>
+</tr>
+<tr>
+<td><strong>Skip downloading duplicate read chapters</strong></td>
+<td>Avoids re-downloading a chapter you read elsewhere</td>
+<td>Leave on</td>
+</tr>
+<tr>
+<td><strong>Excluded categories</strong></td>
+<td>Entries here are never auto-downloaded</td>
+<td>An entry in both an included and an excluded category is excluded</td>
+</tr>
+</tbody></table></div>
+<p>Set <strong>Concurrent source downloads</strong>, <strong>Concurrent page downloads</strong> and <strong>Download threads</strong> conservatively. Two or three threads is a sane default; higher values trigger rate limits on some sources.</p>
+<p>The queue survives leaving the app and a full close; <strong>More → Download queue</strong> shows it.</p>
+<h2 id="step-4-decide-what-cleans-itself-up"><a class="anchor" href="#step-4-decide-what-cleans-itself-up" aria-label="Link to this section">#</a>Step 4 — Decide what cleans itself up</h2>
+<p>Still under <strong>Settings → Downloads</strong>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Delete chapters after reading</strong></td>
+<td>Off, after the last read chapter, or the second/third/fourth/fifth to last</td>
+</tr>
+<tr>
+<td><strong>After reading automatically delete</strong></td>
+<td>Delete a chapter once it is read</td>
+</tr>
+<tr>
+<td><strong>Allow deleting bookmarked chapters</strong></td>
+<td>Whether a bookmark protects a chapter from automatic cleanup</td>
+</tr>
+</tbody></table></div>
+<p>The safe pattern is: keep bookmarked chapters, delete only what you have read, and leave a buffer of one or two chapters behind the current position. If you re-read often, set the buffer larger or turn automatic deletion off and clean up monthly.</p>
+<h2 id="step-5-let-tracking-keep-up"><a class="anchor" href="#step-5-let-tracking-keep-up" aria-label="Link to this section">#</a>Step 5 — Let tracking keep up</h2>
+<p>Open <strong>Settings → Tracking</strong>.</p>
+<ol>
+<li>Log in to at least one tracker under <strong>Trackers</strong>.</li>
+<li>Turn on <strong>Update progress after reading</strong>.</li>
+<li>Turn on <strong>Update progress when marked as read</strong> if you also mark chapters manually.</li>
+<li>Turn on <strong>Auto sync progress from trackers</strong> to pull changes made on the service.</li>
+<li>For an entry that exists on several services, set a <strong>definitive tracker</strong> on the entry or its category. That is the record used for status updates and smart-category moves, which prevents two trackers from tugging the shelf in different directions.</li>
+</ol>
+<p>Progress updates are rate-limited and retried. A tracker that is offline does not block reading; the update is queued.</p>
+<h2 id="step-6-build-a-feed-from-searches-you-trust"><a class="anchor" href="#step-6-build-a-feed-from-searches-you-trust" aria-label="Link to this section">#</a>Step 6 — Build a feed from searches you trust</h2>
+<ol>
+<li>Run a search on a source and <strong>save</strong> it.</li>
+<li>Open <strong>Browse → Feed</strong>.</li>
+<li>Add the saved searches you want in the stream.</li>
+<li>Turn on <strong>Hide entries already in the library</strong>.</li>
+<li>Optionally move the Feed to the front of Browse, or hide the tab if you prefer the library.</li>
+</ol>
+<p>The feed is not a recommendation engine; it is the set of searches you already trust, evaluated together.</p>
+<h2 id="step-7-add-the-offline-safety-net"><a class="anchor" href="#step-7-add-the-offline-safety-net" aria-label="Link to this section">#</a>Step 7 — Add the offline safety net</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Goal</th>
+<th>Setting</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Read only what is on the device</td>
+<td><strong>Downloaded only</strong> in the library filter</td>
+</tr>
+<tr>
+<td>Keep recently read chapters around</td>
+<td><strong>Settings → Data and storage → Chapter cache retention</strong> (12 hours to 30 days)</td>
+</tr>
+<tr>
+<td>See what is taking space</td>
+<td><strong>Data and storage → Downloaded and cached content</strong></td>
+</tr>
+<tr>
+<td>Remove downloads for entries you removed</td>
+<td><strong>Data and storage → Delete downloads not in library</strong></td>
+</tr>
+<tr>
+<td>Recover from a bad week</td>
+<td><strong>Automatic backup frequency</strong> — hourly to weekly, keeps the four most recent</td>
+</tr>
+<tr>
+<td>Catch corruption automatically</td>
+<td>The app&#39;s rolling local database backup and startup check run without configuration</td>
+</tr>
+</tbody></table></div>
+<p>Downloaded chapters and the chapter cache are different things. Downloads are explicit and kept until deleted; the cache is evictable and can be cleared without losing anything you deliberately saved.</p>
+<h2 id="step-8-optional-make-events-visible"><a class="anchor" href="#step-8-optional-make-events-visible" aria-label="Link to this section">#</a>Step 8 — Optional: make events visible</h2>
+<p><strong>Settings → Connections → Webhooks</strong> can send a Discord webhook or a generic JSON payload when something happens:</p>
+<ul>
+<li>chapter started or read;</li>
+<li>entry added, removed, finished, started or migrated;</li>
+<li>library update finished;</li>
+<li>downloads finished;</li>
+<li>backup created or restored;</li>
+<li>achievement unlocked.</li>
+</ul>
+<p>Paste the URL, select the events, exclude categories you do not want announced, and use <strong>Send test notification</strong> before trusting it.</p>
+<h2 id="check-it-worked"><a class="anchor" href="#check-it-worked" aria-label="Link to this section">#</a>Check it worked</h2>
+<ul>
+<li>The next scheduled update adds chapters without prompting.</li>
+<li>New chapters for opted-in entries appear in the download queue.</li>
+<li>A chapter you finish disappears after the configured buffer, while a bookmarked one stays.</li>
+<li>Tracker progress matches the last chapter you read.</li>
+<li>The feed shows new entries from your saved searches.</li>
+<li><strong>Downloaded and cached content</strong> shows a stable, explainable size rather than unbounded growth.</li>
+<li>A recent automatic backup exists.</li>
+</ul>
+<h2 id="if-something-goes-wrong"><a class="anchor" href="#if-something-goes-wrong" aria-label="Link to this section">#</a>If something goes wrong</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Updates never run</td>
+<td>Battery optimisation, wrong interval, or device restrictions</td>
+<td>Exempt Hyoukan from optimisation; check the category interval and Wi-Fi/charging requirements</td>
+</tr>
+<tr>
+<td>New chapters do not download</td>
+<td><strong>Download new chapters</strong> off, category excluded, or no storage location</td>
+<td>Check all three</td>
+</tr>
+<tr>
+<td>Nothing downloads at all</td>
+<td>Storage location unset or invalid</td>
+<td>Re-select it under <strong>Data and storage</strong></td>
+</tr>
+<tr>
+<td>Delete-after-reading removed something you wanted</td>
+<td>Buffer too small or bookmark protection off</td>
+<td>Increase the buffer; bookmark the chapter; disallow deleting bookmarked chapters</td>
+</tr>
+<tr>
+<td>Tracker progress does not update</td>
+<td>Entry not linked, setting off, or rate limit</td>
+<td>Link the tracker, check both update settings, wait for the retry</td>
+</tr>
+<tr>
+<td>Smart category never moves</td>
+<td>Category not bound, or the tracker reports no status</td>
+<td>Bind the category and confirm the tracker status</td>
+</tr>
+<tr>
+<td>Storage keeps growing</td>
+<td>Downloads are kept independently of the cache</td>
+<td>Use <strong>Downloaded and cached content</strong>, then delete orphans</td>
+</tr>
+<tr>
+<td>A webhook fires for the wrong shelf</td>
+<td>Excluded categories incomplete</td>
+<td>Add the category to the exclusion list</td>
+</tr>
+</tbody></table></div>
+<h2 id="where-to-go-next"><a class="anchor" href="#where-to-go-next" aria-label="Link to this section">#</a>Where to go next</h2>
+<ul>
+<li><a href="/hyoukan/guide/library/">Library &amp; categories</a> — categories, smart shelves and update rules in full.</li>
+<li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a> — the queue, cache retention and cleanup.</li>
+<li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a> — automatic backups, restore and multi-device sync.</li>
+<li><a href="/hyoukan/guide/tracking/">Tracking</a> — every service and the definitive-tracker rules.</li>
+</ul>
+
+      </article>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/tutorials/typeset-an-epub/"><span class="pager-dir">Previous</span><span class="pager-title">Typeset an EPUB</span></a><a class="pager-link pager-next" href="/hyoukan/tutorials/calibrate-the-reader/"><span class="pager-dir">Next</span><span class="pager-title">Calibrate the reader</span></a></nav>
+      <footer class="page-foot">
+        <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
+        <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/tutorials/library-autopilot.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
+      </footer>
+    </div>
+  </main>
+
+  <aside class="toc" aria-label="On this page">
+    <p class="toc-heading">On this page</p>
+<ul class="toc-list"><li class="toc-l2"><a href="#what-youll-build">What you'll build</a></li>
+<li class="toc-l2"><a href="#before-you-start">Before you start</a></li>
+<li class="toc-l2"><a href="#step-1-build-the-shelves-first">Step 1 — Build the shelves first</a></li>
+<li class="toc-l3"><a href="#make-status-shelves-move-themselves">Make status shelves move themselves</a></li>
+<li class="toc-l2"><a href="#step-2-schedule-updates">Step 2 — Schedule updates</a></li>
+<li class="toc-l2"><a href="#step-3-decide-what-downloads-itself">Step 3 — Decide what downloads itself</a></li>
+<li class="toc-l2"><a href="#step-4-decide-what-cleans-itself-up">Step 4 — Decide what cleans itself up</a></li>
+<li class="toc-l2"><a href="#step-5-let-tracking-keep-up">Step 5 — Let tracking keep up</a></li>
+<li class="toc-l2"><a href="#step-6-build-a-feed-from-searches-you-trust">Step 6 — Build a feed from searches you trust</a></li>
+<li class="toc-l2"><a href="#step-7-add-the-offline-safety-net">Step 7 — Add the offline safety net</a></li>
+<li class="toc-l2"><a href="#step-8-optional-make-events-visible">Step 8 — Optional: make events visible</a></li>
+<li class="toc-l2"><a href="#check-it-worked">Check it worked</a></li>
+<li class="toc-l2"><a href="#if-something-goes-wrong">If something goes wrong</a></li>
+<li class="toc-l2"><a href="#where-to-go-next">Where to go next</a></li></ul>
+  </aside>
+</div>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search the Hyoukan wiki" hidden>
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search-input" type="search" placeholder="Search the wiki…" autocomplete="off" spellcheck="false" aria-label="Search query">
+      <button class="icon-btn" id="search-close" aria-label="Close search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-results" id="search-results" aria-live="polite">
+      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.HYOUKAN_BASE = "/hyoukan";</script>
+<script>/* Hyoukan wiki — theme, navigation, search, TOC and reading progress. */
+(function () {
+  'use strict';
+
+  var BASE = window.HYOUKAN_BASE || '/hyoukan';
+  var root = document.documentElement;
+
+  // --- Theme ---------------------------------------------------------------
+  var themeBtn = document.getElementById('theme-toggle');
+  function setTheme(theme) {
+    root.dataset.theme = theme;
+    try { localStorage.setItem('hyoukan-theme', theme); } catch (e) {}
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+  setTheme(root.dataset.theme || 'light');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // --- Mobile sidebar ------------------------------------------------------
+  var menuBtn = document.getElementById('menu-btn');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('sidebar-backdrop');
+
+  function setMenu(open) {
+    if (!sidebar) return;
+    sidebar.classList.toggle('is-open', open);
+    if (backdrop) backdrop.hidden = !open;
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function () {
+      setMenu(!sidebar.classList.contains('is-open'));
+    });
+  }
+  if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
+  if (sidebar) {
+    sidebar.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setMenu(false);
+    });
+  }
+
+  // --- Reading progress ----------------------------------------------------
+  var progress = document.getElementById('progress-bar');
+  if (progress) {
+    var ticking = false;
+    function updateProgress() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+      progress.style.width = pct.toFixed(2) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+    updateProgress();
+  }
+
+  // --- TOC scroll spy ------------------------------------------------------
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-list a'));
+  var tocTargets = tocLinks
+    .map(function (link) {
+      var id = decodeURIComponent(link.getAttribute('href').slice(1));
+      var el = document.getElementById(id);
+      return el ? { link: link, el: el } : null;
+    })
+    .filter(Boolean);
+
+  if (tocTargets.length && 'IntersectionObserver' in window) {
+    var visible = new Map();
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) visible.set(entry.target.id, entry.boundingClientRect.top);
+        else visible.delete(entry.target.id);
+      });
+      var best = null;
+      tocTargets.forEach(function (t) {
+        if (visible.has(t.el.id)) {
+          var top = visible.get(t.el.id);
+          if (best === null || top < best.top) best = { top: top, link: t.link };
+        }
+      });
+      if (best) {
+        tocLinks.forEach(function (l) { l.classList.remove('is-active'); });
+        best.link.classList.add('is-active');
+      }
+    }, { rootMargin: '-88px 0px -65% 0px', threshold: [0, 1] });
+    tocTargets.forEach(function (t) { observer.observe(t.el); });
+  }
+
+  // --- Copy code buttons ---------------------------------------------------
+  document.querySelectorAll('.prose pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-code';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(area);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  // --- Search --------------------------------------------------------------
+  var overlay = document.getElementById('search-overlay');
+  var trigger = document.getElementById('search-trigger');
+  var closeBtn = document.getElementById('search-close');
+  var input = document.getElementById('search-input');
+  var resultsEl = document.getElementById('search-results');
+  var index = null;
+  var loading = null;
+  var selected = -1;
+  var currentResults = [];
+  var lastFocus = null;
+
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (loading) return loading;
+    loading = fetch(BASE + '/search-index.json', { cache: 'no-cache' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { index = data; return data; })
+      .catch(function () { index = []; return index; });
+    return loading;
+  }
+
+  function tokenize(q) {
+    return q.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function highlight(text, tokens) {
+    var safe = escapeHtml(text);
+    tokens.forEach(function (token) {
+      if (!token) return;
+      var re = new RegExp('(' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      safe = safe.replace(re, '<mark>$1</mark>');
+    });
+    return safe;
+  }
+
+  function snippet(text, tokens) {
+    if (!text) return '';
+    var lower = text.toLowerCase();
+    var at = -1;
+    for (var i = 0; i < tokens.length; i++) {
+      var p = lower.indexOf(tokens[i]);
+      if (p !== -1 && (at === -1 || p < at)) at = p;
+    }
+    if (at === -1) at = 0;
+    var start = Math.max(0, at - 70);
+    var end = Math.min(text.length, at + 190);
+    return (start > 0 ? '…' : '') + text.slice(start, end).trim() + (end < text.length ? '…' : '');
+  }
+
+  function score(page, tokens) {
+    var title = page.title.toLowerCase();
+    var headings = (page.headings || []).join(' ').toLowerCase();
+    var description = (page.description || '').toLowerCase();
+    var text = (page.text || '').toLowerCase();
+    var total = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      var s = 0;
+      if (title === t) s = 120;
+      else if (title.indexOf(t) === 0) s = 80;
+      else if (title.indexOf(t) !== -1) s = 55;
+      else if (headings.indexOf(t) !== -1) s = 24;
+      else if (description.indexOf(t) !== -1) s = 14;
+      else if (text.indexOf(t) !== -1) s = 6;
+      if (s === 0) return 0;
+
+      // Repeated mentions are a useful relevance hint once the token matches at all.
+      var count = 0;
+      var at = text.indexOf(t);
+      while (at !== -1 && count < 8) {
+        count++;
+        at = text.indexOf(t, at + t.length);
+      }
+      total += s + count;
+    }
+    return total;
+  }
+
+  function renderResults(query) {
+    var tokens = tokenize(query);
+    if (!tokens.length) {
+      resultsEl.innerHTML = '<p class="search-hint">Type to search ' + (index ? index.length : '') +
+        ' pages. Use ↑ ↓ to move and Enter to open.</p>';
+      currentResults = [];
+      selected = -1;
+      return;
+    }
+    if (!index) {
+      resultsEl.innerHTML = '<p class="search-hint">Loading index…</p>';
+      return;
+    }
+    var scored = index.map(function (page) {
+      return { page: page, score: score(page, tokens) };
+    }).filter(function (r) { return r.score > 0; });
+    scored.sort(function (a, b) { return b.score - a.score || a.page.title.localeCompare(b.page.title); });
+    currentResults = scored.slice(0, 18);
+    selected = currentResults.length ? 0 : -1;
+
+    if (!currentResults.length) {
+      resultsEl.innerHTML = '<p class="search-empty">No pages match <strong>' + escapeHtml(query) + '</strong>.</p>';
+      return;
+    }
+
+    resultsEl.innerHTML = currentResults.map(function (r, i) {
+      var p = r.page;
+      return '<a class="search-result' + (i === 0 ? ' is-selected' : '') + '" href="' + p.url + '">' +
+        '<span class="search-result-title">' + highlight(p.title, tokens) +
+        '<span class="search-result-section">' + escapeHtml(p.section || '') + '</span></span>' +
+        '<span class="search-result-text">' + highlight(snippet(p.description || p.text, tokens), tokens) + '</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  function moveSelection(delta) {
+    if (!currentResults.length) return;
+    selected = (selected + delta + currentResults.length) % currentResults.length;
+    Array.prototype.forEach.call(resultsEl.querySelectorAll('.search-result'), function (el, i) {
+      el.classList.toggle('is-selected', i === selected);
+      if (i === selected) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  function openSearch() {
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    renderResults('');
+    loadIndex().then(function () { renderResults(input.value); });
+    setTimeout(function () { input.focus(); }, 0);
+  }
+
+  function closeSearch() {
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  if (trigger) trigger.addEventListener('click', openSearch);
+  if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+  if (overlay) {
+    overlay.addEventListener('mousedown', function (e) {
+      if (e.target === overlay) closeSearch();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', function () {
+      loadIndex().then(function () { renderResults(input.value); });
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveSelection(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveSelection(-1); }
+      else if (e.key === 'Enter') {
+        var link = resultsEl.querySelector('.search-result.is-selected');
+        if (link) { e.preventDefault(); window.location.href = link.getAttribute('href'); }
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+    if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === '/' && !typing) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === 'Escape' && overlay && !overlay.hidden) {
+      closeSearch();
+    }
+  });
+
+  // --- External links get a quiet marker ----------------------------------
+  document.querySelectorAll('.prose a[target="_blank"]').forEach(function (a) {
+    a.setAttribute('rel', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calibrate the comic reader · Hyoukan Wiki</title>
+<meta name="description" content="A guided walkthrough for the WebGPU renderer — brightness, HDR, smart dark mode, LUT colour grading, e-ink and display-performance trade-offs.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e7490'/%3E%3Cpath d='M32 12l5 14h15l-12 9 4 15-12-9-12 9 4-15-12-9h15z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/hyoukan/assets/wiki.css">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('hyoukan-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  } catch (e) { document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="progress-bar" id="progress-bar" aria-hidden="true"></div>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="/hyoukan/">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><path d="M16 3l3.2 8.1L28 14l-8.8 2.9L16 25l-3.2-8.1L4 14l8.8-2.9z" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">Hyoukan</span><span class="brand-sub">Wiki</span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <button class="search-trigger" id="search-trigger" aria-label="Search the wiki">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <span class="search-label">Search</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+  <a class="icon-btn" href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener" aria-label="Hyoukan on GitHub">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5 4-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg>
+  </a>
+  <button class="icon-btn" id="theme-toggle" aria-label="Switch colour theme">
+    <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+  </button>
+</header>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Wiki navigation">
+      <div class="nav-section">
+  <p class="nav-heading">Overview</p>
+  <ul><li><a href="/hyoukan/">Home</a></li>
+<li><a href="/hyoukan/getting-started/">Getting started</a></li>
+<li><a href="/hyoukan/features/">Feature tour</a></li>
+<li><a href="/hyoukan/faq/">FAQ</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Tutorials</p>
+  <ul><li><a href="/hyoukan/tutorials/">All tutorials</a></li>
+<li><a href="/hyoukan/tutorials/translate-a-chapter/">Translate a chapter</a></li>
+<li><a href="/hyoukan/tutorials/translate-offline/">Translate fully offline</a></li>
+<li><a href="/hyoukan/tutorials/upscale-a-series/">Upscale a series</a></li>
+<li><a href="/hyoukan/tutorials/typeset-an-epub/">Typeset an EPUB</a></li>
+<li><a href="/hyoukan/tutorials/library-autopilot/">Library on autopilot</a></li>
+<li><a href="/hyoukan/tutorials/calibrate-the-reader/" aria-current="page">Calibrate the reader</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">User guide</p>
+  <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
+<li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
+<li><a href="/hyoukan/guide/books/">Reading books</a></li>
+<li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
+<li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
+<li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/translation/">AI translation</a></li>
+<li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
+<li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
+<li><a href="/hyoukan/guide/appearance/">Appearance &amp; identity</a></li>
+<li><a href="/hyoukan/guide/connections/">Connections</a></li>
+<li><a href="/hyoukan/guide/privacy/">Privacy &amp; security</a></li>
+<li><a href="/hyoukan/guide/troubleshooting/">Troubleshooting</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Development</p>
+  <ul><li><a href="/hyoukan/development/architecture/">Architecture</a></li>
+<li><a href="/hyoukan/development/reader/">Reader &amp; WebGPU</a></li>
+<li><a href="/hyoukan/development/books-engine/">Book engine</a></li>
+<li><a href="/hyoukan/development/data/">Data &amp; database</a></li>
+<li><a href="/hyoukan/development/extensions/">Extensions &amp; source API</a></li>
+<li><a href="/hyoukan/development/translation-upscaling/">Translation &amp; upscaling</a></li>
+<li><a href="/hyoukan/development/settings/">Settings framework</a></li>
+<li><a href="/hyoukan/development/build/">Build &amp; release</a></li>
+<li><a href="/hyoukan/development/testing/">Testing &amp; conventions</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Reference</p>
+  <ul><li><a href="/hyoukan/reference/settings/">Settings index</a></li>
+<li><a href="/hyoukan/reference/formats/">Files &amp; formats</a></li>
+<li><a href="/hyoukan/reference/glossary/">Glossary</a></li>
+<li><a href="/hyoukan/reference/versions/">Versions &amp; channels</a></li>
+<li><a href="/hyoukan/reference/history/">Project history</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Contributing</p>
+  <ul><li><a href="/hyoukan/contributing/">Contributing</a></li></ul>
+</div>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="version-pill">v1.25.3</span>
+      <span>Updated November 2026</span>
+    </div>
+  </aside>
+
+  <main class="main" id="content">
+    <div class="page">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/hyoukan/">Wiki</a><span aria-hidden="true">/</span><span>Tutorials</span><span aria-hidden="true">/</span><span aria-current="page">Calibrate the comic reader</span>
+</nav>
+      <article class="prose">
+        <h1>Calibrate the comic reader</h1><p class="page-lede">A guided walkthrough for the WebGPU renderer — brightness, HDR, smart dark mode, LUT colour grading, e-ink and display-performance trade-offs.</p>
+        <p>This tutorial tunes the image reader for one screen. It covers the WebGPU renderer&#39;s colour pipeline, not the library or source settings: how a page is toned, graded and sharpened before it reaches your eyes.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Time</strong></td>
+<td>15 minutes</td>
+</tr>
+<tr>
+<td><strong>Needs</strong></td>
+<td>A WebGPU-capable device for the full set; the legacy viewer still reads pages without it</td>
+</tr>
+<tr>
+<td><strong>Ends with</strong></td>
+<td>A reference page that looks right in daylight and at night, and a LUT you can turn down instead of removing</td>
+</tr>
+</tbody></table></div>
+<h2 id="what-youll-build"><a class="anchor" href="#what-youll-build" aria-label="Link to this section">#</a>What you&#39;ll build</h2>
+<p>The reader decodes pages into GPU textures, tiles them, and draws them through a render pipeline. On top of that pipeline sit brightness, contrast, HDR tone mapping, smart dark mode, LUT colour grading and two different sharpening paths. The goal is a stable setup you do not have to revisit for every series.</p>
+<h2 id="before-you-start"><a class="anchor" href="#before-you-start" aria-label="Link to this section">#</a>Before you start</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Where</th>
+<th>Expected</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>WebGPU is allowed</td>
+<td><strong>Settings → Advanced → Reader → Use high quality renderer (WebGPU)</strong></td>
+<td>On. It is the default on supported devices</td>
+</tr>
+<tr>
+<td>The reader uses it</td>
+<td>Open a chapter, then <strong>Settings → Reader → WebGPU</strong></td>
+<td>The WebGPU group is present and its settings take effect</td>
+</tr>
+<tr>
+<td>A test page</td>
+<td>Any colour page with both dark and light areas</td>
+<td>Use the same page for every comparison</td>
+</tr>
+<tr>
+<td>A second test page</td>
+<td>A night scene or a page with near-black art</td>
+<td>Reveals crushed shadows</td>
+</tr>
+</tbody></table></div>
+<h2 id="step-1-confirm-which-renderer-is-running"><a class="anchor" href="#step-1-confirm-which-renderer-is-running" aria-label="Link to this section">#</a>Step 1 — Confirm which renderer is running</h2>
+<p>The WebGPU viewer is not a skin over the old viewer; it is a separate render path. It declines in a fixed order:</p>
+<ol>
+<li><strong>Use high quality renderer</strong> is off.</li>
+<li>The build recorded <strong>two degraded sessions</strong> on this device.</li>
+<li>The renderer cannot initialise or lost its GPU device.</li>
+<li>Constructing the viewer threw.</li>
+</ol>
+<p>Every decline writes a line to the in-app log beginning <code>WebGPU viewer declined:</code> or <code>WebGPU viewer failed:</code>. If the reader looks like the old viewer, check <strong>Settings → Advanced → View logs</strong> for those lines before changing colour settings that are not being used.</p>
+<p>To clear the health latch, turn the WebGPU switch off and on again. A new app build clears it automatically; a single recovered device loss does not count as degraded.</p>
+<h2 id="step-2-start-from-a-neutral-picture"><a class="anchor" href="#step-2-start-from-a-neutral-picture" aria-label="Link to this section">#</a>Step 2 — Start from a neutral picture</h2>
+<p>Before grading, make the base display correct.</p>
+<ol>
+<li>Set <strong>Background colour</strong> (black, grey, white or automatic) to what you actually read against.</li>
+<li>Turn on <strong>Fullscreen</strong> if the system bars are distracting.</li>
+<li>Open the test page and adjust <strong>Brightness</strong> and then <strong>Contrast</strong>:<ul>
+<li>Brightness shifts the whole page up or down.</li>
+<li>Contrast stretches tones around mid-gray.</li>
+</ul>
+</li>
+</ol>
+<p>Both apply live with no re-decode, so compare on the same page rather than reopening the chapter.</p>
+<blockquote class="callout callout-tip"><p class="callout-title">Tip</p>
+<p>Set brightness before contrast. Raising contrast first makes the brightness control feel wrong, and you end up with a crushed page that needs a second correction.</p>
+</blockquote>
+<h2 id="step-3-tune-night-reading"><a class="anchor" href="#step-3-tune-night-reading" aria-label="Link to this section">#</a>Step 3 — Tune night reading</h2>
+<p>Under <strong>Settings → Reader → WebGPU</strong>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it does</th>
+<th>Starting point</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Dark mode filter</strong></td>
+<td>Smart-inverts pages: white becomes black, art stays readable</td>
+<td>On at night, off in daylight</td>
+</tr>
+<tr>
+<td><strong>True black (AMOLED)</strong></td>
+<td>Crushes near-blacks to pure black to save OLED power</td>
+<td>On for OLED, off for LCD</td>
+</tr>
+<tr>
+<td><strong>Gray tolerance</strong></td>
+<td>How much colour a pixel may carry and still count as grey</td>
+<td>Raise to catch tinted paper; lower to protect coloured art</td>
+</tr>
+<tr>
+<td><strong>Color dimming</strong></td>
+<td>How much kept colours are darkened</td>
+<td>Raise for night reading; lower if art looks muddy</td>
+</tr>
+</tbody></table></div>
+<p>The filter is not a simple inversion. Grey tolerance decides what counts as page paper, and colour dimming decides how much of the remaining colour survives. If a colour page turns into a negative, grey tolerance is too high; if white speech bubbles stay blinding, it is too low.</p>
+<h2 id="step-4-handle-hdr-pages"><a class="anchor" href="#step-4-handle-hdr-pages" aria-label="Link to this section">#</a>Step 4 — Handle HDR pages</h2>
+<p>The renderer displays PQ, HLG and UltraHDR content at full brightness and tone-maps the rest to SDR.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>HLG tone mapping</strong></td>
+<td>A hybrid log-gamma pass for HDR-ish pages; applies live</td>
+</tr>
+<tr>
+<td><strong>HLG exposure</strong></td>
+<td>An exposure shift in EV applied before the HLG curve</td>
+</tr>
+<tr>
+<td><strong>Brightness</strong> / <strong>Contrast</strong></td>
+<td>Global, and still applied after the HDR path</td>
+</tr>
+</tbody></table></div>
+<p>If an HDR page looks washed out, adjust HLG exposure before touching global contrast. If SDR pages look fine and only HDR pages look wrong, the HLG pass is the control that matters.</p>
+<h2 id="step-5-grade-with-a-lut"><a class="anchor" href="#step-5-grade-with-a-lut" aria-label="Link to this section">#</a>Step 5 — Grade with a LUT</h2>
+<p>A LUT is a colour table applied to the page. Presets are built in; custom files are supported.</p>
+<ol>
+<li>Set <strong>Color LUT preset</strong> to <strong>Grayscale</strong>, <strong>Sepia</strong>, <strong>Warm</strong>, <strong>Cool</strong> or <strong>Custom file</strong>.</li>
+<li>Adjust <strong>LUT intensity</strong>. Lower blends toward the original page; higher applies the table fully.</li>
+<li>For a custom look, set <strong>Custom LUT file</strong> to the full path of a <code>.cube</code> or madVR <code>.3dlut</code> file. It is parsed off the main thread.</li>
+</ol>
+<p>A light touch is usually right: <strong>Warm</strong> at moderate intensity takes the blue cast off a cheap panel; <strong>Grayscale</strong> is for focus, not for e-ink (use the e-ink preset for that).</p>
+<blockquote class="callout callout-note"><p class="callout-title">Note</p>
+<p>The LUT is display-side grading. It does not modify the stored page, the upscale cache or the translation output. <strong>Compare translation</strong> still shows the original page through the same display pipeline.</p>
+</blockquote>
+<h2 id="step-6-use-the-e-ink-preset-on-an-e-ink-panel"><a class="anchor" href="#step-6-use-the-e-ink-preset-on-an-e-ink-panel" aria-label="Link to this section">#</a>Step 6 — Use the e-ink preset on an e-ink panel</h2>
+<p>Turn on <strong>E-ink preset</strong>. It applies:</p>
+<ul>
+<li>grayscale pages;</li>
+<li>boosted contrast;</li>
+<li>calm transitions;</li>
+<li>tiled-refresh handling instead of tile ripples.</li>
+</ul>
+<p>On an e-ink device, also consider <strong>Flash on page change</strong> in the legacy reader settings for ghosting, and turn off ArtCNN and page transitions to reduce redraws.</p>
+<h2 id="step-7-choose-the-sharpening-path"><a class="anchor" href="#step-7-choose-the-sharpening-path" aria-label="Link to this section">#</a>Step 7 — Choose the sharpening path</h2>
+<p>There are two different sharpening features, and they are easy to confuse.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Where</th>
+<th>What it changes</th>
+<th>Persists?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>ArtCNN upscaling</strong></td>
+<td>Settings → Reader → WebGPU</td>
+<td>Sharpens zoomed tiles on the GPU</td>
+<td>No — display only</td>
+</tr>
+<tr>
+<td><strong>AI upscaling</strong></td>
+<td>Settings → AI Upscaler</td>
+<td>Runs a super-resolution model on the page bytes</td>
+<td>Yes — writes to the upscale cache</td>
+</tr>
+</tbody></table></div>
+<p>Use ArtCNN for on-screen zoom quality. Use AI upscaling when the source itself is low-resolution. Enabling both is valid, but the page pipeline runs first and ArtCNN sharpens the result.</p>
+<p><strong>Fast rendering</strong> skips the tile cache and draws pages directly. It is less sharp when zoomed and smoother on weak tablets. If page turns stutter, try Fast rendering before lowering image quality.</p>
+<h2 id="step-8-set-the-reading-buffer"><a class="anchor" href="#step-8-set-the-reading-buffer" aria-label="Link to this section">#</a>Step 8 — Set the reading buffer</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Pages preloaded ahead</strong></td>
+<td>Pages decoded before you turn to them</td>
+</tr>
+<tr>
+<td><strong>Pages preloaded behind</strong></td>
+<td>Pages kept ready when you turn back</td>
+</tr>
+<tr>
+<td><strong>Fast rendering</strong></td>
+<td>Skips the tile cache</td>
+</tr>
+</tbody></table></div>
+<p>The renderer sizes its cache to the device and to live memory pressure. A page larger than the pixel ceiling is downsampled to what the panel can actually show, with zoom headroom, rather than uploaded whole. That is why a very high-resolution page may not reveal more detail when zoomed: the limit is the panel, not the file.</p>
+<h2 id="check-it-worked"><a class="anchor" href="#check-it-worked" aria-label="Link to this section">#</a>Check it worked</h2>
+<ul>
+<li>The in-app log has no <code>WebGPU viewer declined:</code> or <code>WebGPU viewer failed:</code> line for the current session.</li>
+<li>Brightness and contrast changes apply without reopening the page.</li>
+<li>At night, page paper is dark and coloured art is still recognisable.</li>
+<li>An HDR page is not washed out, and an SDR page is not overly dim.</li>
+<li>The LUT changes the page at 100% and still blends at low intensity.</li>
+<li>Zoomed tiles look sharper with ArtCNN on, and the improvement disappears when it is off.</li>
+<li>Page turns are smooth with the chosen preload counts.</li>
+</ul>
+<h2 id="if-something-goes-wrong"><a class="anchor" href="#if-something-goes-wrong" aria-label="Link to this section">#</a>If something goes wrong</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>The reader looks like the old viewer</td>
+<td>WebGPU switch off, or the health latch is set</td>
+<td>Turn the switch off and on; check the log lines</td>
+</tr>
+<tr>
+<td>WebGPU still declines after that</td>
+<td>The device cannot initialise the renderer</td>
+<td>Update the app; the legacy viewer remains usable</td>
+</tr>
+<tr>
+<td>White pages stay bright at night</td>
+<td>Dark mode filter off, or grey tolerance too low</td>
+<td>Turn on the filter; raise tolerance</td>
+</tr>
+<tr>
+<td>Coloured art turns into a negative</td>
+<td>Grey tolerance too high</td>
+<td>Lower it until colour survives</td>
+</tr>
+<tr>
+<td>Art becomes muddy at night</td>
+<td>Colour dimming too high</td>
+<td>Lower it</td>
+</tr>
+<tr>
+<td>HDR pages look flat</td>
+<td>HLG tone mapping off, or exposure wrong</td>
+<td>Enable HLG and adjust exposure</td>
+</tr>
+<tr>
+<td>A custom LUT does nothing</td>
+<td>Wrong path, unsupported file, or intensity at zero</td>
+<td>Use a <code>.cube</code> or madVR <code>.3dlut</code> full path; raise intensity</td>
+</tr>
+<tr>
+<td>Zoomed pages are soft</td>
+<td>Fast rendering on, or ArtCNN off</td>
+<td>Turn Fast rendering off and ArtCNN on</td>
+</tr>
+<tr>
+<td>Page turns stutter</td>
+<td>Preload too high, ArtCNN on, weak GPU</td>
+<td>Lower preload, enable Fast rendering, disable ArtCNN</td>
+</tr>
+<tr>
+<td>E-ink screen ghosts</td>
+<td>Tiled refresh without the preset</td>
+<td>Enable the E-ink preset; add page-change flashes in the legacy settings</td>
+</tr>
+</tbody></table></div>
+<h2 id="where-to-go-next"><a class="anchor" href="#where-to-go-next" aria-label="Link to this section">#</a>Where to go next</h2>
+<ul>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a> — modes, gestures, WebGPU memory behaviour and the reader&#39;s other settings.</li>
+<li><a href="/hyoukan/guide/upscaling/">AI upscaling</a> — the page pipeline behind the sharper source bytes.</li>
+<li><a href="/hyoukan/guide/appearance/">Appearance &amp; identity</a> — themes, dynamic colour and the app&#39;s own palette.</li>
+</ul>
+
+      </article>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/tutorials/library-autopilot/"><span class="pager-dir">Previous</span><span class="pager-title">Library on autopilot</span></a><a class="pager-link pager-next" href="/hyoukan/guide/library/"><span class="pager-dir">Next</span><span class="pager-title">Library &amp; categories</span></a></nav>
+      <footer class="page-foot">
+        <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
+        <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/tutorials/calibrate-the-reader.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
+      </footer>
+    </div>
+  </main>
+
+  <aside class="toc" aria-label="On this page">
+    <p class="toc-heading">On this page</p>
+<ul class="toc-list"><li class="toc-l2"><a href="#what-youll-build">What you'll build</a></li>
+<li class="toc-l2"><a href="#before-you-start">Before you start</a></li>
+<li class="toc-l2"><a href="#step-1-confirm-which-renderer-is-running">Step 1 — Confirm which renderer is running</a></li>
+<li class="toc-l2"><a href="#step-2-start-from-a-neutral-picture">Step 2 — Start from a neutral picture</a></li>
+<li class="toc-l2"><a href="#step-3-tune-night-reading">Step 3 — Tune night reading</a></li>
+<li class="toc-l2"><a href="#step-4-handle-hdr-pages">Step 4 — Handle HDR pages</a></li>
+<li class="toc-l2"><a href="#step-5-grade-with-a-lut">Step 5 — Grade with a LUT</a></li>
+<li class="toc-l2"><a href="#step-6-use-the-e-ink-preset-on-an-e-ink-panel">Step 6 — Use the e-ink preset on an e-ink panel</a></li>
+<li class="toc-l2"><a href="#step-7-choose-the-sharpening-path">Step 7 — Choose the sharpening path</a></li>
+<li class="toc-l2"><a href="#step-8-set-the-reading-buffer">Step 8 — Set the reading buffer</a></li>
+<li class="toc-l2"><a href="#check-it-worked">Check it worked</a></li>
+<li class="toc-l2"><a href="#if-something-goes-wrong">If something goes wrong</a></li>
+<li class="toc-l2"><a href="#where-to-go-next">Where to go next</a></li></ul>
+  </aside>
+</div>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search the Hyoukan wiki" hidden>
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search-input" type="search" placeholder="Search the wiki…" autocomplete="off" spellcheck="false" aria-label="Search query">
+      <button class="icon-btn" id="search-close" aria-label="Close search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-results" id="search-results" aria-live="polite">
+      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.HYOUKAN_BASE = "/hyoukan";</script>
+<script>/* Hyoukan wiki — theme, navigation, search, TOC and reading progress. */
+(function () {
+  'use strict';
+
+  var BASE = window.HYOUKAN_BASE || '/hyoukan';
+  var root = document.documentElement;
+
+  // --- Theme ---------------------------------------------------------------
+  var themeBtn = document.getElementById('theme-toggle');
+  function setTheme(theme) {
+    root.dataset.theme = theme;
+    try { localStorage.setItem('hyoukan-theme', theme); } catch (e) {}
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+  setTheme(root.dataset.theme || 'light');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // --- Mobile sidebar ------------------------------------------------------
+  var menuBtn = document.getElementById('menu-btn');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('sidebar-backdrop');
+
+  function setMenu(open) {
+    if (!sidebar) return;
+    sidebar.classList.toggle('is-open', open);
+    if (backdrop) backdrop.hidden = !open;
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function () {
+      setMenu(!sidebar.classList.contains('is-open'));
+    });
+  }
+  if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
+  if (sidebar) {
+    sidebar.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setMenu(false);
+    });
+  }
+
+  // --- Reading progress ----------------------------------------------------
+  var progress = document.getElementById('progress-bar');
+  if (progress) {
+    var ticking = false;
+    function updateProgress() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+      progress.style.width = pct.toFixed(2) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+    updateProgress();
+  }
+
+  // --- TOC scroll spy ------------------------------------------------------
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-list a'));
+  var tocTargets = tocLinks
+    .map(function (link) {
+      var id = decodeURIComponent(link.getAttribute('href').slice(1));
+      var el = document.getElementById(id);
+      return el ? { link: link, el: el } : null;
+    })
+    .filter(Boolean);
+
+  if (tocTargets.length && 'IntersectionObserver' in window) {
+    var visible = new Map();
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) visible.set(entry.target.id, entry.boundingClientRect.top);
+        else visible.delete(entry.target.id);
+      });
+      var best = null;
+      tocTargets.forEach(function (t) {
+        if (visible.has(t.el.id)) {
+          var top = visible.get(t.el.id);
+          if (best === null || top < best.top) best = { top: top, link: t.link };
+        }
+      });
+      if (best) {
+        tocLinks.forEach(function (l) { l.classList.remove('is-active'); });
+        best.link.classList.add('is-active');
+      }
+    }, { rootMargin: '-88px 0px -65% 0px', threshold: [0, 1] });
+    tocTargets.forEach(function (t) { observer.observe(t.el); });
+  }
+
+  // --- Copy code buttons ---------------------------------------------------
+  document.querySelectorAll('.prose pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-code';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(area);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  // --- Search --------------------------------------------------------------
+  var overlay = document.getElementById('search-overlay');
+  var trigger = document.getElementById('search-trigger');
+  var closeBtn = document.getElementById('search-close');
+  var input = document.getElementById('search-input');
+  var resultsEl = document.getElementById('search-results');
+  var index = null;
+  var loading = null;
+  var selected = -1;
+  var currentResults = [];
+  var lastFocus = null;
+
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (loading) return loading;
+    loading = fetch(BASE + '/search-index.json', { cache: 'no-cache' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { index = data; return data; })
+      .catch(function () { index = []; return index; });
+    return loading;
+  }
+
+  function tokenize(q) {
+    return q.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function highlight(text, tokens) {
+    var safe = escapeHtml(text);
+    tokens.forEach(function (token) {
+      if (!token) return;
+      var re = new RegExp('(' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      safe = safe.replace(re, '<mark>$1</mark>');
+    });
+    return safe;
+  }
+
+  function snippet(text, tokens) {
+    if (!text) return '';
+    var lower = text.toLowerCase();
+    var at = -1;
+    for (var i = 0; i < tokens.length; i++) {
+      var p = lower.indexOf(tokens[i]);
+      if (p !== -1 && (at === -1 || p < at)) at = p;
+    }
+    if (at === -1) at = 0;
+    var start = Math.max(0, at - 70);
+    var end = Math.min(text.length, at + 190);
+    return (start > 0 ? '…' : '') + text.slice(start, end).trim() + (end < text.length ? '…' : '');
+  }
+
+  function score(page, tokens) {
+    var title = page.title.toLowerCase();
+    var headings = (page.headings || []).join(' ').toLowerCase();
+    var description = (page.description || '').toLowerCase();
+    var text = (page.text || '').toLowerCase();
+    var total = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      var s = 0;
+      if (title === t) s = 120;
+      else if (title.indexOf(t) === 0) s = 80;
+      else if (title.indexOf(t) !== -1) s = 55;
+      else if (headings.indexOf(t) !== -1) s = 24;
+      else if (description.indexOf(t) !== -1) s = 14;
+      else if (text.indexOf(t) !== -1) s = 6;
+      if (s === 0) return 0;
+
+      // Repeated mentions are a useful relevance hint once the token matches at all.
+      var count = 0;
+      var at = text.indexOf(t);
+      while (at !== -1 && count < 8) {
+        count++;
+        at = text.indexOf(t, at + t.length);
+      }
+      total += s + count;
+    }
+    return total;
+  }
+
+  function renderResults(query) {
+    var tokens = tokenize(query);
+    if (!tokens.length) {
+      resultsEl.innerHTML = '<p class="search-hint">Type to search ' + (index ? index.length : '') +
+        ' pages. Use ↑ ↓ to move and Enter to open.</p>';
+      currentResults = [];
+      selected = -1;
+      return;
+    }
+    if (!index) {
+      resultsEl.innerHTML = '<p class="search-hint">Loading index…</p>';
+      return;
+    }
+    var scored = index.map(function (page) {
+      return { page: page, score: score(page, tokens) };
+    }).filter(function (r) { return r.score > 0; });
+    scored.sort(function (a, b) { return b.score - a.score || a.page.title.localeCompare(b.page.title); });
+    currentResults = scored.slice(0, 18);
+    selected = currentResults.length ? 0 : -1;
+
+    if (!currentResults.length) {
+      resultsEl.innerHTML = '<p class="search-empty">No pages match <strong>' + escapeHtml(query) + '</strong>.</p>';
+      return;
+    }
+
+    resultsEl.innerHTML = currentResults.map(function (r, i) {
+      var p = r.page;
+      return '<a class="search-result' + (i === 0 ? ' is-selected' : '') + '" href="' + p.url + '">' +
+        '<span class="search-result-title">' + highlight(p.title, tokens) +
+        '<span class="search-result-section">' + escapeHtml(p.section || '') + '</span></span>' +
+        '<span class="search-result-text">' + highlight(snippet(p.description || p.text, tokens), tokens) + '</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  function moveSelection(delta) {
+    if (!currentResults.length) return;
+    selected = (selected + delta + currentResults.length) % currentResults.length;
+    Array.prototype.forEach.call(resultsEl.querySelectorAll('.search-result'), function (el, i) {
+      el.classList.toggle('is-selected', i === selected);
+      if (i === selected) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  function openSearch() {
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    renderResults('');
+    loadIndex().then(function () { renderResults(input.value); });
+    setTimeout(function () { input.focus(); }, 0);
+  }
+
+  function closeSearch() {
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  if (trigger) trigger.addEventListener('click', openSearch);
+  if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+  if (overlay) {
+    overlay.addEventListener('mousedown', function (e) {
+      if (e.target === overlay) closeSearch();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', function () {
+      loadIndex().then(function () { renderResults(input.value); });
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveSelection(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveSelection(-1); }
+      else if (e.key === 'Enter') {
+        var link = resultsEl.querySelector('.search-result.is-selected');
+        if (link) { e.preventDefault(); window.location.href = link.getAttribute('href'); }
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+    if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === '/' && !typing) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === 'Escape' && overlay && !overlay.hidden) {
+      closeSearch();
+    }
+  });
+
+  // --- External links get a quiet marker ----------------------------------
+  document.querySelectorAll('.prose a[target="_blank"]').forEach(function (a) {
+    a.setAttribute('rel', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>

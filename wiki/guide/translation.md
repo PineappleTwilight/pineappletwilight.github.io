@@ -5,6 +5,10 @@ description: The on-device and cloud pipeline that turns raw pages into readable
 
 Hyoukan's translation engine (internally **MTL**, "machine translation") is not a text overlay. It detects the text on a page, reads it, translates it, erases the original glyphs and typesets the translation back into the artwork. It can run entirely on the device or use a cloud model, and every stage is replaceable.
 
+> [!TIP]
+>
+> New to the feature? [Translate a chapter with AI](/hyoukan/tutorials/translate-a-chapter/) is the guided cloud setup; [Translate fully offline](/hyoukan/tutorials/translate-offline/) walks through local GGUF models and Gemini Nano.
+
 ## Requirements
 
 | Requirement | Detail |

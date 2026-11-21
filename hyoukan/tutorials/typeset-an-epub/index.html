@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Typeset an EPUB like a printed book · Hyoukan Wiki</title>
+<meta name="description" content="A guided walkthrough for font, spacing, justification, dark mode and custom CSS — turning an EPUB into a page that reads like print.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e7490'/%3E%3Cpath d='M32 12l5 14h15l-12 9 4 15-12-9-12 9 4-15-12-9h15z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/hyoukan/assets/wiki.css">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('hyoukan-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  } catch (e) { document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="progress-bar" id="progress-bar" aria-hidden="true"></div>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="/hyoukan/">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><path d="M16 3l3.2 8.1L28 14l-8.8 2.9L16 25l-3.2-8.1L4 14l8.8-2.9z" fill="currentColor"/></svg>
+    </span>
+    <span class="brand-name">Hyoukan</span><span class="brand-sub">Wiki</span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <button class="search-trigger" id="search-trigger" aria-label="Search the wiki">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <span class="search-label">Search</span>
+    <kbd>Ctrl K</kbd>
+  </button>
+  <a class="icon-btn" href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener" aria-label="Hyoukan on GitHub">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7 1 .7 2v3c0 .3.2.6.7.5 4-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg>
+  </a>
+  <button class="icon-btn" id="theme-toggle" aria-label="Switch colour theme">
+    <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg>
+  </button>
+</header>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Wiki navigation">
+      <div class="nav-section">
+  <p class="nav-heading">Overview</p>
+  <ul><li><a href="/hyoukan/">Home</a></li>
+<li><a href="/hyoukan/getting-started/">Getting started</a></li>
+<li><a href="/hyoukan/features/">Feature tour</a></li>
+<li><a href="/hyoukan/faq/">FAQ</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Tutorials</p>
+  <ul><li><a href="/hyoukan/tutorials/">All tutorials</a></li>
+<li><a href="/hyoukan/tutorials/translate-a-chapter/">Translate a chapter</a></li>
+<li><a href="/hyoukan/tutorials/translate-offline/">Translate fully offline</a></li>
+<li><a href="/hyoukan/tutorials/upscale-a-series/">Upscale a series</a></li>
+<li><a href="/hyoukan/tutorials/typeset-an-epub/" aria-current="page">Typeset an EPUB</a></li>
+<li><a href="/hyoukan/tutorials/library-autopilot/">Library on autopilot</a></li>
+<li><a href="/hyoukan/tutorials/calibrate-the-reader/">Calibrate the reader</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">User guide</p>
+  <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
+<li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
+<li><a href="/hyoukan/guide/books/">Reading books</a></li>
+<li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
+<li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
+<li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/translation/">AI translation</a></li>
+<li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
+<li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
+<li><a href="/hyoukan/guide/appearance/">Appearance &amp; identity</a></li>
+<li><a href="/hyoukan/guide/connections/">Connections</a></li>
+<li><a href="/hyoukan/guide/privacy/">Privacy &amp; security</a></li>
+<li><a href="/hyoukan/guide/troubleshooting/">Troubleshooting</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Development</p>
+  <ul><li><a href="/hyoukan/development/architecture/">Architecture</a></li>
+<li><a href="/hyoukan/development/reader/">Reader &amp; WebGPU</a></li>
+<li><a href="/hyoukan/development/books-engine/">Book engine</a></li>
+<li><a href="/hyoukan/development/data/">Data &amp; database</a></li>
+<li><a href="/hyoukan/development/extensions/">Extensions &amp; source API</a></li>
+<li><a href="/hyoukan/development/translation-upscaling/">Translation &amp; upscaling</a></li>
+<li><a href="/hyoukan/development/settings/">Settings framework</a></li>
+<li><a href="/hyoukan/development/build/">Build &amp; release</a></li>
+<li><a href="/hyoukan/development/testing/">Testing &amp; conventions</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Reference</p>
+  <ul><li><a href="/hyoukan/reference/settings/">Settings index</a></li>
+<li><a href="/hyoukan/reference/formats/">Files &amp; formats</a></li>
+<li><a href="/hyoukan/reference/glossary/">Glossary</a></li>
+<li><a href="/hyoukan/reference/versions/">Versions &amp; channels</a></li>
+<li><a href="/hyoukan/reference/history/">Project history</a></li></ul>
+</div>
+<div class="nav-section">
+  <p class="nav-heading">Contributing</p>
+  <ul><li><a href="/hyoukan/contributing/">Contributing</a></li></ul>
+</div>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="version-pill">v1.25.3</span>
+      <span>Updated November 2026</span>
+    </div>
+  </aside>
+
+  <main class="main" id="content">
+    <div class="page">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/hyoukan/">Wiki</a><span aria-hidden="true">/</span><span>Tutorials</span><span aria-hidden="true">/</span><span aria-current="page">Typeset an EPUB like a printed book</span>
+</nav>
+      <article class="prose">
+        <h1>Typeset an EPUB like a printed book</h1><p class="page-lede">A guided walkthrough for font, spacing, justification, dark mode and custom CSS — turning an EPUB into a page that reads like print.</p>
+        <p>This tutorial takes one EPUB from its publisher&#39;s defaults to a deliberate page: a font you chose, a measure that fits the screen, justified text with hyphenation, and colours that survive night reading.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Time</strong></td>
+<td>15 minutes</td>
+</tr>
+<tr>
+<td><strong>Needs</strong></td>
+<td>An EPUB, and optionally a <code>.ttf</code>, <code>.otf</code>, <code>.woff</code> or <code>.woff2</code> font you like</td>
+</tr>
+<tr>
+<td><strong>Ends with</strong></td>
+<td>A reusable reading appearance, with per-book overrides only where the book needs them</td>
+</tr>
+</tbody></table></div>
+<h2 id="what-youll-build"><a class="anchor" href="#what-youll-build" aria-label="Link to this section">#</a>What you&#39;ll build</h2>
+<p>The book reader is a WebView, not a text widget: the publisher&#39;s XHTML, CSS, fonts and illustrations survive. That is good by default and occasionally bad when a book hardcodes paper-sized margins or tiny type. The tutorial teaches both: a house style for most books, and the escape hatches for the ones that fight it.</p>
+<h2 id="before-you-start"><a class="anchor" href="#before-you-start" aria-label="Link to this section">#</a>Before you start</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Where</th>
+<th>Expected</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>The book is in the library</td>
+<td>Library</td>
+<td>Tapping it opens the <strong>book</strong> reader, not the comic viewer</td>
+</tr>
+<tr>
+<td>Reading appearance is reachable</td>
+<td><strong>Settings → Book reading → Reading appearance</strong></td>
+<td>The typography sheet opens; it is also in the reader&#39;s settings while a book is open</td>
+</tr>
+<tr>
+<td>Optional font is on the device</td>
+<td>Files app</td>
+<td>A <code>.ttf</code>, <code>.otf</code>, <code>.woff</code> or <code>.woff2</code> file; imports are validated and copied into private storage</td>
+</tr>
+</tbody></table></div>
+<h2 id="step-1-get-the-book-into-the-library"><a class="anchor" href="#step-1-get-the-book-into-the-library" aria-label="Link to this section">#</a>Step 1 — Get the book into the library</h2>
+<ol>
+<li>Open <strong>Settings → Book reading → Import books</strong>.</li>
+<li>Pick one or more EPUB files.</li>
+<li>Give the destination folder a name — this becomes the series name.</li>
+<li>Confirm.</li>
+</ol>
+<p>The books are copied into a new folder in the local source and appear as one series. For an existing folder of books, put it in the local source instead and refresh the source.</p>
+<p>A folder whose chapters are all EPUBs is detected as a <strong>book</strong>. A mixed folder stays a comic. If a title is detected wrongly, open the entry&#39;s menu and choose <strong>Render as book</strong> (or <strong>Render as comic</strong>); the choice survives library updates.</p>
+<h2 id="step-2-choose-how-the-book-moves"><a class="anchor" href="#step-2-choose-how-the-book-moves" aria-label="Link to this section">#</a>Step 2 — Choose how the book moves</h2>
+<p>Open the book, then open reading appearance from the reader&#39;s settings sheet (or from <strong>Settings → Book reading → Reading appearance</strong>).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Options</th>
+<th>Guidance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Reading mode</strong></td>
+<td><strong>Continuous scroll</strong>, <strong>Paged</strong>, <strong>Two pages</strong></td>
+<td>Continuous for web novels and long sessions; Paged for a paper feel; Two pages for a tablet in landscape</td>
+</tr>
+<tr>
+<td><strong>Page turn → Animation</strong></td>
+<td>None, Slide, Slide vertical, Fade, Curl</td>
+<td>None is the fastest and most readable; Curl is the most physical</td>
+</tr>
+<tr>
+<td><strong>Animation speed</strong></td>
+<td>Slider</td>
+<td>Slower suits Curl; faster suits Slide</td>
+</tr>
+</tbody></table></div>
+<p>Reading position is stored as a character offset plus the document URL, so changing mode, font size or orientation will not lose your place.</p>
+<h2 id="step-3-pick-the-typeface"><a class="anchor" href="#step-3-pick-the-typeface" aria-label="Link to this section">#</a>Step 3 — Pick the typeface</h2>
+<p>Under <strong>Font</strong>:</p>
+<ul>
+<li><strong>Built-in fonts</strong> are grouped into <strong>Serif</strong>, <strong>Sans-serif</strong>, <strong>Monospace</strong> and <strong>Handwriting</strong>.</li>
+<li><strong>Device fonts</strong> uses the system&#39;s generic families.</li>
+<li><strong>Add a font…</strong> imports your own file.</li>
+</ul>
+<p>For long-form prose, a serif at a moderate size is the conventional choice; sans-serif reads better on low-density screens and for short sessions. Import a font when you have a specific book face in mind — the import is validated before acceptance, and a family you delete falls back to the default.</p>
+<p>Then set:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Font size</strong></td>
+<td>The base type size</td>
+</tr>
+<tr>
+<td><strong>Font scale</strong></td>
+<td>A second multiplier for the whole page</td>
+</tr>
+<tr>
+<td><strong>Smooth text</strong></td>
+<td>Anti-aliasing. Off uses LCD subpixels: sharper on light backgrounds, with colour fringing on coloured text</td>
+</tr>
+</tbody></table></div>
+<blockquote class="callout callout-tip"><p class="callout-title">Tip</p>
+<p>Set <strong>Font size</strong> first and leave <strong>Font scale</strong> at its default. Using both to enlarge type makes the relationship between body text and headings harder to reason about.</p>
+</blockquote>
+<h2 id="step-4-set-the-measure-and-the-rhythm"><a class="anchor" href="#step-4-set-the-measure-and-the-rhythm" aria-label="Link to this section">#</a>Step 4 — Set the measure and the rhythm</h2>
+<p>These controls decide whether a page feels typeset or dumped.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Suggested direction</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Line spacing</strong></td>
+<td>Open it up until lines stop colliding; prose usually wants more than the publisher&#39;s default</td>
+</tr>
+<tr>
+<td><strong>Paragraph spacing</strong></td>
+<td>A small gap, or none if you prefer indented paragraphs</td>
+</tr>
+<tr>
+<td><strong>Paragraph indent</strong></td>
+<td>On for prose; the tri-state follows the publisher unless you override</td>
+</tr>
+<tr>
+<td><strong>Indent length</strong></td>
+<td>Match the gap to the type size; too large looks like a form</td>
+</tr>
+<tr>
+<td><strong>Margins</strong> (left, right, top, bottom)</td>
+<td>Increase the side margins to shorten the line length — the single biggest readability win on a phone</td>
+</tr>
+<tr>
+<td><strong>Justified alignment</strong></td>
+<td><strong>Follow book</strong>, justify or left-align. Justify only with hyphenation on</td>
+</tr>
+<tr>
+<td><strong>Hyphenation</strong></td>
+<td>On when justified; it removes the rivers of whitespace</td>
+</tr>
+<tr>
+<td><strong>Word spacing</strong> / <strong>Font spacing</strong></td>
+<td>Fine-tuning only; change after the measure is right</td>
+</tr>
+<tr>
+<td><strong>Bold text</strong> / <strong>Italic</strong></td>
+<td>Tri-state: follow the book, on, off</td>
+</tr>
+<tr>
+<td><strong>Vertical writing</strong></td>
+<td>Tri-state. A Japanese light novel stays vertical unless you override it</td>
+</tr>
+<tr>
+<td><strong>Text outline</strong></td>
+<td>A subtle outline for contrast on busy backgrounds</td>
+</tr>
+</tbody></table></div>
+<p>The tri-states matter: &quot;follow the book&quot; is not the same as &quot;off&quot;. A default of off would silently restyle a book that depends on its own CSS.</p>
+<h2 id="step-5-set-the-colours"><a class="anchor" href="#step-5-set-the-colours" aria-label="Link to this section">#</a>Step 5 — Set the colours</h2>
+<ol>
+<li>Set <strong>Background colour</strong> and <strong>Font colour</strong>. Picking a background derives a contrasting text colour automatically.</li>
+<li>Turn on <strong>Force dark</strong> for night reading.</li>
+</ol>
+<p>Force dark is a palette rewrite, not a filter: the canvas becomes your dark surface, text is derived from it, classed element backgrounds are neutralised, and illustrations keep their original colours. That is why it does not turn a colour plate into a negative.</p>
+<p>If text becomes invisible, the page and text colours are probably both dark. Reset one of them, or turn Force dark off and choose a light-on-dark pair manually.</p>
+<h2 id="step-6-override-a-stubborn-publisher"><a class="anchor" href="#step-6-override-a-stubborn-publisher" aria-label="Link to this section">#</a>Step 6 — Override a stubborn publisher</h2>
+<p>Some books hardcode pixel font sizes, fixed page widths or paper-tuned spacing. Two tools, in order of preference:</p>
+<ol>
+<li><strong>Ignore publisher styles</strong> — drops the book&#39;s stylesheets and keeps the reader&#39;s. Inline <code>style</code> attributes survive on purpose; the switch is about stylesheets, not rewriting the markup.</li>
+<li><strong>Custom CSS</strong> — injected as the document&#39;s last stylesheet, so normal cascade ties fall your way.</li>
+</ol>
+<p>For a book that resists both, add <code>!important</code> to the specific declarations.</p>
+<h3 id="a-small-custom-stylesheet"><a class="anchor" href="#a-small-custom-stylesheet" aria-label="Link to this section">#</a>A small custom stylesheet</h3>
+<p>Open <strong>Custom CSS → Inject custom CSS → Edit custom CSS</strong> and try:</p>
+<pre><code class="language-css">/* A quieter scene break than a full-width rule */
+hr {
+  border: 0;
+  margin: 1.8em 0;
+  text-align: center;
+}
+hr::after {
+  content: &quot;❦&quot;;
+  font-size: 1.1em;
+  letter-spacing: 0.3em;
+}
+
+/* Do not indent the first paragraph after a heading */
+h1 + p,
+h2 + p,
+h3 + p {
+  text-indent: 0 !important;
+}
+
+/* Keep very wide tables from forcing a horizontal scroll */
+table {
+  max-width: 100% !important;
+  font-size: 0.9em;
+}
+</code></pre>
+<p>CSS applies live. It can restyle, but it cannot remove content.</p>
+<p><strong>Custom JavaScript</strong> is a separate switch, off by default. An injected script runs with the reader&#39;s trust inside every downloaded book, so enable it only for code you wrote or reviewed. JavaScript changes apply on the next page turn, because re-running code on every keystroke would double-register listeners.</p>
+<h2 id="step-7-add-the-reading-aids"><a class="anchor" href="#step-7-add-the-reading-aids" aria-label="Link to this section">#</a>Step 7 — Add the reading aids</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Aid</th>
+<th>Where</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Highlights &amp; selection actions</strong></td>
+<td>Reading appearance</td>
+<td>Four pen colours, copy and dictionary look-up; highlights survive reflow</td>
+</tr>
+<tr>
+<td><strong>Footnote popups</strong></td>
+<td>Reading appearance</td>
+<td>Tapping a labelled note shows it beside the text, even from another file</td>
+</tr>
+<tr>
+<td><strong>Read aloud</strong></td>
+<td>Reading appearance</td>
+<td>System TTS in document order, chaining across the book and turning pages</td>
+</tr>
+<tr>
+<td><strong>Speech rate</strong></td>
+<td>Reading appearance</td>
+<td>Adjust TTS speed</td>
+</tr>
+<tr>
+<td><strong>Auto-scroll</strong></td>
+<td>Reading appearance</td>
+<td>Continuous drift at a chosen dp/s; timed page turns in paged mode</td>
+</tr>
+<tr>
+<td><strong>Status line → Show</strong></td>
+<td>Reading appearance</td>
+<td>Clock, chapter progress, chapter name and battery</td>
+</tr>
+<tr>
+<td><strong>Status line → Position / Text size / Colour</strong></td>
+<td>Reading appearance</td>
+<td>Top or bottom, sized and coloured to stay quiet</td>
+</tr>
+</tbody></table></div>
+<p>Auto-scroll pauses when you touch the screen and stops at the end of the book. The status line hides with the menus unless you ask it to stay.</p>
+<h2 id="check-it-worked"><a class="anchor" href="#check-it-worked" aria-label="Link to this section">#</a>Check it worked</h2>
+<ul>
+<li>The body text uses the font you chose, at a line length you set with the margins.</li>
+<li>Justified text has no large white rivers (hyphenation is doing its job).</li>
+<li>Reopening the book lands on the same paragraph, not the same page number.</li>
+<li>Force dark leaves illustrations in colour.</li>
+<li>A footnote opens in place instead of navigating away.</li>
+<li>Custom CSS appears without a restart.</li>
+</ul>
+<h2 id="if-something-goes-wrong"><a class="anchor" href="#if-something-goes-wrong" aria-label="Link to this section">#</a>If something goes wrong</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A book opens as a comic</td>
+<td>Entry type was overridden, or the folder is mixed</td>
+<td>Use <strong>Render as book</strong></td>
+</tr>
+<tr>
+<td>Styles or images are missing</td>
+<td>The book references resources outside the archive</td>
+<td>The inliner embeds local resources; truly external URLs are not copied</td>
+</tr>
+<tr>
+<td>Text is invisible on a dark theme</td>
+<td>Page and text colours are both dark</td>
+<td>Enable Force dark, or pick a contrasting pair</td>
+</tr>
+<tr>
+<td>The publisher&#39;s tiny type survives</td>
+<td>Its stylesheet hardcodes sizes</td>
+<td><strong>Ignore publisher styles</strong>, then set size again</td>
+</tr>
+<tr>
+<td>Custom CSS does nothing</td>
+<td>Inline styles or higher specificity win</td>
+<td>Target the element more precisely, or use <code>!important</code></td>
+</tr>
+<tr>
+<td>Pages do not turn in Paged mode</td>
+<td>The chapter is not a text book, or an old build</td>
+<td>Confirm the book is text and update the app</td>
+</tr>
+<tr>
+<td>A downloaded book says &quot;No pages found&quot;</td>
+<td>It is being treated as an image chapter</td>
+<td>Update; downloaded books need the downloaded-book loader</td>
+</tr>
+<tr>
+<td>Imported font is rejected</td>
+<td>Not a recognised font, unreadable, or too large</td>
+<td>Try a standard <code>.ttf</code> / <code>.otf</code>; check the error</td>
+</tr>
+</tbody></table></div>
+<h2 id="where-to-go-next"><a class="anchor" href="#where-to-go-next" aria-label="Link to this section">#</a>Where to go next</h2>
+<ul>
+<li><a href="/hyoukan/guide/books/">Reading books reference</a> — every typography control, positions and footnotes in full.</li>
+<li><a href="/hyoukan/reference/formats/">Files &amp; formats</a> — what the local source expects on disk.</li>
+<li><a href="/hyoukan/tutorials/calibrate-the-reader/">Calibrate the reader</a> — the same colour and display discipline for image pages.</li>
+</ul>
+
+      </article>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/tutorials/upscale-a-series/"><span class="pager-dir">Previous</span><span class="pager-title">Upscale a series</span></a><a class="pager-link pager-next" href="/hyoukan/tutorials/library-autopilot/"><span class="pager-dir">Next</span><span class="pager-title">Library on autopilot</span></a></nav>
+      <footer class="page-foot">
+        <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
+        <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/tutorials/typeset-an-epub.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
+      </footer>
+    </div>
+  </main>
+
+  <aside class="toc" aria-label="On this page">
+    <p class="toc-heading">On this page</p>
+<ul class="toc-list"><li class="toc-l2"><a href="#what-youll-build">What you'll build</a></li>
+<li class="toc-l2"><a href="#before-you-start">Before you start</a></li>
+<li class="toc-l2"><a href="#step-1-get-the-book-into-the-library">Step 1 — Get the book into the library</a></li>
+<li class="toc-l2"><a href="#step-2-choose-how-the-book-moves">Step 2 — Choose how the book moves</a></li>
+<li class="toc-l2"><a href="#step-3-pick-the-typeface">Step 3 — Pick the typeface</a></li>
+<li class="toc-l2"><a href="#step-4-set-the-measure-and-the-rhythm">Step 4 — Set the measure and the rhythm</a></li>
+<li class="toc-l2"><a href="#step-5-set-the-colours">Step 5 — Set the colours</a></li>
+<li class="toc-l2"><a href="#step-6-override-a-stubborn-publisher">Step 6 — Override a stubborn publisher</a></li>
+<li class="toc-l3"><a href="#a-small-custom-stylesheet">A small custom stylesheet</a></li>
+<li class="toc-l2"><a href="#step-7-add-the-reading-aids">Step 7 — Add the reading aids</a></li>
+<li class="toc-l2"><a href="#check-it-worked">Check it worked</a></li>
+<li class="toc-l2"><a href="#if-something-goes-wrong">If something goes wrong</a></li>
+<li class="toc-l2"><a href="#where-to-go-next">Where to go next</a></li></ul>
+  </aside>
+</div>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search the Hyoukan wiki" hidden>
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search-input" type="search" placeholder="Search the wiki…" autocomplete="off" spellcheck="false" aria-label="Search query">
+      <button class="icon-btn" id="search-close" aria-label="Close search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="search-results" id="search-results" aria-live="polite">
+      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.HYOUKAN_BASE = "/hyoukan";</script>
+<script>/* Hyoukan wiki — theme, navigation, search, TOC and reading progress. */
+(function () {
+  'use strict';
+
+  var BASE = window.HYOUKAN_BASE || '/hyoukan';
+  var root = document.documentElement;
+
+  // --- Theme ---------------------------------------------------------------
+  var themeBtn = document.getElementById('theme-toggle');
+  function setTheme(theme) {
+    root.dataset.theme = theme;
+    try { localStorage.setItem('hyoukan-theme', theme); } catch (e) {}
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+  }
+  setTheme(root.dataset.theme || 'light');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // --- Mobile sidebar ------------------------------------------------------
+  var menuBtn = document.getElementById('menu-btn');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('sidebar-backdrop');
+
+  function setMenu(open) {
+    if (!sidebar) return;
+    sidebar.classList.toggle('is-open', open);
+    if (backdrop) backdrop.hidden = !open;
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function () {
+      setMenu(!sidebar.classList.contains('is-open'));
+    });
+  }
+  if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
+  if (sidebar) {
+    sidebar.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setMenu(false);
+    });
+  }
+
+  // --- Reading progress ----------------------------------------------------
+  var progress = document.getElementById('progress-bar');
+  if (progress) {
+    var ticking = false;
+    function updateProgress() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+      progress.style.width = pct.toFixed(2) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateProgress);
+      }
+    }, { passive: true });
+    updateProgress();
+  }
+
+  // --- TOC scroll spy ------------------------------------------------------
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-list a'));
+  var tocTargets = tocLinks
+    .map(function (link) {
+      var id = decodeURIComponent(link.getAttribute('href').slice(1));
+      var el = document.getElementById(id);
+      return el ? { link: link, el: el } : null;
+    })
+    .filter(Boolean);
+
+  if (tocTargets.length && 'IntersectionObserver' in window) {
+    var visible = new Map();
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) visible.set(entry.target.id, entry.boundingClientRect.top);
+        else visible.delete(entry.target.id);
+      });
+      var best = null;
+      tocTargets.forEach(function (t) {
+        if (visible.has(t.el.id)) {
+          var top = visible.get(t.el.id);
+          if (best === null || top < best.top) best = { top: top, link: t.link };
+        }
+      });
+      if (best) {
+        tocLinks.forEach(function (l) { l.classList.remove('is-active'); });
+        best.link.classList.add('is-active');
+      }
+    }, { rootMargin: '-88px 0px -65% 0px', threshold: [0, 1] });
+    tocTargets.forEach(function (t) { observer.observe(t.el); });
+  }
+
+  // --- Copy code buttons ---------------------------------------------------
+  document.querySelectorAll('.prose pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-code';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.addEventListener('click', function () {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      var done = function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var area = document.createElement('textarea');
+        area.value = text;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(area);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  // --- Search --------------------------------------------------------------
+  var overlay = document.getElementById('search-overlay');
+  var trigger = document.getElementById('search-trigger');
+  var closeBtn = document.getElementById('search-close');
+  var input = document.getElementById('search-input');
+  var resultsEl = document.getElementById('search-results');
+  var index = null;
+  var loading = null;
+  var selected = -1;
+  var currentResults = [];
+  var lastFocus = null;
+
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (loading) return loading;
+    loading = fetch(BASE + '/search-index.json', { cache: 'no-cache' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { index = data; return data; })
+      .catch(function () { index = []; return index; });
+    return loading;
+  }
+
+  function tokenize(q) {
+    return q.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 0; });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function highlight(text, tokens) {
+    var safe = escapeHtml(text);
+    tokens.forEach(function (token) {
+      if (!token) return;
+      var re = new RegExp('(' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      safe = safe.replace(re, '<mark>$1</mark>');
+    });
+    return safe;
+  }
+
+  function snippet(text, tokens) {
+    if (!text) return '';
+    var lower = text.toLowerCase();
+    var at = -1;
+    for (var i = 0; i < tokens.length; i++) {
+      var p = lower.indexOf(tokens[i]);
+      if (p !== -1 && (at === -1 || p < at)) at = p;
+    }
+    if (at === -1) at = 0;
+    var start = Math.max(0, at - 70);
+    var end = Math.min(text.length, at + 190);
+    return (start > 0 ? '…' : '') + text.slice(start, end).trim() + (end < text.length ? '…' : '');
+  }
+
+  function score(page, tokens) {
+    var title = page.title.toLowerCase();
+    var headings = (page.headings || []).join(' ').toLowerCase();
+    var description = (page.description || '').toLowerCase();
+    var text = (page.text || '').toLowerCase();
+    var total = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      var s = 0;
+      if (title === t) s = 120;
+      else if (title.indexOf(t) === 0) s = 80;
+      else if (title.indexOf(t) !== -1) s = 55;
+      else if (headings.indexOf(t) !== -1) s = 24;
+      else if (description.indexOf(t) !== -1) s = 14;
+      else if (text.indexOf(t) !== -1) s = 6;
+      if (s === 0) return 0;
+
+      // Repeated mentions are a useful relevance hint once the token matches at all.
+      var count = 0;
+      var at = text.indexOf(t);
+      while (at !== -1 && count < 8) {
+        count++;
+        at = text.indexOf(t, at + t.length);
+      }
+      total += s + count;
+    }
+    return total;
+  }
+
+  function renderResults(query) {
+    var tokens = tokenize(query);
+    if (!tokens.length) {
+      resultsEl.innerHTML = '<p class="search-hint">Type to search ' + (index ? index.length : '') +
+        ' pages. Use ↑ ↓ to move and Enter to open.</p>';
+      currentResults = [];
+      selected = -1;
+      return;
+    }
+    if (!index) {
+      resultsEl.innerHTML = '<p class="search-hint">Loading index…</p>';
+      return;
+    }
+    var scored = index.map(function (page) {
+      return { page: page, score: score(page, tokens) };
+    }).filter(function (r) { return r.score > 0; });
+    scored.sort(function (a, b) { return b.score - a.score || a.page.title.localeCompare(b.page.title); });
+    currentResults = scored.slice(0, 18);
+    selected = currentResults.length ? 0 : -1;
+
+    if (!currentResults.length) {
+      resultsEl.innerHTML = '<p class="search-empty">No pages match <strong>' + escapeHtml(query) + '</strong>.</p>';
+      return;
+    }
+
+    resultsEl.innerHTML = currentResults.map(function (r, i) {
+      var p = r.page;
+      return '<a class="search-result' + (i === 0 ? ' is-selected' : '') + '" href="' + p.url + '">' +
+        '<span class="search-result-title">' + highlight(p.title, tokens) +
+        '<span class="search-result-section">' + escapeHtml(p.section || '') + '</span></span>' +
+        '<span class="search-result-text">' + highlight(snippet(p.description || p.text, tokens), tokens) + '</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  function moveSelection(delta) {
+    if (!currentResults.length) return;
+    selected = (selected + delta + currentResults.length) % currentResults.length;
+    Array.prototype.forEach.call(resultsEl.querySelectorAll('.search-result'), function (el, i) {
+      el.classList.toggle('is-selected', i === selected);
+      if (i === selected) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  function openSearch() {
+    if (!overlay) return;
+    lastFocus = document.activeElement;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    renderResults('');
+    loadIndex().then(function () { renderResults(input.value); });
+    setTimeout(function () { input.focus(); }, 0);
+  }
+
+  function closeSearch() {
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  if (trigger) trigger.addEventListener('click', openSearch);
+  if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+  if (overlay) {
+    overlay.addEventListener('mousedown', function (e) {
+      if (e.target === overlay) closeSearch();
+    });
+  }
+  if (input) {
+    input.addEventListener('input', function () {
+      loadIndex().then(function () { renderResults(input.value); });
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveSelection(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); moveSelection(-1); }
+      else if (e.key === 'Enter') {
+        var link = resultsEl.querySelector('.search-result.is-selected');
+        if (link) { e.preventDefault(); window.location.href = link.getAttribute('href'); }
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+    if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === '/' && !typing) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === 'Escape' && overlay && !overlay.hidden) {
+      closeSearch();
+    }
+  });
+
+  // --- External links get a quiet marker ----------------------------------
+  document.querySelectorAll('.prose a[target="_blank"]').forEach(function (a) {
+    a.setAttribute('rel', 'noopener');
+  });
+})();
+</script>
+</body>
+</html>

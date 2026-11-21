@@ -27,7 +27,7 @@ This page is the map. Each section links to the guide that covers the feature in
 | **In-chapter search** | Search the open book chapter as you type, with context snippets and jump-to-match. |
 | **Chapter completion sound** | Optional randomized 60/30/10 audio when a chapter finishes, with user sound packs. |
 
-→ [Reading comics](/hyoukan/guide/comics/)
+→ [Reading comics](/hyoukan/guide/comics/) · [Tutorial: calibrate the reader](/hyoukan/tutorials/calibrate-the-reader/)
 
 ## Reading books
 
@@ -55,7 +55,7 @@ This page is the map. Each section links to the guide that covers the feature in
 | **Cover page** | The declared cover is prepended as page zero when the spine does not already show it. |
 | **DRM detection** | DRM-locked books are reported instead of rendered as garbage; font obfuscation is ignored. |
 
-→ [Reading books](/hyoukan/guide/books/)
+→ [Reading books](/hyoukan/guide/books/) · [Tutorial: typeset an EPUB](/hyoukan/tutorials/typeset-an-epub/)
 
 ## Library and organisation
 
@@ -80,7 +80,7 @@ This page is the map. Each section links to the guide that covers the feature in
 | **Local source** | Folder-per-series reading of images, archives and EPUBs, with hidden-folder support. |
 | **Comics and books together** | One library holds both; the entry type is detected from the content, not the file extension alone. |
 
-→ [Library & categories](/hyoukan/guide/library/)
+→ [Library & categories](/hyoukan/guide/library/) · [Tutorial: library on autopilot](/hyoukan/tutorials/library-autopilot/)
 
 ## Sources and extensions
 
@@ -161,7 +161,7 @@ Also: automatic progress updates on read, per-tracker score and status, reading 
 | **Sessions** | Pause, resume, retry or stop active translation sessions per chapter. |
 | **Grammar fixer** | An optional English grammar and vocabulary pass. |
 
-→ [AI translation](/hyoukan/guide/translation/)
+→ [AI translation](/hyoukan/guide/translation/) · [Tutorial: translate a chapter](/hyoukan/tutorials/translate-a-chapter/) · [Tutorial: translate offline](/hyoukan/tutorials/translate-offline/)
 
 ## AI upscaling
 
@@ -177,7 +177,7 @@ Also: automatic progress updates on read, per-tracker score and status, reading 
 | **WebGPU ArtCNN** | An on-GPU tile refinement path that is display quality only, not a page pipeline. |
 | **Live status** | Served, cache-hit, fallback, failure, average inference time and per-backend readiness. |
 
-→ [AI upscaling](/hyoukan/guide/upscaling/)
+→ [AI upscaling](/hyoukan/guide/upscaling/) · [Tutorial: upscale a series](/hyoukan/tutorials/upscale-a-series/)
 
 ## Backup, sync and continuity
 

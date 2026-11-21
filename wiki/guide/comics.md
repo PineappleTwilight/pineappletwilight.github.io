@@ -152,6 +152,8 @@ The chapter list is the entry's table of contents. From it you can:
 - The upscaler's per-entry toggle is on the entry's details page. The reader asks the upscaler for display bytes before decoding; the cache is shared across sessions.
 - WebGPU's **ArtCNN** is separate from the upscaler's page pipeline. It sharpens tiles on screen and never changes the stored page.
 
+For a display-tuning walkthrough, see [Calibrate the comic reader](/hyoukan/tutorials/calibrate-the-reader/).
+
 ## Progress and incognito
 
 Reading progress is written per chapter and per entry. Incognito mode (**More → Incognito**) stops history and progress writes entirely; the position is kept only for the current session in memory. It is a reading mode, not an access control.

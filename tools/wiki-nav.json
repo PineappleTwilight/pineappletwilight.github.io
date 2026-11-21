@@ -11,6 +11,19 @@
       ]
     },
     {
+      "id": "tutorials",
+      "title": "Tutorials",
+      "items": [
+        { "file": "tutorials/index", "title": "All tutorials" },
+        { "file": "tutorials/translate-a-chapter", "title": "Translate a chapter" },
+        { "file": "tutorials/translate-offline", "title": "Translate fully offline" },
+        { "file": "tutorials/upscale-a-series", "title": "Upscale a series" },
+        { "file": "tutorials/typeset-an-epub", "title": "Typeset an EPUB" },
+        { "file": "tutorials/library-autopilot", "title": "Library on autopilot" },
+        { "file": "tutorials/calibrate-the-reader", "title": "Calibrate the reader" }
+      ]
+    },
+    {
       "id": "guide",
       "title": "User guide",
       "items": [
