@@ -110,8 +110,9 @@ Hyoukan requests permissions only for features you use:
 - **Boot completed / wake lock / foreground service** — reliable background updates and downloads.
 - **Battery optimization exemption** — optional, for reliable background work.
 - **Biometric / device credential** — app lock, provided by the platform.
+- **Camera** — only for the QR scanner beside the SyncYomi API-key field. The permission is declared by the bundled ZXing barcode library, and Android asks for it the first time you open the scanner; the rest of the app never opens the camera. It is optional hardware, so the app still installs on devices without a camera.
 
-It does not request contacts, location, microphone or camera access.
+It does not request contacts, location or microphone access.
 
 ## Backups and sync are sensitive
 

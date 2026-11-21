@@ -291,8 +291,9 @@
 <li><strong>Boot completed / wake lock / foreground service</strong> — reliable background updates and downloads.</li>
 <li><strong>Battery optimization exemption</strong> — optional, for reliable background work.</li>
 <li><strong>Biometric / device credential</strong> — app lock, provided by the platform.</li>
+<li><strong>Camera</strong> — only for the QR scanner beside the SyncYomi API-key field. The permission is declared by the bundled ZXing barcode library, and Android asks for it the first time you open the scanner; the rest of the app never opens the camera. It is optional hardware, so the app still installs on devices without a camera.</li>
 </ul>
-<p>It does not request contacts, location, microphone or camera access.</p>
+<p>It does not request contacts, location or microphone access.</p>
 <h2 id="backups-and-sync-are-sensitive"><a class="anchor" href="#backups-and-sync-are-sensitive" aria-label="Link to this section">#</a>Backups and sync are sensitive</h2>
 <p>A <code>.tachibk</code> backup with <strong>Source settings</strong> or <strong>Private settings</strong> contains logins and cookies. Sync payloads can contain the same. Treat both as credentials:</p>
 <ul>
