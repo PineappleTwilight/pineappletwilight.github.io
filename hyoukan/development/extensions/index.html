@@ -71,11 +71,13 @@
   <p class="nav-heading">User guide</p>
   <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
 <li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/novel-plugins/">Novel plugins</a></li>
 <li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
 <li><a href="/hyoukan/guide/books/">Reading books</a></li>
 <li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
 <li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
 <li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/library-imports/">Library imports</a></li>
 <li><a href="/hyoukan/guide/translation/">AI translation</a></li>
 <li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
 <li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
@@ -397,6 +399,8 @@
 <li>optional <code>cover.jpg</code>, <code>details.json</code> and <code>ComicInfo.xml</code>.</li>
 </ul>
 <p>See <a href="/hyoukan/reference/formats/#local-source">Files &amp; formats</a> for the folder layout.</p>
+<h2 id="novel-plugins-quickjs"><a class="anchor" href="#novel-plugins-quickjs" aria-label="Link to this section">#</a>Novel plugins (QuickJS)</h2>
+<p>Novel plugins do not use the APK ABI. A plugin is one <code>.js</code> file, validated from a header without executing it, stored in <code>files/novel_plugins/&lt;id&gt;.js</code> and run in a <strong>fresh QuickJS context per call</strong>. The only injected object exposes <code>fetch</code>, <code>postJson</code>, <code>postForm</code>, <code>log</code> and <code>now</code>; there is no filesystem, classloader, <code>require</code>, DOM or direct network. Calls are synchronous; scripts are capped at 2 MiB, responses at 8 MiB and URLs at 8,192 characters. Source ids derive stably from <code>@id</code>, so reimporting keeps library rows. Plugins are not LNReader-compatible. See <a href="/hyoukan/guide/novel-plugins/">Novel plugins</a> and <code>docs/novel-plugins.md</code> in the app repository.</p>
 <h2 id="testing-an-extension"><a class="anchor" href="#testing-an-extension" aria-label="Link to this section">#</a>Testing an extension</h2>
 <ol>
 <li>Build the APK with the same <code>applicationId</code> and signing key you will publish.</li>
@@ -451,6 +455,7 @@
 <li class="toc-l2"><a href="#repository-index">Repository index</a></li>
 <li class="toc-l2"><a href="#delegated-sources">Delegated sources</a></li>
 <li class="toc-l2"><a href="#the-local-source">The local source</a></li>
+<li class="toc-l2"><a href="#novel-plugins-quickjs">Novel plugins (QuickJS)</a></li>
 <li class="toc-l2"><a href="#testing-an-extension">Testing an extension</a></li>
 <li class="toc-l2"><a href="#publishing-checklist">Publishing checklist</a></li>
 <li class="toc-l2"><a href="#compatibility-policy">Compatibility policy</a></li></ul>
@@ -467,7 +472,7 @@
       </button>
     </div>
     <div class="search-results" id="search-results" aria-live="polite">
-      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+      <p class="search-hint">Type to search 42 pages. Use ↑ ↓ to move and Enter to open.</p>
     </div>
   </div>
 </div>

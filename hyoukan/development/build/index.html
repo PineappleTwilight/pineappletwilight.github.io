@@ -71,11 +71,13 @@
   <p class="nav-heading">User guide</p>
   <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
 <li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/novel-plugins/">Novel plugins</a></li>
 <li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
 <li><a href="/hyoukan/guide/books/">Reading books</a></li>
 <li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
 <li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
 <li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/library-imports/">Library imports</a></li>
 <li><a href="/hyoukan/guide/translation/">AI translation</a></li>
 <li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
 <li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
@@ -194,7 +196,7 @@
 <td>Benchmark build</td>
 </tr>
 </tbody></table></div>
-<p><code>preview</code> and <code>benchmark</code> use the <strong>debug signing key</strong>; <code>release</code> is unsigned until CI signs it with <code>r0adkll/sign-android-release</code>. There is no <code>signingConfigs</code> block in <code>app/build.gradle.kts</code>.</p>
+<p><code>preview</code> and <code>benchmark</code> use the <strong>debug signing key</strong>; <code>release</code> is unsigned at build time. CI signs APKs with the repo-local <code>.github/actions/sign-apk</code> action — zipalign-check, a time-bounded <code>apksigner sign</code> with one retry, and <code>apksigner verify</code> — which replaced <code>r0adkll/sign-android-release</code>. There is no <code>signingConfigs</code> block in <code>app/build.gradle.kts</code>.</p>
 <h3 id="flavours"><a class="anchor" href="#flavours" aria-label="Link to this section">#</a>Flavours</h3>
 <div class="table-wrap"><table>
 <thead>
@@ -277,6 +279,14 @@
 ./gradlew :data:generateSqlDelightInterface  # after .sq/.sqm changes
 </code></pre>
 <p>On a cloud VM, export <code>ANDROID_HOME</code> and <code>JAVA_HOME</code> first. First builds download around 1 GB of dependencies.</p>
+<h3 id="the-bugsanitizer-wrapper"><a class="anchor" href="#the-bugsanitizer-wrapper" aria-label="Link to this section">#</a>The bugsanitizer wrapper</h3>
+<p>For the full local sweep, use <code>scripts/bugsanitizer/run.sh</code> rather than calling Gradle directly. It is a console wrapper around <code>./gradlew</code> — <strong>not a Gradle task</strong> — and its default pass runs <code>spotlessApply spotlessCheck compileDebugUnitTestKotlin app:assembleDebug</code> with progress, hang and OOM watchdogs and a full log.</p>
+<pre><code class="language-bash">scripts/bugsanitizer/run.sh                    # default sweep
+scripts/bugsanitizer/run.sh --agent            # timestamped trace of every step
+scripts/bugsanitizer/run.sh --stall 15 --timeout 60
+scripts/bugsanitizer/selftest.sh               # test the wrapper itself
+</code></pre>
+<p>The script&#39;s own flags (<code>--agent</code>, <code>--quiet</code>, <code>--verbose</code>, <code>--stall &lt;min&gt;</code> with a 10-minute default, <code>--timeout &lt;min&gt;</code> off by default, <code>--fresh</code>, <code>--stop</code>) are consumed by the wrapper, not forwarded to Gradle. Output goes to <code>errors.log</code>, <code>bugsanitizer/full.txt</code>, <code>last-run.txt</code> and <code>agent-trace.log</code>; exit <code>124</code> means the watchdog killed a hung run. <code>scripts/kotlinc-check</code> remains the fast first pass for pure-policy files.</p>
 <h2 id="submodules"><a class="anchor" href="#submodules" aria-label="Link to this section">#</a>Submodules</h2>
 <p>Three external projects are git submodules:</p>
 <div class="table-wrap"><table>
@@ -326,8 +336,8 @@
 </thead>
 <tbody><tr>
 <td><code>build_push</code></td>
-<td>Push to <code>master</code></td>
-<td>Format check, both flavours, tests, sign, upload, publish beta, notify Discord</td>
+<td>Push to <code>master</code>, or manual dispatch</td>
+<td>Format check, both flavours, tests, sign, upload, publish beta, notify Discord; a manual run publishes only with the <code>publish-beta</code> input</td>
 </tr>
 <tr>
 <td><code>build_pull_request</code></td>
@@ -387,6 +397,7 @@
 </ol>
 <p>The beta repository is a <strong>separate repo</strong>: the default <code>GITHUB_TOKEN</code> cannot write there. It needs <code>BETA_RELEASE_TOKEN</code> (release write access) and <code>BETA_DISCORD_WEBHOOK</code> (a beta-channel webhook). Without the token, the job warns and skips so master stays green.</p>
 <p>Asset names retain the legacy <code>Houri-&lt;abi&gt;-r&lt;count&gt;.apk</code> shape; the updater matches on the <code>-&lt;abi&gt;-</code> segment.</p>
+<p>A manual dispatch of <code>build_push</code> on <code>master</code> can publish the same beta by ticking <strong>publish-beta</strong> (&quot;Publish this build as the next beta release (and ping beta testers)&quot;; off by default). Pushes always publish; manual runs do so only with the tick. An older ref cannot take over a newer beta tag, and a newer push cancels an in-flight manual publish. The release is marked non-prerelease because the updater reads <code>/releases/latest</code>, which never returns a prerelease.</p>
 <h2 id="release-notes"><a class="anchor" href="#release-notes" aria-label="Link to this section">#</a>Release notes</h2>
 <p><code>RELEASE_NOTES.md</code> is the curated, human-readable staging area for the next release. It is what <code>auto_release</code> renders into the GitHub release and the Discord announcement.</p>
 <h3 id="the-cycle"><a class="anchor" href="#the-cycle" aria-label="Link to this section">#</a>The cycle</h3>
@@ -440,6 +451,7 @@ python3 .github/scripts/release_notes.py --cut v1.23.0  # CI only
 <li class="toc-l3"><a href="#flavours">Flavours</a></li>
 <li class="toc-l2"><a href="#build-flags">Build flags</a></li>
 <li class="toc-l2"><a href="#commands">Commands</a></li>
+<li class="toc-l3"><a href="#the-bugsanitizer-wrapper">The bugsanitizer wrapper</a></li>
 <li class="toc-l2"><a href="#submodules">Submodules</a></li>
 <li class="toc-l3"><a href="#native-builds-on-windows">Native builds on Windows</a></li>
 <li class="toc-l2"><a href="#ci-workflows">CI workflows</a></li>
@@ -463,7 +475,7 @@ python3 .github/scripts/release_notes.py --cut v1.23.0  # CI only
       </button>
     </div>
     <div class="search-results" id="search-results" aria-live="polite">
-      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+      <p class="search-hint">Type to search 42 pages. Use ↑ ↓ to move and Enter to open.</p>
     </div>
   </div>
 </div>

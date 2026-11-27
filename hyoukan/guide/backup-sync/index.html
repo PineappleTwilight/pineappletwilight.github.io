@@ -71,11 +71,13 @@
   <p class="nav-heading">User guide</p>
   <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
 <li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/novel-plugins/">Novel plugins</a></li>
 <li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
 <li><a href="/hyoukan/guide/books/">Reading books</a></li>
 <li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
 <li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
 <li><a href="/hyoukan/guide/backup-sync/" aria-current="page">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/library-imports/">Library imports</a></li>
 <li><a href="/hyoukan/guide/translation/">AI translation</a></li>
 <li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
 <li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
@@ -123,6 +125,9 @@
       <article class="prose">
         <h1>Backup &amp; sync</h1><p class="page-lede">Portable .tachibk backups, automatic snapshots, SyncYomi, WebDAV and Google Drive.</p>
         <p>Hyoukan stores everything in one SQLite database. Keeping that database safe has two parts: <strong>backups</strong> (portable snapshots you own) and <strong>sync</strong> (keeping several devices aligned). They are not substitutes for each other.</p>
+<blockquote class="callout callout-note"><p class="callout-title">Note</p>
+<p>Importing another service&#39;s export is not a restore. <a href="/hyoukan/guide/library-imports/">Library imports</a> asks you to match each entry to a source; a <code>.tachibk</code> restore writes Hyoukan&#39;s own snapshot back.</p>
+</blockquote>
 <h2 id="backups"><a class="anchor" href="#backups" aria-label="Link to this section">#</a>Backups</h2>
 <p>A backup is a <code>.tachibk</code> file — a protobuf stream containing the library, chapters, categories, history, tracking and selected settings. It is not a copy of the database file, and it does not contain downloaded pages or extension APKs.</p>
 <h3 id="creating-one"><a class="anchor" href="#creating-one" aria-label="Link to this section">#</a>Creating one</h3>
@@ -220,6 +225,7 @@
 <p>How restore behaves:</p>
 <ul>
 <li>The file is <strong>streamed</strong>. Entries are decoded one at a time and restored in batches, so a large library does not need to fit in memory.</li>
+<li>A block that declares a length over <strong>64 MiB</strong> is refused, so a malformed file cannot demand gigabytes of memory.</li>
 <li>Entries are classified as new, existing or merged and walked twice; merged entries are written after the ordinary chunks.</li>
 <li>Each batch runs in one transaction, falling back to per-entry writes if the batch fails.</li>
 <li>Old Mihon-format backups are readable; entries without an update schedule have one computed from the backup&#39;s own chapter list.</li>
@@ -230,7 +236,7 @@
 <h3 id="integrity-and-recovery"><a class="anchor" href="#integrity-and-recovery" aria-label="Link to this section">#</a>Integrity and recovery</h3>
 <p>The app protects the database on its own:</p>
 <ul>
-<li>A <strong>startup quick check</strong> probes the database file before the connection pool opens.</li>
+<li>A <strong>startup quick check</strong> runs its integrity pragma on the app&#39;s own SQLDelight connection, so it reads the same WAL state the app is writing.</li>
 <li>A <strong>rolling local database backup</strong> is refreshed at most once a day; the three most recent are kept.</li>
 <li>If the quick check fails, the latest local backup is restored automatically.</li>
 <li>If no backup can be restored, the corrupt file is <strong>quarantined</strong> (renamed with a <code>.corrupt-&lt;timestamp&gt;</code> suffix) instead of crash-looping forever.</li>
@@ -329,7 +335,7 @@
 </ul>
 
       </article>
-      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/guide/tracking/"><span class="pager-dir">Previous</span><span class="pager-title">Tracking</span></a><a class="pager-link pager-next" href="/hyoukan/guide/translation/"><span class="pager-dir">Next</span><span class="pager-title">AI translation</span></a></nav>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/guide/tracking/"><span class="pager-dir">Previous</span><span class="pager-title">Tracking</span></a><a class="pager-link pager-next" href="/hyoukan/guide/library-imports/"><span class="pager-dir">Next</span><span class="pager-title">Library imports</span></a></nav>
       <footer class="page-foot">
         <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
         <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/guide/backup-sync.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
@@ -366,7 +372,7 @@
       </button>
     </div>
     <div class="search-results" id="search-results" aria-live="polite">
-      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+      <p class="search-hint">Type to search 42 pages. Use ↑ ↓ to move and Enter to open.</p>
     </div>
   </div>
 </div>

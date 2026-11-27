@@ -71,11 +71,13 @@
   <p class="nav-heading">User guide</p>
   <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
 <li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/novel-plugins/">Novel plugins</a></li>
 <li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
 <li><a href="/hyoukan/guide/books/">Reading books</a></li>
 <li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
 <li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
 <li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/library-imports/">Library imports</a></li>
 <li><a href="/hyoukan/guide/translation/">AI translation</a></li>
 <li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
 <li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
@@ -288,7 +290,7 @@ handler.await(inTransaction = true) {
 <li><strong>Coalesce updates</strong> — <code>SET col = coalesce(:param, col)</code> for partial DTOs.</li>
 <li><strong>UPSERT</strong> — <code>INSERT … ON CONFLICT DO UPDATE</code>.</li>
 <li><strong>Sync-aware versioning</strong> — triggers increment <code>version</code> only when <code>is_syncing = 0</code>.</li>
-<li><strong>Merged entries</strong> — views <code>UNION</code> the synthetic source id <code>6969</code>.</li>
+<li><strong>Merged entries</strong> — views <code>UNION</code> the synthetic source id <code>6969</code>. The library fetches the merged children of a whole page in <strong>one batched query</strong> for filtering, bulk download and bulk delete; one round trip per entry made large libraries of merged titles stall.</li>
 </ul>
 <h3 id="custom-metadata-cache"><a class="anchor" href="#custom-metadata-cache" aria-label="Link to this section">#</a>Custom metadata cache</h3>
 <p><code>CustomMangaRepositoryImpl</code> fronts <code>custom_manga_info</code> with a process-wide cache because <code>Manga</code> snapshots edits in a <code>@Transient</code> initializer. The cache exists to make an edited title/cover/description visible everywhere a snapshot is already held.</p>
@@ -351,6 +353,7 @@ handler.await(inTransaction = true) {
 <li><code>BackupDecoder.decodeMetadata</code> walks the entries by length to count them and hands back the stream.</li>
 <li><code>decodeEntries(uri, include)</code> yields one <code>BackupManga</code> at a time, skipping rejected entries by length.</li>
 <li><code>BackupReader</code> walks the protobuf by hand. The wire format is unchanged, so old and new backups are readable.</li>
+<li>An entry or metadata block whose declared length exceeds <strong>64 MiB</strong> is refused, so a malformed length field cannot demand gigabytes of memory.</li>
 <li><code>decode(uri)</code> is used only for the integrity check, which needs every entry&#39;s trackers; never call it on the restore path.</li>
 </ul>
 <p>Entries are classified as <strong>NEW / EXISTING / MERGED</strong> and the file is walked twice to realise the classification. Sorting would mean holding every entry in memory.</p>
@@ -367,14 +370,13 @@ handler.await(inTransaction = true) {
 <h3 id="custom-covers"><a class="anchor" href="#custom-covers" aria-label="Link to this section">#</a>Custom covers</h3>
 <p>A custom cover is a file in the cover cache, not a column. It is read separately at backup time and carried inside the entry&#39;s backup record. Sync keeps custom covers off by default so the bytes do not ride on every request.</p>
 <h2 id="database-maintenance"><a class="anchor" href="#database-maintenance" aria-label="Link to this section">#</a>Database maintenance</h2>
-<p><code>DatabaseMaintenanceManager</code> runs before the connection pool opens:</p>
+<p><code>DatabaseMaintenanceManager</code> runs its pragmas on the app&#39;s <strong>live SQLDelight <code>SqlDriver</code> connection</strong>, before the pool opens. Framework SQLite used to open the same file a second time; under WAL that connection could not share the live <code>-shm</code> file and failed with <code>SQLITE_IOERR_SHMOPEN</code>, which spammed logcat on every launch and could abort the pass. The driver already selects plaintext or SQLCipher internally, so there is no passphrase path and no <code>System.loadLibrary(&quot;sqlcipher&quot;)</code> call here.</p>
 <ol>
 <li><strong>Quick check</strong> (<code>PRAGMA quick_check(1)</code>).</li>
 <li>If OK — refresh the rolling local backup, at most once a day.</li>
 <li>If corrupt — restore the latest local backup.</li>
 <li>If that fails — quarantine the database as <code>tachiyomi.db.corrupt-&lt;timestamp&gt;</code> instead of crash-looping.</li>
 </ol>
-<p>It supports both plaintext and SQLCipher databases, loading the SQLCipher library only when a passphrase is supplied.</p>
 <h3 id="exporting-a-snapshot"><a class="anchor" href="#exporting-a-snapshot" aria-label="Link to this section">#</a>Exporting a snapshot</h3>
 <p><code>prepareSnapshot()</code> folds the WAL into the main file with <code>wal_checkpoint(TRUNCATE)</code>, falling back to <code>FULL</code> when a reader is blocking, and verifies the result. Copying only the main file while the WAL holds recent commits is how an exported database silently loses the newest chapters and categories.</p>
 <h2 id="sync-versioning"><a class="anchor" href="#sync-versioning" aria-label="Link to this section">#</a>Sync versioning</h2>
@@ -444,7 +446,7 @@ handler.await(inTransaction = true) {
       </button>
     </div>
     <div class="search-results" id="search-results" aria-live="polite">
-      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+      <p class="search-hint">Type to search 42 pages. Use ↑ ↓ to move and Enter to open.</p>
     </div>
   </div>
 </div>

@@ -25,6 +25,10 @@ The Updates and History tabs can be hidden from **Settings → Appearance → Na
 
 An entry is identified by its **source + URL**, so the same series from two sources is two entries until you merge them.
 
+### Importing another service's library
+
+**Settings → Data and storage → Library imports → Import a library export** turns a MangaBaka JSON export into library entries. Nothing is added automatically: each export entry is a shell that you match to a source one at a time, carrying over read progress, notes and tracking where applicable. Sessions survive a restart. See [Library imports](/hyoukan/guide/library-imports/) for the flow; this is not the same as restoring a [backup](/hyoukan/guide/backup-sync/).
+
 ## Finding things
 
 The library search field understands a small query language:
@@ -82,7 +86,7 @@ A category can pin a reading mode and orientation for everything on that shelf �
 
 ### Per-category update schedules
 
-Each category can set its own library-update interval, from daily to monthly. The shortest interval among the categories an entry belongs to wins. A category with no schedule follows the global one.
+Each category can set its own library-update interval, from daily to monthly. The shortest interval among the categories an entry belongs to wins. A category with no schedule follows the global one; a **subcategory** with no schedule of its own inherits its parent's interval, while one with a schedule keeps it. Deleting or moving a category falls back to the parent or global interval instead of silently stopping updates. Inheritance is on the current `master` build, not in stable 1.25.3.
 
 ## Smart categories
 
@@ -178,9 +182,11 @@ Hyoukan/local/
     Chapter 2.cbz
   A Novel/
     Book.epub
+    Story.fb2
+    Notes.txt
 ```
 
-A folder containing only EPUB files is treated as a **book** series; a mixed folder is treated as a comic. You can override the entry type per entry ("Render as book" / "Render as comic") and the choice survives library updates. See [Files & formats](/hyoukan/reference/formats/) for the metadata fields.
+A folder containing only book files (EPUB, FB2 or TXT) is treated as a **book** series; a mixed folder is treated as a comic. FB2/TXT support is on the current `master` build, not in stable 1.25.3. You can override the entry type per entry ("Render as book" / "Render as comic") and the choice survives library updates. See [Files & formats](/hyoukan/reference/formats/) for the metadata fields.
 
 ## What to do next
 
@@ -188,3 +194,4 @@ A folder containing only EPUB files is treated as a **book** series; a mixed fol
 - [Sources & extensions](/hyoukan/guide/sources/) — where the entries come from.
 - [Reading comics](/hyoukan/guide/comics/) and [Reading books](/hyoukan/guide/books/) — the two readers.
 - [Backup & sync](/hyoukan/guide/backup-sync/) — keep the library safe.
+- [Library imports](/hyoukan/guide/library-imports/) — bring in an export from another service.

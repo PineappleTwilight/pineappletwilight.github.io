@@ -15,8 +15,12 @@ Hyoukan treats text as a first-class reading format. An `.epub` is not rendered 
 |---|---|
 | **EPUB 2** | Local source, Komga, a text-source extension |
 | **EPUB 3** | Same; `nav.xhtml` contents are read as well as `toc.ncx` |
+| **FB2** | Local source; chapters, headings, emphasis and verse become reader typography |
+| **TXT** | Local source; split into page-sized sections at paragraph boundaries |
 | **Plain text web novels** | A source that returns `Kind.PLAIN` text pages |
 | **Downloaded EPUBs** | Stored with the chapter and opened from disk, no network needed |
+
+FB2 and TXT support is on the current `master` build, not in the stable 1.25.3 release. Nothing is uploaded when either format is read.
 
 A book's chapter list is one library chapter per file in the library, but inside the reader the book's own spine is the unit of navigation. A five-hundred-file novel opens immediately because only the current section is read; the rest are loaded as you approach them.
 
@@ -26,7 +30,7 @@ DRM-locked books are detected and refused with an explanation. Font obfuscation 
 
 ### Local files
 
-Put a folder of EPUBs in the local source directory, or use **Settings → Book reading → Import books** to copy one or more EPUBs into a new local-source folder. A folder whose chapters are all EPUBs is detected as a **book**; a mixed folder stays a comic. The detection reads the book's content, not just its extension — a title page and a copyright leaf look like prose to a shape test.
+Put a folder of books in the local source directory, or use **Settings → Book reading → Import books** to copy one or more `.epub`, `.fb2` or `.txt` files into a new local-source folder. A folder whose chapters are all books is detected as a **book**; a mixed folder stays a comic. EPUB detection reads the content, not just the extension — a title page and a copyright leaf look like prose to a shape test. FB2 sections and TXT paragraphs are converted locally; see [Files & formats](/hyoukan/reference/formats/#fb2-and-txt-conversion). The import button's description still says "EPUB" even though all three formats are accepted.
 
 You can override the type per entry with **Render as book** / **Render as comic**. The choice survives library updates and refreshes.
 
@@ -36,7 +40,7 @@ A Komga series that contains EPUBs is listed in full, and each EPUB opens in the
 
 ### Extensions
 
-Any extension implementing the `TextSource` interfaces gets the book reader automatically. See [Extensions & source API](/hyoukan/development/extensions/#text-sources).
+Any extension implementing the `TextSource` interfaces gets the book reader automatically. See [Extensions & source API](/hyoukan/development/extensions/#text-sources). A sandboxed `.js` [novel plugin](/hyoukan/guide/novel-plugins/) from **Settings → Advanced → Novel plugins** is a text source too.
 
 ## Reading modes
 

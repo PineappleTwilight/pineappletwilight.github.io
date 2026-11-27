@@ -71,11 +71,13 @@
   <p class="nav-heading">User guide</p>
   <ul><li><a href="/hyoukan/guide/library/" aria-current="page">Library &amp; categories</a></li>
 <li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/novel-plugins/">Novel plugins</a></li>
 <li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
 <li><a href="/hyoukan/guide/books/">Reading books</a></li>
 <li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
 <li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
 <li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/library-imports/">Library imports</a></li>
 <li><a href="/hyoukan/guide/translation/">AI translation</a></li>
 <li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
 <li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
@@ -160,6 +162,8 @@
 <li><strong>Remove</strong> from the entry&#39;s menu. Removing from the library does not delete downloaded chapters; clean those up under <strong>Data and storage → Downloaded and cached content</strong>.</li>
 </ul>
 <p>An entry is identified by its <strong>source + URL</strong>, so the same series from two sources is two entries until you merge them.</p>
+<h3 id="importing-another-services-library"><a class="anchor" href="#importing-another-services-library" aria-label="Link to this section">#</a>Importing another service&#39;s library</h3>
+<p><strong>Settings → Data and storage → Library imports → Import a library export</strong> turns a MangaBaka JSON export into library entries. Nothing is added automatically: each export entry is a shell that you match to a source one at a time, carrying over read progress, notes and tracking where applicable. Sessions survive a restart. See <a href="/hyoukan/guide/library-imports/">Library imports</a> for the flow; this is not the same as restoring a <a href="/hyoukan/guide/backup-sync/">backup</a>.</p>
 <h2 id="finding-things"><a class="anchor" href="#finding-things" aria-label="Link to this section">#</a>Finding things</h2>
 <p>The library search field understands a small query language:</p>
 <div class="table-wrap"><table>
@@ -244,7 +248,7 @@
 <h3 id="per-category-reader-settings"><a class="anchor" href="#per-category-reader-settings" aria-label="Link to this section">#</a>Per-category reader settings</h3>
 <p>A category can pin a reading mode and orientation for everything on that shelf — useful for a webtoon-only or manga-only collection. The resolution order is <strong>entry override → first matching category → global default</strong>.</p>
 <h3 id="per-category-update-schedules"><a class="anchor" href="#per-category-update-schedules" aria-label="Link to this section">#</a>Per-category update schedules</h3>
-<p>Each category can set its own library-update interval, from daily to monthly. The shortest interval among the categories an entry belongs to wins. A category with no schedule follows the global one.</p>
+<p>Each category can set its own library-update interval, from daily to monthly. The shortest interval among the categories an entry belongs to wins. A category with no schedule follows the global one; a <strong>subcategory</strong> with no schedule of its own inherits its parent&#39;s interval, while one with a schedule keeps it. Deleting or moving a category falls back to the parent or global interval instead of silently stopping updates. Inheritance is on the current <code>master</code> build, not in stable 1.25.3.</p>
 <h2 id="smart-categories"><a class="anchor" href="#smart-categories" aria-label="Link to this section">#</a>Smart categories</h2>
 <p>A smart category is bound to a tracker status. When an entry&#39;s status changes on a tracker — or when you finish the first chapter of something in <em>Wish to read</em> — it moves to the matching category automatically.</p>
 <ul>
@@ -356,14 +360,17 @@
     Chapter 2.cbz
   A Novel/
     Book.epub
+    Story.fb2
+    Notes.txt
 </code></pre>
-<p>A folder containing only EPUB files is treated as a <strong>book</strong> series; a mixed folder is treated as a comic. You can override the entry type per entry (&quot;Render as book&quot; / &quot;Render as comic&quot;) and the choice survives library updates. See <a href="/hyoukan/reference/formats/">Files &amp; formats</a> for the metadata fields.</p>
+<p>A folder containing only book files (EPUB, FB2 or TXT) is treated as a <strong>book</strong> series; a mixed folder is treated as a comic. FB2/TXT support is on the current <code>master</code> build, not in stable 1.25.3. You can override the entry type per entry (&quot;Render as book&quot; / &quot;Render as comic&quot;) and the choice survives library updates. See <a href="/hyoukan/reference/formats/">Files &amp; formats</a> for the metadata fields.</p>
 <h2 id="what-to-do-next"><a class="anchor" href="#what-to-do-next" aria-label="Link to this section">#</a>What to do next</h2>
 <ul>
 <li><a href="/hyoukan/tutorials/library-autopilot/">Put your library on autopilot</a> — scheduled updates, auto-download, cleanup and tracker sync.</li>
 <li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a> — where the entries come from.</li>
 <li><a href="/hyoukan/guide/comics/">Reading comics</a> and <a href="/hyoukan/guide/books/">Reading books</a> — the two readers.</li>
 <li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a> — keep the library safe.</li>
+<li><a href="/hyoukan/guide/library-imports/">Library imports</a> — bring in an export from another service.</li>
 </ul>
 
       </article>
@@ -379,6 +386,7 @@
     <p class="toc-heading">On this page</p>
 <ul class="toc-list"><li class="toc-l2"><a href="#the-five-tabs">The five tabs</a></li>
 <li class="toc-l2"><a href="#adding-and-removing-entries">Adding and removing entries</a></li>
+<li class="toc-l3"><a href="#importing-another-services-library">Importing another service's library</a></li>
 <li class="toc-l2"><a href="#finding-things">Finding things</a></li>
 <li class="toc-l2"><a href="#sorting-display-and-grouping">Sorting, display and grouping</a></li>
 <li class="toc-l2"><a href="#categories-and-subcategories">Categories and subcategories</a></li>
@@ -406,7 +414,7 @@
       </button>
     </div>
     <div class="search-results" id="search-results" aria-live="polite">
-      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+      <p class="search-hint">Type to search 42 pages. Use ↑ ↓ to move and Enter to open.</p>
     </div>
   </div>
 </div>

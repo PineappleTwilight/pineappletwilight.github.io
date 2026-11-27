@@ -71,11 +71,13 @@
   <p class="nav-heading">User guide</p>
   <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
 <li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/novel-plugins/">Novel plugins</a></li>
 <li><a href="/hyoukan/guide/comics/" aria-current="page">Reading comics</a></li>
 <li><a href="/hyoukan/guide/books/">Reading books</a></li>
 <li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
 <li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
 <li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/library-imports/">Library imports</a></li>
 <li><a href="/hyoukan/guide/translation/">AI translation</a></li>
 <li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
 <li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
@@ -195,15 +197,19 @@
 <ul>
 <li><strong>HDR pages</strong> — PQ, HLG and UltraHDR content at full brightness, with SDR tone-mapping for the rest.</li>
 <li><strong>Colour grading</strong> — brightness, contrast and HLG exposure; built-in LUT presets and custom <code>.cube</code> / madVR <code>.3dlut</code> files with adjustable intensity.</li>
+<li><strong>Sharpening</strong> — an unsharp mask for soft or downscaled scans, 0–200%, applied live without a re-decode. It is WebGPU-only and separate from ArtCNN or AI upscaling.</li>
+<li><strong>Filter presets</strong> — save brightness, contrast, sharpening, LUT and e-ink choices under a name, then reapply all of them in one tap.</li>
 <li><strong>Smart dark mode</strong> — darkens light pages on a dark reader theme without inverting illustrations.</li>
 <li><strong>E-ink preset</strong> — grayscale, contrast boost, calm transitions and full-page refreshes instead of tile ripples.</li>
 <li><strong>Dual-page spreads</strong> — two pages side by side, with deterministic height matching, inversion and a centre margin for foldables.</li>
 <li><strong>Page transitions</strong> — none, normal or fast; separate dual-page animations; a configurable transition animation.</li>
 <li><strong>ArtCNN</strong> — an on-GPU super-resolution pass for zoomed tiles. It is display quality only and uses more battery.</li>
 <li><strong>Fast rendering</strong> — skips the tile cache and draws pages directly: less sharp when zoomed, smoother on weak tablets.</li>
+<li><strong>WebGPU tile cache</strong> — <strong>Settings → Advanced → Reader → WebGPU tile cache</strong> is on by default; turn it off for a GPU that shows black or flickering pages. PowerVR devices always take the cache-free path.</li>
 <li><strong>Preload ahead/behind</strong> — separate counts, memory-gated.</li>
 <li><strong>Cutout handling</strong> — avoid or draw into the display cutout, with a separate choice for dual pages.</li>
 </ul>
+<p>The sharpening slider, filter presets, tile-cache switch and the −70% brightness floor are on the current <code>master</code> build, not in stable 1.25.3.</p>
 <h3 id="why-it-might-not-be-used"><a class="anchor" href="#why-it-might-not-be-used" aria-label="Link to this section">#</a>Why it might not be used</h3>
 <p><code>WebGpuProvider</code> declines, in order, when:</p>
 <ol>
@@ -347,7 +353,7 @@
 </ul>
 
       </article>
-      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/guide/sources/"><span class="pager-dir">Previous</span><span class="pager-title">Sources &amp; extensions</span></a><a class="pager-link pager-next" href="/hyoukan/guide/books/"><span class="pager-dir">Next</span><span class="pager-title">Reading books</span></a></nav>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/guide/novel-plugins/"><span class="pager-dir">Previous</span><span class="pager-title">Novel plugins</span></a><a class="pager-link pager-next" href="/hyoukan/guide/books/"><span class="pager-dir">Next</span><span class="pager-title">Reading books</span></a></nav>
       <footer class="page-foot">
         <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
         <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/guide/comics.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
@@ -386,7 +392,7 @@
       </button>
     </div>
     <div class="search-results" id="search-results" aria-live="polite">
-      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+      <p class="search-hint">Type to search 42 pages. Use ↑ ↓ to move and Enter to open.</p>
     </div>
   </div>
 </div>

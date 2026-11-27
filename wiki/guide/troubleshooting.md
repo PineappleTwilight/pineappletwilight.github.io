@@ -40,7 +40,7 @@ Changing the level can affect performance and requires a force restart. Return t
 - whether a decode stalled;
 - whether the GPU device was lost.
 
-A report with this attached is far more useful than "the reader is broken".
+A report with this attached is far more useful than "the reader is broken". Current builds count `frames=` from frames the renderer actually presented, not from the reader's pre-submit `drawn` flag; the summary also carries `tiles=`, `filter=` and a `page=` line with the first drawn page's size, scale and mip count, plus the adapter backend and renderer/Dawn log lines.
 
 ### Debug info
 
@@ -49,6 +49,20 @@ A report with this attached is far more useful than "the reader is broken".
 ### Worker info and backup schema
 
 The debug menu exposes scheduled workers and the backup schema. These are advanced tools; they are safe to inspect and copy, not to edit.
+
+### Source health diagnostics
+
+**Settings → Advanced → Source health diagnostics** shows which installed sources are answering. It is local-only: nothing is uploaded, and the screen reads connectivity only to decide whether a verdict is meaningful.
+
+| Status | Meaning |
+|---|---|
+| **Unknown** | No check has run, or the device is offline. Offline overrides every stored verdict and freezes the failure counts. |
+| **Healthy** | The last call succeeded; the failure streak was cleared. |
+| **Degraded** | The last call failed but the streak is under three — usually a transient timeout or HTTP error. |
+| **Blocked** | A Cloudflare challenge or a login is in the way. One such failure is enough. |
+| **Suspected dead** | Three DNS or 404 failures in a row. The site may have moved or closed. |
+
+Failures are counted only while the device is online; a success clears the streak but keeps the lifetime total. **Blocked** wins over a long DNS/404 streak because the most recent failure kind is checked first. **Refresh** reloads the screen and **Clear health records** forgets every recorded failure. **Export redacted report** shares a plain-text summary through Android's share sheet: source names, statuses, failure counts, failure kinds and a success timestamp, never library titles, URLs, accounts or reading history. An offline export downgrades every status to Unknown so stale "dead" verdicts are not replayed.
 
 ## App crashes
 
@@ -78,6 +92,9 @@ The debug menu exposes scheduled workers and the backup schema. These are advanc
 | "Cloudflare" or a timeout | Challenge not solved | Open the source in WebView; enable FlareSolverr; try again |
 | HTTP 403/429 | Site blocking or rate limiting | Slow down downloads, change the user agent, wait |
 | Source works in browser but not in app | User agent or cookie difference | Reset the user agent; clear cookies and log in again |
+| Source shows **Blocked** in health diagnostics | Cloudflare or a login challenge | Open the source in WebView and solve the challenge |
+| Source shows **Suspected dead** | Three DNS or 404 failures in a row | Check whether the site moved; clear health records once it recovers |
+| Every source shows **Unknown** | Device offline | Reconnect; failure counts are frozen while offline |
 | Komga cannot connect | Wrong URL, API key or DNS | Use the server's IP; the source intentionally uses system DNS |
 | EPUB from Komga says "No pages found" | Chapter treated as an image chapter | Update; downloaded books must use the downloaded-book loader |
 
@@ -98,9 +115,9 @@ This is a GPU/driver problem. Try:
 
 1. Update the app (the bundled Dawn runtime tracks upstream).
 2. Toggle the high-quality switch off and on.
-3. Try **Fast rendering**.
-4. Disable **ArtCNN**.
-5. If the device is PowerVR-based, a current build may have a texture-copy workaround.
+3. Try **Fast rendering**, or turn off **Settings → Advanced → Reader → WebGPU tile cache** (on by default). PowerVR devices take that cache-free path automatically.
+4. Disable **ArtCNN** and, on current `master` builds, **Sharpening**.
+5. Update: recent builds paint the page under the tiles every frame and require a real blit before the tile path can report "covered", so a wrong answer can no longer leave the screen blank.
 
 ### Pages are blurry or downsampled
 

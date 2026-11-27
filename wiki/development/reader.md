@@ -74,7 +74,7 @@ A page too tall for the decoder is cut into segments by `HttpPageLoader` and **r
 
 The app never decodes or draws. It hands the library an `ImagePage` per page; the library draws it. "The page is blank" is therefore a question about which `ImagePage` the shell holds. "Nothing renders at all" is almost always the device.
 
-The library is an `includeBuild`. Its `embed(libs.androidx.webgpu)` does **not** reach the app's runtime classpath, so `app/build.gradle.kts` pins the matching `androidx.webgpu` version itself. The two must stay equal; a drift ships an older Dawn than the library was compiled against.
+The library is an `includeBuild`, and `settings.gradle.kts` substitutes `ca.mpreg:webgpuviewer` with the in-repo fork at that coordinate — a published artifact can never be resolved instead. The app no longer pins `androidx.webgpu` itself: the library exposes the official `1.0.0-alpha06` from `google()` as an `api` dependency, exactly as Mihon does, so the classes and the native library always come from one build. A custom repository that re-published a mismatched native library caused "No implementation found ... createInstance" fallbacks; the renderer now loads the native runtime directly and retries that first call, and the app's R8 rules keep the JNI-bound classes.
 
 ## Threads
 
@@ -132,6 +132,14 @@ FETCH → LOAD → READ → VALIDATE → ENHANCE → METADATA → DECODE → PRE
 
 Each stage is entered through `enterPipelineStage`, which does exactly two things: records the trace stage and publishes the label onto the page placeholder under the percentage (`43%` over `Decoding`). The stage line is diagnostic plumbing with a reader-facing face; it adds no work and disappears when the placeholder is replaced.
 
+### Filter chain and saved looks
+
+The display chain runs brightness/contrast → sharpen → HLG → LUT → e-ink grayscale → dark mode. **Sharpening** (`webgpu_sharpen`, default `0`, range `0..200`, displayed as 0–200%) feeds the library's unsharp mask; `0` detaches the pass and a change re-registers it live without a re-decode.
+
+**Filter presets** are JSON records (`webgpu_filter_presets`, default empty; malformed values decode to empty) holding exactly six controls — brightness, contrast, sharpen, LUT preset, LUT intensity and the e-ink flag. Apply writes those six and nothing else: HLG, dark mode, compare translation and the performance HUD stay as they were. Names are trimmed and capped at 48 characters, and the dialog saves at most 20 presets; re-saving a name replaces that entry.
+
+`WebGpuConfig` clamps brightness to **−0.7** so the shader cannot drive every channel to black, and logs a warning at or below −0.5. The slider floor is −70%.
+
 ## The stuck-page ladder
 
 `startStuckPageSweep` is signal-driven, not a timer. It recognises three orphan shapes:
@@ -173,6 +181,8 @@ Loading has a deadline (`STUCK_LOAD_DEADLINE_MS`): a page stranded at `LoadPage`
 3. Rebuild the swapchain from the retained surface.
 4. The app's `deviceLostListener` calls `resetDecodedPagesAfterDeviceLoss()`: every decoded page is destroyed, tile grids clear, and the viewer re-anchors on the current page.
 
+A rebuilt device invalidates everything bound to the old one. `WebGpuViewer` carries a **device generation**: pages decoded before a rebuild are discarded instead of being submitted to the replacement device, and the pipeline caches, bind groups and font atlases are cleared as part of the rebuild. The device-lost check runs **before** `submitAndRelease`, and texture readback checks for loss before mapping, so a dead device is never submitted to or mapped. An uncaptured validation error counts as a failed frame (`errs=`), and the one-shot page-texture readback logs `tex=rgba=…`, which separates a black texture from a black composite.
+
 **Recovery is bounded:**
 
 - The app makes 3 attempts with linear backoff (250/500/750 ms).
@@ -180,6 +190,8 @@ Loading has a deadline (`STUCK_LOAD_DEADLINE_MS`): a page stranded at `LoadPage`
 - A recovery resets its dial only after the new device has stayed alive 15 seconds.
 - A failed recovery self-retries once per cooldown.
 - A recovery that loses its device at birth reports failure rather than returning true.
+
+A wedged display surface has its own ladder: rebuild the surface, restart the GPU stack with a fresh Dawn instance and device, switch the adapter to the OpenGLES backend, and only then give up for the session. The surface uses the driver-reported format, waits a frame before its first image request after a reconfiguration, and is closed in `WebGpuViewer.destroy()` before the activity dies so the next session cannot inherit it. A session that recovers names the step that saved it in the log.
 
 **Device upgrades itself to core.** If the adapter lists `core-features-and-limits`, the library requests it; Compatibility mode only added restrictions and produced silent black frames when a pipeline exceeded one of them. A driver that lists the feature but rejects the request retries compat-only.
 
@@ -203,7 +215,7 @@ A **strike** is a session verdict, not a sample at exit:
 - Turning the high-quality switch off and on clears them.
 - A session that lost the device once and recovered is not a strike; backgrounding does that on healthy phones.
 
-The verdict is computed from facts accumulated over the session (`anyPageDrawn()`), never from the page named at `destroy()` — closing on a chapter transition used to record a false strike.
+The verdict is computed from facts accumulated over the session, never from the page named at `destroy()` — closing on a chapter transition used to record a false strike. It reads the renderer's own presented-frame count (`frames=`), not the reader's `drawn` flag, which was set before a frame was submitted. A session that decoded pages for more than five seconds without either a presented frame or a page on screen is the black-screen shape and counts as degraded. The report also carries `tiles=`, `filter=` and a `page=` line with the first drawn page's size, scale, position, mip count and tile quality, plus the adapter backend (`gpu=`) and renderer/Dawn log lines from this process.
 
 ## Memory budget
 
@@ -239,6 +251,8 @@ cacheSize = 1 + preloadAhead + preloadBehind + (dualPage ? 3 : 1)
 - Drawn pages are immune; preload-window pages survive while anything outside exists.
 - A page superseded by a split measures `distance == null` and sorts farthest — exactly what the replacement is about to replace.
 - Tile-cache shedding on low memory records the pre-shrink value and restores it later; the old 0.8 ratchet was a permanent downgrade.
+- The advanced **WebGPU tile cache** switch is on by default. Turning it off uses the cache-free direct path that is forced on PowerVR Rogue, where the tile cache lost the Vulkan device under `VK_ERROR_OUT_OF_DEVICE_MEMORY`. Pages are still uploaded in tiles; the direct path builds the full mip chain and selects the level for the draw scale so screentones do not moiré, and transitions render their cache slots directly.
+- The page is now painted under the tiles on every frame, and a "covered" answer from the tile path requires an actual blit. The paged page pass carries no stencil attachment at all, so no driver's stencil handling can discard the page.
 
 ## Restore and progress
 

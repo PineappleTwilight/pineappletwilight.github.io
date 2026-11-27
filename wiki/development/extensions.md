@@ -224,6 +224,10 @@ The local source is an in-repo implementation of the same interfaces. It reads:
 
 See [Files & formats](/hyoukan/reference/formats/#local-source) for the folder layout.
 
+## Novel plugins (QuickJS)
+
+Novel plugins do not use the APK ABI. A plugin is one `.js` file, validated from a header without executing it, stored in `files/novel_plugins/<id>.js` and run in a **fresh QuickJS context per call**. The only injected object exposes `fetch`, `postJson`, `postForm`, `log` and `now`; there is no filesystem, classloader, `require`, DOM or direct network. Calls are synchronous; scripts are capped at 2 MiB, responses at 8 MiB and URLs at 8,192 characters. Source ids derive stably from `@id`, so reimporting keeps library rows. Plugins are not LNReader-compatible. See [Novel plugins](/hyoukan/guide/novel-plugins/) and `docs/novel-plugins.md` in the app repository.
+
 ## Testing an extension
 
 1. Build the APK with the same `applicationId` and signing key you will publish.

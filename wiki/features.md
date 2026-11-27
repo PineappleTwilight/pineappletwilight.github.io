@@ -22,6 +22,8 @@ This page is the map. Each section links to the guide that covers the feature in
 | **Preload control** | Separate pages-ahead and pages-behind counts, plus memory-gated prefetch. |
 | **Reader cache** | A configurable image cache, with aggressive whole-chapter loading as an option. |
 | **ArtCNN** | On-GPU super-resolution for zoomed tiles when the device supports it. |
+| **Unsharp sharpening** | A live 0–200% unsharp mask for soft or downscaled scans, WebGPU only (on `master`). |
+| **Filter presets** | Named looks covering brightness, contrast, sharpening, LUT and e-ink, reapplied in one tap (on `master`). |
 | **Cutout support** | Draw into the display cutout area, with per-viewer behaviour. |
 | **Chapter transitions** | Optional transition pages between chapters, with a "always show" override. |
 | **In-chapter search** | Search the open book chapter as you type, with context snippets and jump-to-match. |
@@ -34,6 +36,7 @@ This page is the map. Each section links to the guide that covers the feature in
 | Feature | What it does |
 |---|---|
 | **EPUB 2 and EPUB 3** | Parses `toc.ncx` and `nav.xhtml`, the OPF manifest/spine, `encryption.xml`, and both series conventions. |
+| **FB2 and TXT** | Local FB2 sections and TXT paragraphs become book pages, with find-in-book; conversion stays on the device (on `master`). |
 | **Publisher typography** | Drop caps, ruby, tables, vertical writing and the book's own stylesheets survive because the reader is a WebView, not a text widget. |
 | **Books in the library** | An `.epub` in a library folder is detected as a BOOK; art books can stay COMIC. Per-entry "Render as book / comic" survives updates. |
 | **Continuous reading** | Sections append ahead and prepend behind, so a book scrolls like the continuous manga viewer. |
@@ -77,7 +80,8 @@ This page is the map. Each section links to the guide that covers the feature in
 | **Feed** | A multi-source feed of latest entries and saved searches, with its own tab. |
 | **History** | Reading history with per-entry progress, timestamps and chapter counts. |
 | **Stats** | Library and reading statistics with configurable cover styling. |
-| **Local source** | Folder-per-series reading of images, archives and EPUBs, with hidden-folder support. |
+| **Local source** | Folder-per-series reading of images, archives and books (EPUB, FB2, TXT), with hidden-folder support. |
+| **Library imports** | Turn a MangaBaka export into resumable sessions, matching each entry to a source by hand (on `master`). |
 | **Comics and books together** | One library holds both; the entry type is detected from the content, not the file extension alone. |
 
 → [Library & categories](/hyoukan/guide/library/) · [Tutorial: library on autopilot](/hyoukan/tutorials/library-autopilot/)
@@ -99,6 +103,8 @@ This page is the map. Each section links to the guide that covers the feature in
 | **Data saver** | Per-source image compression, Bandwidth Hero or wsrv.nl proxying, JPEG/WebP conversion and black-and-white conversion. |
 | **Saved searches** | Save a source search and reopen it later, or put it in the feed. |
 | **Global search** | Search every enabled source from one query, with source-category filtering. |
+| **Novel plugins** | Sandboxed `.js` text sources installed from Advanced settings; no file, database or class access (on `master`). |
+| **Source health diagnostics** | Local five-state verdicts for sources, with a redacted, shareable report (on `master`). |
 
 → [Sources & extensions](/hyoukan/guide/sources/)
 
@@ -252,6 +258,7 @@ Also: automatic progress updates on read, per-tracker score and status, reading 
 - **View logs**, **Clear logs** and **Dump crash logs** under Advanced.
 - A crash screen showing the full stack trace and device info.
 - WebGPU session summaries in the log dump.
+- Source health diagnostics: five local verdicts and a redacted report you choose to share.
 - Extension failure reasons and repository attribution.
 - Worker inspection and backup-schema inspection in the debug menu.
 

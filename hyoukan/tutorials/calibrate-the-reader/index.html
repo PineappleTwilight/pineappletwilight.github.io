@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Calibrate the comic reader · Hyoukan Wiki</title>
-<meta name="description" content="A guided walkthrough for the WebGPU renderer — brightness, HDR, smart dark mode, LUT colour grading, e-ink and display-performance trade-offs.">
+<meta name="description" content="A guided walkthrough for the WebGPU renderer — brightness, sharpening, named filter presets, HDR, smart dark mode, LUT grading and display-performance trade-offs.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e7490'/%3E%3Cpath d='M32 12l5 14h15l-12 9 4 15-12-9-12 9 4-15-12-9h15z' fill='%23fff'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="/hyoukan/assets/wiki.css">
@@ -71,11 +71,13 @@
   <p class="nav-heading">User guide</p>
   <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
 <li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/novel-plugins/">Novel plugins</a></li>
 <li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
 <li><a href="/hyoukan/guide/books/">Reading books</a></li>
 <li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
 <li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
 <li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/library-imports/">Library imports</a></li>
 <li><a href="/hyoukan/guide/translation/">AI translation</a></li>
 <li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
 <li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
@@ -121,7 +123,7 @@
   <a href="/hyoukan/">Wiki</a><span aria-hidden="true">/</span><span>Tutorials</span><span aria-hidden="true">/</span><span aria-current="page">Calibrate the comic reader</span>
 </nav>
       <article class="prose">
-        <h1>Calibrate the comic reader</h1><p class="page-lede">A guided walkthrough for the WebGPU renderer — brightness, HDR, smart dark mode, LUT colour grading, e-ink and display-performance trade-offs.</p>
+        <h1>Calibrate the comic reader</h1><p class="page-lede">A guided walkthrough for the WebGPU renderer — brightness, sharpening, named filter presets, HDR, smart dark mode, LUT grading and display-performance trade-offs.</p>
         <p>This tutorial tunes the image reader for one screen. It covers the WebGPU renderer&#39;s colour pipeline, not the library or source settings: how a page is toned, graded and sharpened before it reaches your eyes.</p>
 <div class="table-wrap"><table>
 <thead>
@@ -144,7 +146,7 @@
 </tr>
 </tbody></table></div>
 <h2 id="what-youll-build"><a class="anchor" href="#what-youll-build" aria-label="Link to this section">#</a>What you&#39;ll build</h2>
-<p>The reader decodes pages into GPU textures, tiles them, and draws them through a render pipeline. On top of that pipeline sit brightness, contrast, HDR tone mapping, smart dark mode, LUT colour grading and two different sharpening paths. The goal is a stable setup you do not have to revisit for every series.</p>
+<p>The reader decodes pages into GPU textures, tiles them, and draws them through a render pipeline. On top of that pipeline sit brightness, contrast, sharpening, HDR tone mapping, smart dark mode and LUT colour grading, alongside two other ways to make pages sharper: ArtCNN tile refinement and the AI upscaler. The goal is a stable setup you do not have to revisit for every series.</p>
 <h2 id="before-you-start"><a class="anchor" href="#before-you-start" aria-label="Link to this section">#</a>Before you start</h2>
 <div class="table-wrap"><table>
 <thead>
@@ -196,7 +198,7 @@
 </ul>
 </li>
 </ol>
-<p>Both apply live with no re-decode, so compare on the same page rather than reopening the chapter.</p>
+<p>Both apply live with no re-decode, so compare on the same page rather than reopening the chapter. The WebGPU brightness slider bottoms out at <strong>−70%</strong>: lower values used to clamp every colour channel to black. A stored value at or below −50% writes a warning to the in-app log.</p>
 <blockquote class="callout callout-tip"><p class="callout-title">Tip</p>
 <p>Set brightness before contrast. Raising contrast first makes the brightness control feel wrong, and you end up with a crushed page that needs a second correction.</p>
 </blockquote>
@@ -287,6 +289,12 @@
 </tr>
 </thead>
 <tbody><tr>
+<td><strong>WebGPU sharpening</strong></td>
+<td>Settings → Reader → WebGPU</td>
+<td>Unsharp mask on soft or downscaled scans, 0–200%, live</td>
+<td>Yes — a preference, and captured in presets</td>
+</tr>
+<tr>
 <td><strong>ArtCNN upscaling</strong></td>
 <td>Settings → Reader → WebGPU</td>
 <td>Sharpens zoomed tiles on the GPU</td>
@@ -299,9 +307,14 @@
 <td>Yes — writes to the upscale cache</td>
 </tr>
 </tbody></table></div>
-<p>Use ArtCNN for on-screen zoom quality. Use AI upscaling when the source itself is low-resolution. Enabling both is valid, but the page pipeline runs first and ArtCNN sharpens the result.</p>
+<p>Use the unsharp mask for scans that are soft at their source resolution; start at 0% and raise it in small steps until halftones or lettering start to ring. Use ArtCNN for on-screen zoom quality and AI upscaling when the source itself is low-resolution. Enabling all three is valid: the page pipeline runs first, the unsharp mask sits between brightness/contrast and HDR in the display chain, and ArtCNN sharpens the result on screen. A value of 0 detaches the unsharp pass entirely.</p>
+<h2 id="step-8-save-a-filter-preset"><a class="anchor" href="#step-8-save-a-filter-preset" aria-label="Link to this section">#</a>Step 8 — Save a filter preset</h2>
+<p>Under <strong>Settings → Reader → WebGPU → Filter presets</strong>, tap <strong>Save current look</strong> and give it a name. Names are trimmed and capped at 48 characters, and up to 20 looks can be stored; saving under an existing name replaces that look. A preset captures exactly six controls — brightness, contrast, sharpening, LUT preset, LUT intensity and the e-ink flag. <strong>Apply</strong> rewrites those six in one tap; <strong>Delete</strong> removes the look. HLG, dark mode, compare translation and the performance HUD are not part of a preset, so set those separately.</p>
+<blockquote class="callout callout-note"><p class="callout-title">Note</p>
+<p>Sharpening, filter presets and the −70% brightness floor are on the current <code>master</code> build, not in the stable 1.25.3 release.</p>
+</blockquote>
 <p><strong>Fast rendering</strong> skips the tile cache and draws pages directly. It is less sharp when zoomed and smoother on weak tablets. If page turns stutter, try Fast rendering before lowering image quality.</p>
-<h2 id="step-8-set-the-reading-buffer"><a class="anchor" href="#step-8-set-the-reading-buffer" aria-label="Link to this section">#</a>Step 8 — Set the reading buffer</h2>
+<h2 id="step-9-set-the-reading-buffer"><a class="anchor" href="#step-9-set-the-reading-buffer" aria-label="Link to this section">#</a>Step 9 — Set the reading buffer</h2>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -331,6 +344,8 @@
 <li>An HDR page is not washed out, and an SDR page is not overly dim.</li>
 <li>The LUT changes the page at 100% and still blends at low intensity.</li>
 <li>Zoomed tiles look sharper with ArtCNN on, and the improvement disappears when it is off.</li>
+<li>Soft scans sharpen live as the slider rises, and 0% restores the unsharpened page.</li>
+<li>A saved preset reapplies all six captured controls after you change them.</li>
 <li>Page turns are smooth with the chosen preload counts.</li>
 </ul>
 <h2 id="if-something-goes-wrong"><a class="anchor" href="#if-something-goes-wrong" aria-label="Link to this section">#</a>If something goes wrong</h2>
@@ -383,6 +398,16 @@
 <td>Turn Fast rendering off and ArtCNN on</td>
 </tr>
 <tr>
+<td>A soft scan stays soft</td>
+<td>Sharpening at 0%, or the legacy viewer is running</td>
+<td>Raise <strong>Sharpening</strong>; confirm the WebGPU group is active</td>
+</tr>
+<tr>
+<td>A preset does not restore HDR or dark mode</td>
+<td>Presets capture six controls only</td>
+<td>Reapply HLG and dark mode separately</td>
+</tr>
+<tr>
 <td>Page turns stutter</td>
 <td>Preload too high, ArtCNN on, weak GPU</td>
 <td>Lower preload, enable Fast rendering, disable ArtCNN</td>
@@ -420,7 +445,8 @@
 <li class="toc-l2"><a href="#step-5-grade-with-a-lut">Step 5 — Grade with a LUT</a></li>
 <li class="toc-l2"><a href="#step-6-use-the-e-ink-preset-on-an-e-ink-panel">Step 6 — Use the e-ink preset on an e-ink panel</a></li>
 <li class="toc-l2"><a href="#step-7-choose-the-sharpening-path">Step 7 — Choose the sharpening path</a></li>
-<li class="toc-l2"><a href="#step-8-set-the-reading-buffer">Step 8 — Set the reading buffer</a></li>
+<li class="toc-l2"><a href="#step-8-save-a-filter-preset">Step 8 — Save a filter preset</a></li>
+<li class="toc-l2"><a href="#step-9-set-the-reading-buffer">Step 9 — Set the reading buffer</a></li>
 <li class="toc-l2"><a href="#check-it-worked">Check it worked</a></li>
 <li class="toc-l2"><a href="#if-something-goes-wrong">If something goes wrong</a></li>
 <li class="toc-l2"><a href="#where-to-go-next">Where to go next</a></li></ul>
@@ -437,7 +463,7 @@
       </button>
     </div>
     <div class="search-results" id="search-results" aria-live="polite">
-      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+      <p class="search-hint">Type to search 42 pages. Use ↑ ↓ to move and Enter to open.</p>
     </div>
   </div>
 </div>

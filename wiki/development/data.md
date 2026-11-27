@@ -102,7 +102,7 @@ handler.await(inTransaction = true) {
 - **Coalesce updates** — `SET col = coalesce(:param, col)` for partial DTOs.
 - **UPSERT** — `INSERT … ON CONFLICT DO UPDATE`.
 - **Sync-aware versioning** — triggers increment `version` only when `is_syncing = 0`.
-- **Merged entries** — views `UNION` the synthetic source id `6969`.
+- **Merged entries** — views `UNION` the synthetic source id `6969`. The library fetches the merged children of a whole page in **one batched query** for filtering, bulk download and bulk delete; one round trip per entry made large libraries of merged titles stall.
 
 ### Custom metadata cache
 
@@ -152,6 +152,7 @@ The restore path is **streaming**:
 - `BackupDecoder.decodeMetadata` walks the entries by length to count them and hands back the stream.
 - `decodeEntries(uri, include)` yields one `BackupManga` at a time, skipping rejected entries by length.
 - `BackupReader` walks the protobuf by hand. The wire format is unchanged, so old and new backups are readable.
+- An entry or metadata block whose declared length exceeds **64 MiB** is refused, so a malformed length field cannot demand gigabytes of memory.
 - `decode(uri)` is used only for the integrity check, which needs every entry's trackers; never call it on the restore path.
 
 Entries are classified as **NEW / EXISTING / MERGED** and the file is walked twice to realise the classification. Sorting would mean holding every entry in memory.
@@ -176,14 +177,12 @@ A custom cover is a file in the cover cache, not a column. It is read separately
 
 ## Database maintenance
 
-`DatabaseMaintenanceManager` runs before the connection pool opens:
+`DatabaseMaintenanceManager` runs its pragmas on the app's **live SQLDelight `SqlDriver` connection**, before the pool opens. Framework SQLite used to open the same file a second time; under WAL that connection could not share the live `-shm` file and failed with `SQLITE_IOERR_SHMOPEN`, which spammed logcat on every launch and could abort the pass. The driver already selects plaintext or SQLCipher internally, so there is no passphrase path and no `System.loadLibrary("sqlcipher")` call here.
 
 1. **Quick check** (`PRAGMA quick_check(1)`).
 2. If OK — refresh the rolling local backup, at most once a day.
 3. If corrupt — restore the latest local backup.
 4. If that fails — quarantine the database as `tachiyomi.db.corrupt-<timestamp>` instead of crash-looping.
-
-It supports both plaintext and SQLCipher databases, loading the SQLCipher library only when a passphrase is supplied.
 
 ### Exporting a snapshot
 

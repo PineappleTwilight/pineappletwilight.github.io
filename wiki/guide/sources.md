@@ -110,10 +110,14 @@ The local source is the only way to read files you already own without a server.
 - Each subfolder becomes an entry; each file or subfolder inside it becomes a chapter.
 - `cover.jpg`, `details.json` and `ComicInfo.xml` are read when present.
 - Hidden folders are ignored unless **Settings → Browse → Local source hidden folders** is on.
-- `.epub` files become book chapters; a folder containing only EPUBs is detected as a book series.
+- `.epub`, `.fb2` and `.txt` files become book chapters; a folder containing only books is detected as a book series. FB2/TXT conversion is on the current `master` build, not in stable 1.25.3.
 - CBZ, CBR, ZIP, RAR and 7z archives are read through the native archive layer.
 
 See [Files & formats](/hyoukan/reference/formats/) for the folder layout and metadata schema.
+
+## Novel plugins
+
+**Settings → Advanced → Novel plugins** installs single-file JavaScript novel sources that run in a sandboxed QuickJS runtime. They appear in Browse like other sources, and their chapters open in the book reader. See [Novel plugins](/hyoukan/guide/novel-plugins/) for the import rules, sandbox limits and author contract.
 
 ## Cloudflare and FlareSolverr
 
@@ -159,12 +163,17 @@ Only HTTP 401 and 404 are recorded as extension errors — the statuses that mea
 
 To report an extension bug, use the extension's own repository, not Hyoukan's issue tracker. The app builds the search link for you.
 
+## Source health diagnostics
+
+**Settings → Advanced → Source health diagnostics** records how the installed sources are answering, in five local buckets: **Unknown**, **Healthy**, **Degraded**, **Blocked** (Cloudflare or login) and **Suspected dead** (three DNS or 404 failures in a row). Nothing is uploaded automatically; a plain-text report can be shared manually with source names and statuses only. See [Troubleshooting](/hyoukan/guide/troubleshooting/#source-health-diagnostics) for the counting rules and the redacted report format.
+
 ## Security notes
 
 - Extensions run with the app's permissions. They can read anything the app can read, including cookies they are given and the files they are asked to open.
 - The Private installer verifies repository signatures, but it cannot make an untrusted repository trustworthy.
 - Prefer a small number of well-known stores. Remove stores you no longer use.
 - Do not install extensions from random links, and never enter credentials into a source you do not trust.
+- A [novel plugin](/hyoukan/guide/novel-plugins/) is JavaScript, not an APK: its sandbox blocks files, databases and classes, and its network calls go through the app's HTTP client. There is no signature or content-warning check for plugins.
 
 ## For extension developers
 

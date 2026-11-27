@@ -48,6 +48,9 @@ Local source root/
   Novel Series/
     Book 1.epub
     Book 2.epub
+  Plain books/
+    Story.fb2
+    Notes.txt
 ```
 
 Rules:
@@ -57,8 +60,9 @@ Rules:
 - `details.json` is read when present.
 - `ComicInfo.xml` is read for title, series, volume, summary, writer, artist and publishing status.
 - Hidden folders are ignored unless the setting is enabled.
-- A folder whose chapters are **all** EPUBs is a book series; a mixed folder is a comic.
+- A folder whose chapters are **all** books (`.epub`, `.fb2`, `.txt`) is a book series; a mixed folder is a comic.
 - An EPUB can also be read as an image chapter if the entry is explicitly set to comic.
+- A single `.epub`, `.fb2` or `.txt` file can stand as its own local-source entry. Files imported through **Settings → Book reading → Import books** are copied into one new local-source folder and matched by file name, case-insensitively; the MIME type is ignored.
 
 ### `details.json`
 
@@ -79,6 +83,18 @@ Rules:
 ### `ComicInfo.xml`
 
 ComicInfo is the ComicRack schema. Hyoukan reads the common fields (`Title`, `Series`, `Number`, `Volume`, `Summary`, `Writer`, `Penciller`, `Publisher`, `PublishingStatus`, `Year`, `Month`, `Day`, `Genre`, `Tags`). It is also written into encrypted archives with random padding as an anti-fingerprint measure.
+
+### FB2 and TXT conversion
+
+FB2 is parsed as XML: each leaf `<section>` becomes a reader section, with `<title>` as its heading. Emphasis, strong, strikethrough, sub/superscript, code, citation, epigraphs, annotations and `<v>` verse lines map to HTML with inline CSS; images are not inlined and only `http(s)` links are kept. Encoding is taken from a byte-order mark or an `encoding="…"` declaration, falling back to UTF-8.
+
+TXT is normalised to line feeds, split into paragraphs on blank lines (single newlines become `<br/>`), escaped, and packed into sections of at most 12,000 characters, preferring paragraph boundaries and falling back to sentence or hard cuts inside an over-long paragraph.
+
+Both conversions run entirely on the device. Parsed sections are cached per chapter and files over 64 MiB are refused. **Search in chapter** uses a case-insensitive literal index with context snippets. FB2/TXT files keep the generated placeholder cover.
+
+> [!NOTE]
+>
+> FB2 and TXT support is on the current `master` build, not in the stable 1.25.3 release. The **Import books** strings still say "EPUB" even though the picker accepts all three formats.
 
 ## Downloads
 
@@ -158,7 +174,7 @@ A repository publishes a JSON index. The modern format is an array:
 
 The app also accepts a legacy format with a store object (`name`, `website`, `signingKey`, `contact`) and a separate extension list. The store base URL resolves `apk/<file>` and `icon/<package>.png`.
 
-The signing key is the trust anchor: the Private installer verifies the downloaded APK against it before storing.
+The signing key is the trust anchor: the Private installer verifies the downloaded APK against it before storing. Remote store indexes and extension lists are capped at **16 MiB**; a larger response is refused with a clear error before it is buffered.
 
 ## Sync payload
 
@@ -197,5 +213,7 @@ Log files include the app version, build time, device info and, at higher log le
 | Translation / upscale cache | App-private cache |
 | Imported fonts | App-private files |
 | Imported GGUF / ONNX models | App-private files |
+| Library import sessions | App-private `files/library_imports/sessions.json` |
+| Novel plugins | App-private `files/novel_plugins/<id>.js` |
 
 Android may clear app-private caches on its own. Downloads and backups in user-chosen storage are not cleared by the system.

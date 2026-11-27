@@ -1,6 +1,6 @@
 ---
 title: Calibrate the comic reader
-description: A guided walkthrough for the WebGPU renderer — brightness, HDR, smart dark mode, LUT colour grading, e-ink and display-performance trade-offs.
+description: A guided walkthrough for the WebGPU renderer — brightness, sharpening, named filter presets, HDR, smart dark mode, LUT grading and display-performance trade-offs.
 ---
 
 This tutorial tunes the image reader for one screen. It covers the WebGPU renderer's colour pipeline, not the library or source settings: how a page is toned, graded and sharpened before it reaches your eyes.
@@ -13,7 +13,7 @@ This tutorial tunes the image reader for one screen. It covers the WebGPU render
 
 ## What you'll build
 
-The reader decodes pages into GPU textures, tiles them, and draws them through a render pipeline. On top of that pipeline sit brightness, contrast, HDR tone mapping, smart dark mode, LUT colour grading and two different sharpening paths. The goal is a stable setup you do not have to revisit for every series.
+The reader decodes pages into GPU textures, tiles them, and draws them through a render pipeline. On top of that pipeline sit brightness, contrast, sharpening, HDR tone mapping, smart dark mode and LUT colour grading, alongside two other ways to make pages sharper: ArtCNN tile refinement and the AI upscaler. The goal is a stable setup you do not have to revisit for every series.
 
 ## Before you start
 
@@ -47,7 +47,7 @@ Before grading, make the base display correct.
    - Brightness shifts the whole page up or down.
    - Contrast stretches tones around mid-gray.
 
-Both apply live with no re-decode, so compare on the same page rather than reopening the chapter.
+Both apply live with no re-decode, so compare on the same page rather than reopening the chapter. The WebGPU brightness slider bottoms out at **−70%**: lower values used to clamp every colour channel to black. A stored value at or below −50% writes a warning to the in-app log.
 
 > [!TIP]
 >
@@ -109,14 +109,23 @@ There are two different sharpening features, and they are easy to confuse.
 
 | Feature | Where | What it changes | Persists? |
 |---|---|---|---|
+| **WebGPU sharpening** | Settings → Reader → WebGPU | Unsharp mask on soft or downscaled scans, 0–200%, live | Yes — a preference, and captured in presets |
 | **ArtCNN upscaling** | Settings → Reader → WebGPU | Sharpens zoomed tiles on the GPU | No — display only |
 | **AI upscaling** | Settings → AI Upscaler | Runs a super-resolution model on the page bytes | Yes — writes to the upscale cache |
 
-Use ArtCNN for on-screen zoom quality. Use AI upscaling when the source itself is low-resolution. Enabling both is valid, but the page pipeline runs first and ArtCNN sharpens the result.
+Use the unsharp mask for scans that are soft at their source resolution; start at 0% and raise it in small steps until halftones or lettering start to ring. Use ArtCNN for on-screen zoom quality and AI upscaling when the source itself is low-resolution. Enabling all three is valid: the page pipeline runs first, the unsharp mask sits between brightness/contrast and HDR in the display chain, and ArtCNN sharpens the result on screen. A value of 0 detaches the unsharp pass entirely.
+
+## Step 8 — Save a filter preset
+
+Under **Settings → Reader → WebGPU → Filter presets**, tap **Save current look** and give it a name. Names are trimmed and capped at 48 characters, and up to 20 looks can be stored; saving under an existing name replaces that look. A preset captures exactly six controls — brightness, contrast, sharpening, LUT preset, LUT intensity and the e-ink flag. **Apply** rewrites those six in one tap; **Delete** removes the look. HLG, dark mode, compare translation and the performance HUD are not part of a preset, so set those separately.
+
+> [!NOTE]
+>
+> Sharpening, filter presets and the −70% brightness floor are on the current `master` build, not in the stable 1.25.3 release.
 
 **Fast rendering** skips the tile cache and draws pages directly. It is less sharp when zoomed and smoother on weak tablets. If page turns stutter, try Fast rendering before lowering image quality.
 
-## Step 8 — Set the reading buffer
+## Step 9 — Set the reading buffer
 
 | Setting | Effect |
 |---|---|
@@ -134,6 +143,8 @@ The renderer sizes its cache to the device and to live memory pressure. A page l
 - An HDR page is not washed out, and an SDR page is not overly dim.
 - The LUT changes the page at 100% and still blends at low intensity.
 - Zoomed tiles look sharper with ArtCNN on, and the improvement disappears when it is off.
+- Soft scans sharpen live as the slider rises, and 0% restores the unsharpened page.
+- A saved preset reapplies all six captured controls after you change them.
 - Page turns are smooth with the chosen preload counts.
 
 ## If something goes wrong
@@ -148,6 +159,8 @@ The renderer sizes its cache to the device and to live memory pressure. A page l
 | HDR pages look flat | HLG tone mapping off, or exposure wrong | Enable HLG and adjust exposure |
 | A custom LUT does nothing | Wrong path, unsupported file, or intensity at zero | Use a `.cube` or madVR `.3dlut` full path; raise intensity |
 | Zoomed pages are soft | Fast rendering on, or ArtCNN off | Turn Fast rendering off and ArtCNN on |
+| A soft scan stays soft | Sharpening at 0%, or the legacy viewer is running | Raise **Sharpening**; confirm the WebGPU group is active |
+| A preset does not restore HDR or dark mode | Presets capture six controls only | Reapply HLG and dark mode separately |
 | Page turns stutter | Preload too high, ArtCNN on, weak GPU | Lower preload, enable Fast rendering, disable ArtCNN |
 | E-ink screen ghosts | Tiled refresh without the preset | Enable the E-ink preset; add page-change flashes in the legacy settings |
 

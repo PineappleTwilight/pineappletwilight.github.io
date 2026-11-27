@@ -30,7 +30,7 @@ Hyoukan is a Gradle Android project with a lot of native code behind optional fe
 | `preview` | `.beta` | Minified preview; debug signing |
 | `benchmark` | `.benchmark` | Benchmark build |
 
-`preview` and `benchmark` use the **debug signing key**; `release` is unsigned until CI signs it with `r0adkll/sign-android-release`. There is no `signingConfigs` block in `app/build.gradle.kts`.
+`preview` and `benchmark` use the **debug signing key**; `release` is unsigned at build time. CI signs APKs with the repo-local `.github/actions/sign-apk` action — zipalign-check, a time-bounded `apksigner sign` with one retry, and `apksigner verify` — which replaced `r0adkll/sign-android-release`. There is no `signingConfigs` block in `app/build.gradle.kts`.
 
 ### Flavours
 
@@ -73,6 +73,19 @@ From `buildSrc/.../BuildConfig.kt`:
 
 On a cloud VM, export `ANDROID_HOME` and `JAVA_HOME` first. First builds download around 1 GB of dependencies.
 
+### The bugsanitizer wrapper
+
+For the full local sweep, use `scripts/bugsanitizer/run.sh` rather than calling Gradle directly. It is a console wrapper around `./gradlew` — **not a Gradle task** — and its default pass runs `spotlessApply spotlessCheck compileDebugUnitTestKotlin app:assembleDebug` with progress, hang and OOM watchdogs and a full log.
+
+```bash
+scripts/bugsanitizer/run.sh                    # default sweep
+scripts/bugsanitizer/run.sh --agent            # timestamped trace of every step
+scripts/bugsanitizer/run.sh --stall 15 --timeout 60
+scripts/bugsanitizer/selftest.sh               # test the wrapper itself
+```
+
+The script's own flags (`--agent`, `--quiet`, `--verbose`, `--stall <min>` with a 10-minute default, `--timeout <min>` off by default, `--fresh`, `--stop`) are consumed by the wrapper, not forwarded to Gradle. Output goes to `errors.log`, `bugsanitizer/full.txt`, `last-run.txt` and `agent-trace.log`; exit `124` means the watchdog killed a hung run. `scripts/kotlinc-check` remains the fast first pass for pure-policy files.
+
 ## Submodules
 
 Three external projects are git submodules:
@@ -113,7 +126,7 @@ Ten workflows in `.github/workflows/`:
 
 | Workflow | Trigger | Purpose |
 |---|---|---|
-| `build_push` | Push to `master` | Format check, both flavours, tests, sign, upload, publish beta, notify Discord |
+| `build_push` | Push to `master`, or manual dispatch | Format check, both flavours, tests, sign, upload, publish beta, notify Discord; a manual run publishes only with the `publish-beta` input |
 | `build_pull_request` | PRs | Same checks, path-filtered; ignores Weblate-owned non-base locales |
 | `build_preview` | Manual | Tag and publish a preview release |
 | `build_release` | Manual / tag | Tag and publish a stable release |
@@ -139,6 +152,8 @@ Every `master` push in `build_push`:
 The beta repository is a **separate repo**: the default `GITHUB_TOKEN` cannot write there. It needs `BETA_RELEASE_TOKEN` (release write access) and `BETA_DISCORD_WEBHOOK` (a beta-channel webhook). Without the token, the job warns and skips so master stays green.
 
 Asset names retain the legacy `Houri-<abi>-r<count>.apk` shape; the updater matches on the `-<abi>-` segment.
+
+A manual dispatch of `build_push` on `master` can publish the same beta by ticking **publish-beta** ("Publish this build as the next beta release (and ping beta testers)"; off by default). Pushes always publish; manual runs do so only with the tick. An older ref cannot take over a newer beta tag, and a newer push cancels an in-flight manual publish. The release is marked non-prerelease because the updater reads `/releases/latest`, which never returns a prerelease.
 
 ## Release notes
 

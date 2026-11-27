@@ -60,14 +60,19 @@ On devices that support WebGPU, Hyoukan uses the hardware renderer by default. I
 
 - **HDR pages** — PQ, HLG and UltraHDR content at full brightness, with SDR tone-mapping for the rest.
 - **Colour grading** — brightness, contrast and HLG exposure; built-in LUT presets and custom `.cube` / madVR `.3dlut` files with adjustable intensity.
+- **Sharpening** — an unsharp mask for soft or downscaled scans, 0–200%, applied live without a re-decode. It is WebGPU-only and separate from ArtCNN or AI upscaling.
+- **Filter presets** — save brightness, contrast, sharpening, LUT and e-ink choices under a name, then reapply all of them in one tap.
 - **Smart dark mode** — darkens light pages on a dark reader theme without inverting illustrations.
 - **E-ink preset** — grayscale, contrast boost, calm transitions and full-page refreshes instead of tile ripples.
 - **Dual-page spreads** — two pages side by side, with deterministic height matching, inversion and a centre margin for foldables.
 - **Page transitions** — none, normal or fast; separate dual-page animations; a configurable transition animation.
 - **ArtCNN** — an on-GPU super-resolution pass for zoomed tiles. It is display quality only and uses more battery.
 - **Fast rendering** — skips the tile cache and draws pages directly: less sharp when zoomed, smoother on weak tablets.
+- **WebGPU tile cache** — **Settings → Advanced → Reader → WebGPU tile cache** is on by default; turn it off for a GPU that shows black or flickering pages. PowerVR devices always take the cache-free path.
 - **Preload ahead/behind** — separate counts, memory-gated.
 - **Cutout handling** — avoid or draw into the display cutout, with a separate choice for dual pages.
+
+The sharpening slider, filter presets, tile-cache switch and the −70% brightness floor are on the current `master` build, not in stable 1.25.3.
 
 ### Why it might not be used
 

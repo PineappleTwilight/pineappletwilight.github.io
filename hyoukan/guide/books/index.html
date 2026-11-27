@@ -71,11 +71,13 @@
   <p class="nav-heading">User guide</p>
   <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
 <li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/novel-plugins/">Novel plugins</a></li>
 <li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
 <li><a href="/hyoukan/guide/books/" aria-current="page">Reading books</a></li>
 <li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
 <li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
 <li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/library-imports/">Library imports</a></li>
 <li><a href="/hyoukan/guide/translation/">AI translation</a></li>
 <li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
 <li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
@@ -143,6 +145,14 @@
 <td>Same; <code>nav.xhtml</code> contents are read as well as <code>toc.ncx</code></td>
 </tr>
 <tr>
+<td><strong>FB2</strong></td>
+<td>Local source; chapters, headings, emphasis and verse become reader typography</td>
+</tr>
+<tr>
+<td><strong>TXT</strong></td>
+<td>Local source; split into page-sized sections at paragraph boundaries</td>
+</tr>
+<tr>
 <td><strong>Plain text web novels</strong></td>
 <td>A source that returns <code>Kind.PLAIN</code> text pages</td>
 </tr>
@@ -151,16 +161,17 @@
 <td>Stored with the chapter and opened from disk, no network needed</td>
 </tr>
 </tbody></table></div>
+<p>FB2 and TXT support is on the current <code>master</code> build, not in the stable 1.25.3 release. Nothing is uploaded when either format is read.</p>
 <p>A book&#39;s chapter list is one library chapter per file in the library, but inside the reader the book&#39;s own spine is the unit of navigation. A five-hundred-file novel opens immediately because only the current section is read; the rest are loaded as you approach them.</p>
 <p>DRM-locked books are detected and refused with an explanation. Font obfuscation (<code>http://www.idpf.org/2007/embed</code>) is not DRM and is ignored, because the text is still readable.</p>
 <h2 id="getting-books-into-the-library"><a class="anchor" href="#getting-books-into-the-library" aria-label="Link to this section">#</a>Getting books into the library</h2>
 <h3 id="local-files"><a class="anchor" href="#local-files" aria-label="Link to this section">#</a>Local files</h3>
-<p>Put a folder of EPUBs in the local source directory, or use <strong>Settings → Book reading → Import books</strong> to copy one or more EPUBs into a new local-source folder. A folder whose chapters are all EPUBs is detected as a <strong>book</strong>; a mixed folder stays a comic. The detection reads the book&#39;s content, not just its extension — a title page and a copyright leaf look like prose to a shape test.</p>
+<p>Put a folder of books in the local source directory, or use <strong>Settings → Book reading → Import books</strong> to copy one or more <code>.epub</code>, <code>.fb2</code> or <code>.txt</code> files into a new local-source folder. A folder whose chapters are all books is detected as a <strong>book</strong>; a mixed folder stays a comic. EPUB detection reads the content, not just the extension — a title page and a copyright leaf look like prose to a shape test. FB2 sections and TXT paragraphs are converted locally; see <a href="/hyoukan/reference/formats/#fb2-and-txt-conversion">Files &amp; formats</a>. The import button&#39;s description still says &quot;EPUB&quot; even though all three formats are accepted.</p>
 <p>You can override the type per entry with <strong>Render as book</strong> / <strong>Render as comic</strong>. The choice survives library updates and refreshes.</p>
 <h3 id="komga"><a class="anchor" href="#komga" aria-label="Link to this section">#</a>Komga</h3>
 <p>A Komga series that contains EPUBs is listed in full, and each EPUB opens in the book reader. Configure the server under <strong>Browse → Sources → Komga → Settings</strong>.</p>
 <h3 id="extensions"><a class="anchor" href="#extensions" aria-label="Link to this section">#</a>Extensions</h3>
-<p>Any extension implementing the <code>TextSource</code> interfaces gets the book reader automatically. See <a href="/hyoukan/development/extensions/#text-sources">Extensions &amp; source API</a>.</p>
+<p>Any extension implementing the <code>TextSource</code> interfaces gets the book reader automatically. See <a href="/hyoukan/development/extensions/#text-sources">Extensions &amp; source API</a>. A sandboxed <code>.js</code> <a href="/hyoukan/guide/novel-plugins/">novel plugin</a> from <strong>Settings → Advanced → Novel plugins</strong> is a text source too.</p>
 <h2 id="reading-modes"><a class="anchor" href="#reading-modes" aria-label="Link to this section">#</a>Reading modes</h2>
 <p>The book reader has three layouts, chosen in <strong>Reading appearance → Page mode</strong>:</p>
 <div class="table-wrap"><table>
@@ -371,7 +382,7 @@
       </button>
     </div>
     <div class="search-results" id="search-results" aria-live="polite">
-      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+      <p class="search-hint">Type to search 42 pages. Use ↑ ↓ to move and Enter to open.</p>
     </div>
   </div>
 </div>

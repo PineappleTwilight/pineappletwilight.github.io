@@ -149,7 +149,9 @@ This is the map of **More → Settings**. Rows are grouped as they appear; a row
 - **Dark mode filter / True black (AMOLED) / Gray tolerance / Color dimming**.
 - **ArtCNN upscaling** — sharper zoomed tiles, more battery.
 - **Fast rendering** — skip the tile cache for weak tablets.
-- **Brightness**, **Contrast**.
+- **Brightness** (−70–100%), **Contrast** (0–200%).
+- **Sharpening** — unsharp mask, 0–200%, live (on `master`).
+- **Filter presets** — save and reapply named looks; see [Calibrate the reader](/hyoukan/tutorials/calibrate-the-reader/#step-8-save-a-filter-preset) (on `master`).
 - **HLG tone mapping** and **HLG exposure**.
 - **Color LUT preset** and **LUT intensity**.
 - **Custom LUT file** — `.cube` or madVR `.3dlut`.
@@ -190,7 +192,7 @@ This is the map of **More → Settings**. Rows are grouped as they appear; a row
 
 ## Book reading
 
-- **Import books** — copy EPUBs into a new local-source folder.
+- **Import books** — copy EPUB, FB2 or TXT files into a new local-source folder (FB2/TXT on `master`, not in stable 1.25.3).
 - **Reading appearance** — the full typography and behaviour sheet (also available in the reader).
 
 ## Downloads
@@ -281,6 +283,7 @@ This is the map of **More → Settings**. Rows are grouped as they appear; a row
 - **Delete all downloads**.
 - **Export → Library List (CSV)**.
 - **Export database**.
+- **Library imports → Import a library export** — match entries from a MangaBaka export to sources (on `master`); see [Library imports](/hyoukan/guide/library-imports/).
 
 ## Security
 
@@ -366,6 +369,7 @@ This is the map of **More → Settings**. Rows are grouped as they appear; a row
 
 **Diagnostics**
 
+- **Source health diagnostics** — local source-answer checks; see [Troubleshooting](/hyoukan/guide/troubleshooting/#source-health-diagnostics).
 - **Dump crash logs**.
 - **Verbose logging**.
 - **Debug info**.
@@ -408,8 +412,13 @@ This is the map of **More → Settings**. Rows are grouped as they appear; a row
 - **Custom hardware bitmap threshold**.
 - **Use legacy decoder for long strip reader**.
 - **Use high quality renderer (WebGPU)**.
+- **WebGPU tile cache** — on by default; off uses the cache-free path for GPUs that show black or flickering pages (on `master`).
 - **Match double-page heights**.
 - **Custom display profile**.
+
+**Plugin sources**
+
+- **Novel plugins** — import and manage sandboxed `.js` novel sources (on `master`); see [Novel plugins](/hyoukan/guide/novel-plugins/).
 
 **Extensions**
 

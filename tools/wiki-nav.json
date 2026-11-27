@@ -29,11 +29,13 @@
       "items": [
         { "file": "guide/library", "title": "Library & categories" },
         { "file": "guide/sources", "title": "Sources & extensions" },
+        { "file": "guide/novel-plugins", "title": "Novel plugins" },
         { "file": "guide/comics", "title": "Reading comics" },
         { "file": "guide/books", "title": "Reading books" },
         { "file": "guide/downloads", "title": "Downloads & storage" },
         { "file": "guide/tracking", "title": "Tracking" },
         { "file": "guide/backup-sync", "title": "Backup & sync" },
+        { "file": "guide/library-imports", "title": "Library imports" },
         { "file": "guide/translation", "title": "AI translation" },
         { "file": "guide/upscaling", "title": "AI upscaling" },
         { "file": "guide/achievements", "title": "Achievements" },

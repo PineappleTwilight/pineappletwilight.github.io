@@ -71,11 +71,13 @@
   <p class="nav-heading">User guide</p>
   <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
 <li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/novel-plugins/">Novel plugins</a></li>
 <li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
 <li><a href="/hyoukan/guide/books/">Reading books</a></li>
 <li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
 <li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
 <li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/library-imports/">Library imports</a></li>
 <li><a href="/hyoukan/guide/translation/">AI translation</a></li>
 <li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
 <li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
@@ -264,7 +266,9 @@
 <li><strong>Dark mode filter / True black (AMOLED) / Gray tolerance / Color dimming</strong>.</li>
 <li><strong>ArtCNN upscaling</strong> — sharper zoomed tiles, more battery.</li>
 <li><strong>Fast rendering</strong> — skip the tile cache for weak tablets.</li>
-<li><strong>Brightness</strong>, <strong>Contrast</strong>.</li>
+<li><strong>Brightness</strong> (−70–100%), <strong>Contrast</strong> (0–200%).</li>
+<li><strong>Sharpening</strong> — unsharp mask, 0–200%, live (on <code>master</code>).</li>
+<li><strong>Filter presets</strong> — save and reapply named looks; see <a href="/hyoukan/tutorials/calibrate-the-reader/#step-8-save-a-filter-preset">Calibrate the reader</a> (on <code>master</code>).</li>
 <li><strong>HLG tone mapping</strong> and <strong>HLG exposure</strong>.</li>
 <li><strong>Color LUT preset</strong> and <strong>LUT intensity</strong>.</li>
 <li><strong>Custom LUT file</strong> — <code>.cube</code> or madVR <code>.3dlut</code>.</li>
@@ -305,7 +309,7 @@
 </ul>
 <h2 id="book-reading"><a class="anchor" href="#book-reading" aria-label="Link to this section">#</a>Book reading</h2>
 <ul>
-<li><strong>Import books</strong> — copy EPUBs into a new local-source folder.</li>
+<li><strong>Import books</strong> — copy EPUB, FB2 or TXT files into a new local-source folder (FB2/TXT on <code>master</code>, not in stable 1.25.3).</li>
 <li><strong>Reading appearance</strong> — the full typography and behaviour sheet (also available in the reader).</li>
 </ul>
 <h2 id="downloads"><a class="anchor" href="#downloads" aria-label="Link to this section">#</a>Downloads</h2>
@@ -395,6 +399,7 @@
 <li><strong>Delete all downloads</strong>.</li>
 <li><strong>Export → Library List (CSV)</strong>.</li>
 <li><strong>Export database</strong>.</li>
+<li><strong>Library imports → Import a library export</strong> — match entries from a MangaBaka export to sources (on <code>master</code>); see <a href="/hyoukan/guide/library-imports/">Library imports</a>.</li>
 </ul>
 <h2 id="security"><a class="anchor" href="#security" aria-label="Link to this section">#</a>Security</h2>
 <ul>
@@ -479,6 +484,7 @@
 <h2 id="advanced"><a class="anchor" href="#advanced" aria-label="Link to this section">#</a>Advanced</h2>
 <p><strong>Diagnostics</strong></p>
 <ul>
+<li><strong>Source health diagnostics</strong> — local source-answer checks; see <a href="/hyoukan/guide/troubleshooting/#source-health-diagnostics">Troubleshooting</a>.</li>
 <li><strong>Dump crash logs</strong>.</li>
 <li><strong>Verbose logging</strong>.</li>
 <li><strong>Debug info</strong>.</li>
@@ -521,8 +527,13 @@
 <li><strong>Custom hardware bitmap threshold</strong>.</li>
 <li><strong>Use legacy decoder for long strip reader</strong>.</li>
 <li><strong>Use high quality renderer (WebGPU)</strong>.</li>
+<li><strong>WebGPU tile cache</strong> — on by default; off uses the cache-free path for GPUs that show black or flickering pages (on <code>master</code>).</li>
 <li><strong>Match double-page heights</strong>.</li>
 <li><strong>Custom display profile</strong>.</li>
+</ul>
+<p><strong>Plugin sources</strong></p>
+<ul>
+<li><strong>Novel plugins</strong> — import and manage sandboxed <code>.js</code> novel sources (on <code>master</code>); see <a href="/hyoukan/guide/novel-plugins/">Novel plugins</a>.</li>
 </ul>
 <p><strong>Extensions</strong></p>
 <ul>
@@ -607,7 +618,7 @@
       </button>
     </div>
     <div class="search-results" id="search-results" aria-live="polite">
-      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+      <p class="search-hint">Type to search 42 pages. Use ↑ ↓ to move and Enter to open.</p>
     </div>
   </div>
 </div>

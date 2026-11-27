@@ -15,6 +15,10 @@ description: What the version number means, how stable and beta differ, and what
 
 The version name is semantic-ish: `major.minor.patch`. The preview build appends `-<commitCount>`.
 
+> [!NOTE]
+>
+> This wiki describes the behaviour at the reviewed `master` commit. Features still staged in the app's `RELEASE_NOTES.md` for the next version may be documented before they ship; they are **not** part of the stable 1.25.3 release until a version bump and a stable tag. Where a feature is new on `master`, the page says so.
+
 ## Channels
 
 | Channel | Where | Signing | Updates |

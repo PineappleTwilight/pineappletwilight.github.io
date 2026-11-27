@@ -71,11 +71,13 @@
   <p class="nav-heading">User guide</p>
   <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
 <li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/novel-plugins/">Novel plugins</a></li>
 <li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
 <li><a href="/hyoukan/guide/books/">Reading books</a></li>
 <li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
 <li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
 <li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/library-imports/">Library imports</a></li>
 <li><a href="/hyoukan/guide/translation/">AI translation</a></li>
 <li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
 <li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
@@ -184,6 +186,14 @@
 <td>On-GPU super-resolution for zoomed tiles when the device supports it.</td>
 </tr>
 <tr>
+<td><strong>Unsharp sharpening</strong></td>
+<td>A live 0–200% unsharp mask for soft or downscaled scans, WebGPU only (on <code>master</code>).</td>
+</tr>
+<tr>
+<td><strong>Filter presets</strong></td>
+<td>Named looks covering brightness, contrast, sharpening, LUT and e-ink, reapplied in one tap (on <code>master</code>).</td>
+</tr>
+<tr>
 <td><strong>Cutout support</strong></td>
 <td>Draw into the display cutout area, with per-viewer behaviour.</td>
 </tr>
@@ -212,6 +222,10 @@
 <tbody><tr>
 <td><strong>EPUB 2 and EPUB 3</strong></td>
 <td>Parses <code>toc.ncx</code> and <code>nav.xhtml</code>, the OPF manifest/spine, <code>encryption.xml</code>, and both series conventions.</td>
+</tr>
+<tr>
+<td><strong>FB2 and TXT</strong></td>
+<td>Local FB2 sections and TXT paragraphs become book pages, with find-in-book; conversion stays on the device (on <code>master</code>).</td>
 </tr>
 <tr>
 <td><strong>Publisher typography</strong></td>
@@ -369,7 +383,11 @@
 </tr>
 <tr>
 <td><strong>Local source</strong></td>
-<td>Folder-per-series reading of images, archives and EPUBs, with hidden-folder support.</td>
+<td>Folder-per-series reading of images, archives and books (EPUB, FB2, TXT), with hidden-folder support.</td>
+</tr>
+<tr>
+<td><strong>Library imports</strong></td>
+<td>Turn a MangaBaka export into resumable sessions, matching each entry to a source by hand (on <code>master</code>).</td>
 </tr>
 <tr>
 <td><strong>Comics and books together</strong></td>
@@ -436,6 +454,14 @@
 <tr>
 <td><strong>Global search</strong></td>
 <td>Search every enabled source from one query, with source-category filtering.</td>
+</tr>
+<tr>
+<td><strong>Novel plugins</strong></td>
+<td>Sandboxed <code>.js</code> text sources installed from Advanced settings; no file, database or class access (on <code>master</code>).</td>
+</tr>
+<tr>
+<td><strong>Source health diagnostics</strong></td>
+<td>Local five-state verdicts for sources, with a redacted, shareable report (on <code>master</code>).</td>
 </tr>
 </tbody></table></div>
 <p>→ <a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></p>
@@ -832,6 +858,7 @@
 <li><strong>View logs</strong>, <strong>Clear logs</strong> and <strong>Dump crash logs</strong> under Advanced.</li>
 <li>A crash screen showing the full stack trace and device info.</li>
 <li>WebGPU session summaries in the log dump.</li>
+<li>Source health diagnostics: five local verdicts and a redacted report you choose to share.</li>
 <li>Extension failure reasons and repository attribution.</li>
 <li>Worker inspection and backup-schema inspection in the debug menu.</li>
 </ul>
@@ -875,7 +902,7 @@
       </button>
     </div>
     <div class="search-results" id="search-results" aria-live="polite">
-      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+      <p class="search-hint">Type to search 42 pages. Use ↑ ↓ to move and Enter to open.</p>
     </div>
   </div>
 </div>

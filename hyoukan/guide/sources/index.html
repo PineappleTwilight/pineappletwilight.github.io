@@ -71,11 +71,13 @@
   <p class="nav-heading">User guide</p>
   <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
 <li><a href="/hyoukan/guide/sources/" aria-current="page">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/novel-plugins/">Novel plugins</a></li>
 <li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
 <li><a href="/hyoukan/guide/books/">Reading books</a></li>
 <li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
 <li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
 <li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/library-imports/">Library imports</a></li>
 <li><a href="/hyoukan/guide/translation/">AI translation</a></li>
 <li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
 <li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
@@ -244,10 +246,12 @@
 <li>Each subfolder becomes an entry; each file or subfolder inside it becomes a chapter.</li>
 <li><code>cover.jpg</code>, <code>details.json</code> and <code>ComicInfo.xml</code> are read when present.</li>
 <li>Hidden folders are ignored unless <strong>Settings → Browse → Local source hidden folders</strong> is on.</li>
-<li><code>.epub</code> files become book chapters; a folder containing only EPUBs is detected as a book series.</li>
+<li><code>.epub</code>, <code>.fb2</code> and <code>.txt</code> files become book chapters; a folder containing only books is detected as a book series. FB2/TXT conversion is on the current <code>master</code> build, not in stable 1.25.3.</li>
 <li>CBZ, CBR, ZIP, RAR and 7z archives are read through the native archive layer.</li>
 </ul>
 <p>See <a href="/hyoukan/reference/formats/">Files &amp; formats</a> for the folder layout and metadata schema.</p>
+<h2 id="novel-plugins"><a class="anchor" href="#novel-plugins" aria-label="Link to this section">#</a>Novel plugins</h2>
+<p><strong>Settings → Advanced → Novel plugins</strong> installs single-file JavaScript novel sources that run in a sandboxed QuickJS runtime. They appear in Browse like other sources, and their chapters open in the book reader. See <a href="/hyoukan/guide/novel-plugins/">Novel plugins</a> for the import rules, sandbox limits and author contract.</p>
 <h2 id="cloudflare-and-flaresolverr"><a class="anchor" href="#cloudflare-and-flaresolverr" aria-label="Link to this section">#</a>Cloudflare and FlareSolverr</h2>
 <p>Many sites put a Cloudflare challenge in front of their pages. Hyoukan handles this in two ways:</p>
 <ol>
@@ -285,18 +289,21 @@
 </ul>
 <p>Only HTTP 401 and 404 are recorded as extension errors — the statuses that mean the source needs attention. Cloudflare challenges, rate limits and server errors are logged but do not flood the error list.</p>
 <p>To report an extension bug, use the extension&#39;s own repository, not Hyoukan&#39;s issue tracker. The app builds the search link for you.</p>
+<h2 id="source-health-diagnostics"><a class="anchor" href="#source-health-diagnostics" aria-label="Link to this section">#</a>Source health diagnostics</h2>
+<p><strong>Settings → Advanced → Source health diagnostics</strong> records how the installed sources are answering, in five local buckets: <strong>Unknown</strong>, <strong>Healthy</strong>, <strong>Degraded</strong>, <strong>Blocked</strong> (Cloudflare or login) and <strong>Suspected dead</strong> (three DNS or 404 failures in a row). Nothing is uploaded automatically; a plain-text report can be shared manually with source names and statuses only. See <a href="/hyoukan/guide/troubleshooting/#source-health-diagnostics">Troubleshooting</a> for the counting rules and the redacted report format.</p>
 <h2 id="security-notes"><a class="anchor" href="#security-notes" aria-label="Link to this section">#</a>Security notes</h2>
 <ul>
 <li>Extensions run with the app&#39;s permissions. They can read anything the app can read, including cookies they are given and the files they are asked to open.</li>
 <li>The Private installer verifies repository signatures, but it cannot make an untrusted repository trustworthy.</li>
 <li>Prefer a small number of well-known stores. Remove stores you no longer use.</li>
 <li>Do not install extensions from random links, and never enter credentials into a source you do not trust.</li>
+<li>A <a href="/hyoukan/guide/novel-plugins/">novel plugin</a> is JavaScript, not an APK: its sandbox blocks files, databases and classes, and its network calls go through the app&#39;s HTTP client. There is no signature or content-warning check for plugins.</li>
 </ul>
 <h2 id="for-extension-developers"><a class="anchor" href="#for-extension-developers" aria-label="Link to this section">#</a>For extension developers</h2>
 <p>The API is documented in <a href="/hyoukan/development/extensions/">Extensions &amp; source API</a>. The short version: implement <code>Source</code> / <code>HttpSource</code> in Kotlin, declare the extension metadata, build an APK, and publish it in a repository index. The text-source interfaces add EPUB and web-novel support without any app-side changes.</p>
 
       </article>
-      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/guide/library/"><span class="pager-dir">Previous</span><span class="pager-title">Library &amp; categories</span></a><a class="pager-link pager-next" href="/hyoukan/guide/comics/"><span class="pager-dir">Next</span><span class="pager-title">Reading comics</span></a></nav>
+      <nav class="pager" aria-label="Page navigation"><a class="pager-link pager-prev" href="/hyoukan/guide/library/"><span class="pager-dir">Previous</span><span class="pager-title">Library &amp; categories</span></a><a class="pager-link pager-next" href="/hyoukan/guide/novel-plugins/"><span class="pager-dir">Next</span><span class="pager-title">Novel plugins</span></a></nav>
       <footer class="page-foot">
         <p>Hyoukan is free and open source under the Apache-2.0 licence. The app hosts no content.</p>
         <p><a href="https://github.com/PineappleTwilight/pineappletwilight.github.io/edit/main/wiki/guide/sources.md" target="_blank" rel="noopener">Edit this page</a> · <a href="https://github.com/PineappleTwilight/hyoukan" target="_blank" rel="noopener">Source code</a> · <a href="/hyoukan/contributing/">Contributing</a></p>
@@ -315,10 +322,12 @@
 <li class="toc-l2"><a href="#komga">Komga</a></li>
 <li class="toc-l2"><a href="#e-hentai-exhentai">E-Hentai / ExHentai</a></li>
 <li class="toc-l2"><a href="#local-source">Local source</a></li>
+<li class="toc-l2"><a href="#novel-plugins">Novel plugins</a></li>
 <li class="toc-l2"><a href="#cloudflare-and-flaresolverr">Cloudflare and FlareSolverr</a></li>
 <li class="toc-l2"><a href="#data-saver-and-image-handling">Data saver and image handling</a></li>
 <li class="toc-l2"><a href="#source-organisation">Source organisation</a></li>
 <li class="toc-l2"><a href="#when-an-extension-breaks">When an extension breaks</a></li>
+<li class="toc-l2"><a href="#source-health-diagnostics">Source health diagnostics</a></li>
 <li class="toc-l2"><a href="#security-notes">Security notes</a></li>
 <li class="toc-l2"><a href="#for-extension-developers">For extension developers</a></li></ul>
   </aside>
@@ -334,7 +343,7 @@
       </button>
     </div>
     <div class="search-results" id="search-results" aria-live="polite">
-      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+      <p class="search-hint">Type to search 42 pages. Use ↑ ↓ to move and Enter to open.</p>
     </div>
   </div>
 </div>

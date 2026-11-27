@@ -5,6 +5,10 @@ description: Portable .tachibk backups, automatic snapshots, SyncYomi, WebDAV an
 
 Hyoukan stores everything in one SQLite database. Keeping that database safe has two parts: **backups** (portable snapshots you own) and **sync** (keeping several devices aligned). They are not substitutes for each other.
 
+> [!NOTE]
+>
+> Importing another service's export is not a restore. [Library imports](/hyoukan/guide/library-imports/) asks you to match each entry to a source; a `.tachibk` restore writes Hyoukan's own snapshot back.
+
 ## Backups
 
 A backup is a `.tachibk` file — a protobuf stream containing the library, chapters, categories, history, tracking and selected settings. It is not a copy of the database file, and it does not contain downloaded pages or extension APKs.
@@ -55,6 +59,7 @@ Restore options mirror the backup options: library, categories, app settings, ex
 How restore behaves:
 
 - The file is **streamed**. Entries are decoded one at a time and restored in batches, so a large library does not need to fit in memory.
+- A block that declares a length over **64 MiB** is refused, so a malformed file cannot demand gigabytes of memory.
 - Entries are classified as new, existing or merged and walked twice; merged entries are written after the ordinary chunks.
 - Each batch runs in one transaction, falling back to per-entry writes if the batch fails.
 - Old Mihon-format backups are readable; entries without an update schedule have one computed from the backup's own chapter list.
@@ -67,7 +72,7 @@ A restore merges into the existing library rather than replacing it wholesale. E
 
 The app protects the database on its own:
 
-- A **startup quick check** probes the database file before the connection pool opens.
+- A **startup quick check** runs its integrity pragma on the app's own SQLDelight connection, so it reads the same WAL state the app is writing.
 - A **rolling local database backup** is refreshed at most once a day; the three most recent are kept.
 - If the quick check fails, the latest local backup is restored automatically.
 - If no backup can be restored, the corrupt file is **quarantined** (renamed with a `.corrupt-<timestamp>` suffix) instead of crash-looping forever.

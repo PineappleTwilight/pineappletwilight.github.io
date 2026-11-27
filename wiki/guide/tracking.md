@@ -105,7 +105,7 @@ A category bound to a tracker status becomes a **smart category**:
 - Complete the last chapter and it moves to *Completed*.
 - Only explicitly bound categories are touched.
 
-This works with any tracker that reports status, and is the easiest way to keep a shelf current without manual dragging.
+This works with any tracker that reports status, and is the easiest way to keep a shelf current without manual dragging. The move also runs when a series is completed from the chapter selector or the track info dialog, not only when you change the status by hand.
 
 ## Troubleshooting
 

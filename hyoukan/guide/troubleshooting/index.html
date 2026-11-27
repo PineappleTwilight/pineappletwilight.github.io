@@ -71,11 +71,13 @@
   <p class="nav-heading">User guide</p>
   <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
 <li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/novel-plugins/">Novel plugins</a></li>
 <li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
 <li><a href="/hyoukan/guide/books/">Reading books</a></li>
 <li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
 <li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
 <li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/library-imports/">Library imports</a></li>
 <li><a href="/hyoukan/guide/translation/">AI translation</a></li>
 <li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
 <li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
@@ -169,11 +171,42 @@
 <li>whether a decode stalled;</li>
 <li>whether the GPU device was lost.</li>
 </ul>
-<p>A report with this attached is far more useful than &quot;the reader is broken&quot;.</p>
+<p>A report with this attached is far more useful than &quot;the reader is broken&quot;. Current builds count <code>frames=</code> from frames the renderer actually presented, not from the reader&#39;s pre-submit <code>drawn</code> flag; the summary also carries <code>tiles=</code>, <code>filter=</code> and a <code>page=</code> line with the first drawn page&#39;s size, scale and mip count, plus the adapter backend and renderer/Dawn log lines.</p>
 <h3 id="debug-info"><a class="anchor" href="#debug-info" aria-label="Link to this section">#</a>Debug info</h3>
 <p><strong>Settings → Advanced → Debug info</strong> shows the version, build, device, ABI, memory class, database size and feature flags. Tapping the version row on <strong>About</strong> copies the same device-info block.</p>
 <h3 id="worker-info-and-backup-schema"><a class="anchor" href="#worker-info-and-backup-schema" aria-label="Link to this section">#</a>Worker info and backup schema</h3>
 <p>The debug menu exposes scheduled workers and the backup schema. These are advanced tools; they are safe to inspect and copy, not to edit.</p>
+<h3 id="source-health-diagnostics"><a class="anchor" href="#source-health-diagnostics" aria-label="Link to this section">#</a>Source health diagnostics</h3>
+<p><strong>Settings → Advanced → Source health diagnostics</strong> shows which installed sources are answering. It is local-only: nothing is uploaded, and the screen reads connectivity only to decide whether a verdict is meaningful.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Unknown</strong></td>
+<td>No check has run, or the device is offline. Offline overrides every stored verdict and freezes the failure counts.</td>
+</tr>
+<tr>
+<td><strong>Healthy</strong></td>
+<td>The last call succeeded; the failure streak was cleared.</td>
+</tr>
+<tr>
+<td><strong>Degraded</strong></td>
+<td>The last call failed but the streak is under three — usually a transient timeout or HTTP error.</td>
+</tr>
+<tr>
+<td><strong>Blocked</strong></td>
+<td>A Cloudflare challenge or a login is in the way. One such failure is enough.</td>
+</tr>
+<tr>
+<td><strong>Suspected dead</strong></td>
+<td>Three DNS or 404 failures in a row. The site may have moved or closed.</td>
+</tr>
+</tbody></table></div>
+<p>Failures are counted only while the device is online; a success clears the streak but keeps the lifetime total. <strong>Blocked</strong> wins over a long DNS/404 streak because the most recent failure kind is checked first. <strong>Refresh</strong> reloads the screen and <strong>Clear health records</strong> forgets every recorded failure. <strong>Export redacted report</strong> shares a plain-text summary through Android&#39;s share sheet: source names, statuses, failure counts, failure kinds and a success timestamp, never library titles, URLs, accounts or reading history. An offline export downgrades every status to Unknown so stale &quot;dead&quot; verdicts are not replayed.</p>
 <h2 id="app-crashes"><a class="anchor" href="#app-crashes" aria-label="Link to this section">#</a>App crashes</h2>
 <ul>
 <li>The crash screen shows the <strong>full stack trace and device info</strong>, not just the exception name.</li>
@@ -261,6 +294,21 @@
 <td>Reset the user agent; clear cookies and log in again</td>
 </tr>
 <tr>
+<td>Source shows <strong>Blocked</strong> in health diagnostics</td>
+<td>Cloudflare or a login challenge</td>
+<td>Open the source in WebView and solve the challenge</td>
+</tr>
+<tr>
+<td>Source shows <strong>Suspected dead</strong></td>
+<td>Three DNS or 404 failures in a row</td>
+<td>Check whether the site moved; clear health records once it recovers</td>
+</tr>
+<tr>
+<td>Every source shows <strong>Unknown</strong></td>
+<td>Device offline</td>
+<td>Reconnect; failure counts are frozen while offline</td>
+</tr>
+<tr>
 <td>Komga cannot connect</td>
 <td>Wrong URL, API key or DNS</td>
 <td>Use the server&#39;s IP; the source intentionally uses system DNS</td>
@@ -284,9 +332,9 @@
 <ol>
 <li>Update the app (the bundled Dawn runtime tracks upstream).</li>
 <li>Toggle the high-quality switch off and on.</li>
-<li>Try <strong>Fast rendering</strong>.</li>
-<li>Disable <strong>ArtCNN</strong>.</li>
-<li>If the device is PowerVR-based, a current build may have a texture-copy workaround.</li>
+<li>Try <strong>Fast rendering</strong>, or turn off <strong>Settings → Advanced → Reader → WebGPU tile cache</strong> (on by default). PowerVR devices take that cache-free path automatically.</li>
+<li>Disable <strong>ArtCNN</strong> and, on current <code>master</code> builds, <strong>Sharpening</strong>.</li>
+<li>Update: recent builds paint the page under the tiles every frame and require a real blit before the tile path can report &quot;covered&quot;, so a wrong answer can no longer leave the screen blank.</li>
 </ol>
 <h3 id="pages-are-blurry-or-downsampled"><a class="anchor" href="#pages-are-blurry-or-downsampled" aria-label="Link to this section">#</a>Pages are blurry or downsampled</h3>
 <p>The reader caps the uploaded page at what the panel can show, with zoom headroom, and scales further under memory pressure. That is deliberate: the alternative is a lost GPU device. Free memory or lower the preload counts.</p>
@@ -418,6 +466,7 @@
 <li class="toc-l3"><a href="#dump-crash-logs">Dump crash logs</a></li>
 <li class="toc-l3"><a href="#debug-info">Debug info</a></li>
 <li class="toc-l3"><a href="#worker-info-and-backup-schema">Worker info and backup schema</a></li>
+<li class="toc-l3"><a href="#source-health-diagnostics">Source health diagnostics</a></li>
 <li class="toc-l2"><a href="#app-crashes">App crashes</a></li>
 <li class="toc-l2"><a href="#library-and-updates">Library and updates</a></li>
 <li class="toc-l2"><a href="#sources-and-extensions">Sources and extensions</a></li>
@@ -449,7 +498,7 @@
       </button>
     </div>
     <div class="search-results" id="search-results" aria-live="polite">
-      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+      <p class="search-hint">Type to search 42 pages. Use ↑ ↓ to move and Enter to open.</p>
     </div>
   </div>
 </div>

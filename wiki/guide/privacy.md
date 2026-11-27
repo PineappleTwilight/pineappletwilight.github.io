@@ -98,6 +98,8 @@ Password protection applies to archives written after it is enabled. Existing do
 
 There is no analytics SDK in the standard release. Logs stay in app-private storage until you share them.
 
+**Source health diagnostics** records failure counts in app-private preferences and never uploads them. The only way those records leave the device is the redacted report you choose to share; it carries source names and statuses, not library titles, URLs or reading history.
+
 ## Permissions
 
 Hyoukan requests permissions only for features you use:

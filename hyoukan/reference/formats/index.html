@@ -71,11 +71,13 @@
   <p class="nav-heading">User guide</p>
   <ul><li><a href="/hyoukan/guide/library/">Library &amp; categories</a></li>
 <li><a href="/hyoukan/guide/sources/">Sources &amp; extensions</a></li>
+<li><a href="/hyoukan/guide/novel-plugins/">Novel plugins</a></li>
 <li><a href="/hyoukan/guide/comics/">Reading comics</a></li>
 <li><a href="/hyoukan/guide/books/">Reading books</a></li>
 <li><a href="/hyoukan/guide/downloads/">Downloads &amp; storage</a></li>
 <li><a href="/hyoukan/guide/tracking/">Tracking</a></li>
 <li><a href="/hyoukan/guide/backup-sync/">Backup &amp; sync</a></li>
+<li><a href="/hyoukan/guide/library-imports/">Library imports</a></li>
 <li><a href="/hyoukan/guide/translation/">AI translation</a></li>
 <li><a href="/hyoukan/guide/upscaling/">AI upscaling</a></li>
 <li><a href="/hyoukan/guide/achievements/">Achievements</a></li>
@@ -200,6 +202,9 @@
   Novel Series/
     Book 1.epub
     Book 2.epub
+  Plain books/
+    Story.fb2
+    Notes.txt
 </code></pre>
 <p>Rules:</p>
 <ul>
@@ -208,8 +213,9 @@
 <li><code>details.json</code> is read when present.</li>
 <li><code>ComicInfo.xml</code> is read for title, series, volume, summary, writer, artist and publishing status.</li>
 <li>Hidden folders are ignored unless the setting is enabled.</li>
-<li>A folder whose chapters are <strong>all</strong> EPUBs is a book series; a mixed folder is a comic.</li>
+<li>A folder whose chapters are <strong>all</strong> books (<code>.epub</code>, <code>.fb2</code>, <code>.txt</code>) is a book series; a mixed folder is a comic.</li>
 <li>An EPUB can also be read as an image chapter if the entry is explicitly set to comic.</li>
+<li>A single <code>.epub</code>, <code>.fb2</code> or <code>.txt</code> file can stand as its own local-source entry. Files imported through <strong>Settings → Book reading → Import books</strong> are copied into one new local-source folder and matched by file name, case-insensitively; the MIME type is ignored.</li>
 </ul>
 <h3 id="detailsjson"><a class="anchor" href="#detailsjson" aria-label="Link to this section">#</a><code>details.json</code></h3>
 <pre><code class="language-json">{
@@ -225,6 +231,13 @@
 <p><code>status</code> accepts <code>Ongoing</code>, <code>Completed</code>, <code>Licensed</code>, <code>Publishing finished</code>, <code>Cancelled</code> or <code>On hiatus</code>.</p>
 <h3 id="comicinfoxml"><a class="anchor" href="#comicinfoxml" aria-label="Link to this section">#</a><code>ComicInfo.xml</code></h3>
 <p>ComicInfo is the ComicRack schema. Hyoukan reads the common fields (<code>Title</code>, <code>Series</code>, <code>Number</code>, <code>Volume</code>, <code>Summary</code>, <code>Writer</code>, <code>Penciller</code>, <code>Publisher</code>, <code>PublishingStatus</code>, <code>Year</code>, <code>Month</code>, <code>Day</code>, <code>Genre</code>, <code>Tags</code>). It is also written into encrypted archives with random padding as an anti-fingerprint measure.</p>
+<h3 id="fb2-and-txt-conversion"><a class="anchor" href="#fb2-and-txt-conversion" aria-label="Link to this section">#</a>FB2 and TXT conversion</h3>
+<p>FB2 is parsed as XML: each leaf <code>&lt;section&gt;</code> becomes a reader section, with <code>&lt;title&gt;</code> as its heading. Emphasis, strong, strikethrough, sub/superscript, code, citation, epigraphs, annotations and <code>&lt;v&gt;</code> verse lines map to HTML with inline CSS; images are not inlined and only <code>http(s)</code> links are kept. Encoding is taken from a byte-order mark or an <code>encoding=&quot;…&quot;</code> declaration, falling back to UTF-8.</p>
+<p>TXT is normalised to line feeds, split into paragraphs on blank lines (single newlines become <code>&lt;br/&gt;</code>), escaped, and packed into sections of at most 12,000 characters, preferring paragraph boundaries and falling back to sentence or hard cuts inside an over-long paragraph.</p>
+<p>Both conversions run entirely on the device. Parsed sections are cached per chapter and files over 64 MiB are refused. <strong>Search in chapter</strong> uses a case-insensitive literal index with context snippets. FB2/TXT files keep the generated placeholder cover.</p>
+<blockquote class="callout callout-note"><p class="callout-title">Note</p>
+<p>FB2 and TXT support is on the current <code>master</code> build, not in the stable 1.25.3 release. The <strong>Import books</strong> strings still say &quot;EPUB&quot; even though the picker accepts all three formats.</p>
+</blockquote>
 <h2 id="downloads"><a class="anchor" href="#downloads" aria-label="Link to this section">#</a>Downloads</h2>
 <p>Downloads live under the chosen storage location:</p>
 <pre><code>&lt;storage&gt;/&lt;source name&gt;/&lt;entry title&gt;/
@@ -313,7 +326,7 @@
 ]
 </code></pre>
 <p>The app also accepts a legacy format with a store object (<code>name</code>, <code>website</code>, <code>signingKey</code>, <code>contact</code>) and a separate extension list. The store base URL resolves <code>apk/&lt;file&gt;</code> and <code>icon/&lt;package&gt;.png</code>.</p>
-<p>The signing key is the trust anchor: the Private installer verifies the downloaded APK against it before storing.</p>
+<p>The signing key is the trust anchor: the Private installer verifies the downloaded APK against it before storing. Remote store indexes and extension lists are capped at <strong>16 MiB</strong>; a larger response is refused with a clear error before it is buffered.</p>
 <h2 id="sync-payload"><a class="anchor" href="#sync-payload" aria-label="Link to this section">#</a>Sync payload</h2>
 <p>SyncYomi, WebDAV and Google Drive carry the same protobuf payload as a backup, with sync-specific settings:</p>
 <ul>
@@ -401,6 +414,14 @@
 <td>Imported GGUF / ONNX models</td>
 <td>App-private files</td>
 </tr>
+<tr>
+<td>Library import sessions</td>
+<td>App-private <code>files/library_imports/sessions.json</code></td>
+</tr>
+<tr>
+<td>Novel plugins</td>
+<td>App-private <code>files/novel_plugins/&lt;id&gt;.js</code></td>
+</tr>
 </tbody></table></div>
 <p>Android may clear app-private caches on its own. Downloads and backups in user-chosen storage are not cleared by the system.</p>
 
@@ -419,6 +440,7 @@
 <li class="toc-l2"><a href="#local-source">Local source</a></li>
 <li class="toc-l3"><a href="#detailsjson">details.json</a></li>
 <li class="toc-l3"><a href="#comicinfoxml">ComicInfo.xml</a></li>
+<li class="toc-l3"><a href="#fb2-and-txt-conversion">FB2 and TXT conversion</a></li>
 <li class="toc-l2"><a href="#downloads">Downloads</a></li>
 <li class="toc-l2"><a href="#supported-archives">Supported archives</a></li>
 <li class="toc-l2"><a href="#supported-image-formats">Supported image formats</a></li>
@@ -440,7 +462,7 @@
       </button>
     </div>
     <div class="search-results" id="search-results" aria-live="polite">
-      <p class="search-hint">Type to search 40 pages. Use ↑ ↓ to move and Enter to open.</p>
+      <p class="search-hint">Type to search 42 pages. Use ↑ ↓ to move and Enter to open.</p>
     </div>
   </div>
 </div>

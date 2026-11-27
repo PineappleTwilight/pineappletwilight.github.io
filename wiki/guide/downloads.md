@@ -128,6 +128,8 @@ The same screen offers:
 
 The CSV is for spreadsheets; the database export is for debugging and migration, not a replacement for a backup. Use [Create backup](/hyoukan/guide/backup-sync/) for a restorable copy.
 
+Below Export on the same screen, **Library imports** matches entries from another service's export to sources one at a time; see [Library imports](/hyoukan/guide/library-imports/).
+
 ## Downloading books
 
 A book chapter (EPUB) downloads as its source file, not as image pages. The downloader writes `book.epub` into the chapter folder, and the reader opens that file offline. A Komga chapter that is really a comic still downloads as pages.
