@@ -104,10 +104,10 @@ Failures are counted only while the device is online; a success clears the strea
 
 Check **Settings → Advanced → Use high quality renderer**. If it is on, the log says why:
 
-- `WebGPU viewer declined:` — the health latch or the device.
+- `WebGPU viewer declined:` — WebGPU cannot run on this device, or a previously dead device cannot be rebuilt.
 - `WebGPU viewer failed` — constructing the viewer threw.
 
-Turning the switch off and on clears the accumulated strikes. A new app build clears them automatically.
+On current `master`, there are no accumulated-strike resets. Degraded sessions are diagnostic only and never cause fallback; a recoverable GPU loss rebuilds the device. A device left dead by a previous session is rebuilt before the next reader starts.
 
 ### The screen is black, but pages are decoding
 

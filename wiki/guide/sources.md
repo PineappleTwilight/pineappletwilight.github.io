@@ -83,8 +83,13 @@ Komga is a self-hosted comic/manga/ebook server. Configure it from **Browse → 
 - **Server address** — for example `http://192.168.1.20:25600`.
 - **API key** — optional, for authenticated servers.
 - **Display name** — how the source appears in Browse.
+- **Chapter title format** — default `{number} - {title}`. Placeholders: `{title}`, `{seriesTitle}`, `{number}`, `{createdDate}`, `{releaseDate}`, `{size}`, `{sizeBytes}`. `{title}` alone removes the number prefix; unknown placeholders are refused, and `${name}` renders `{name}` literally. Stored under Keiyoushi's `Chapter name template` key.
+- **Scanlator name separator** — one character between translator credits. Default `,` renders `", "`; any other separator is surrounded by spaces. Stored under Keiyoushi's `Scanlator seperator` key (sic).
+- **Default libraries** — empty means **All libraries**; choosing libraries narrows browsing to them. **Reload libraries** fetches the server's library list for the selection. Stored under `Default libraries`.
 
 The source browses libraries, series and books; comics read as image pages, EPUBs open in the book reader, and reading progress syncs through the Komga tracker. The app's HTTP client uses the system DNS on purpose so IP-addressed servers work, and never sends credentials to a host that did not issue the challenge.
+
+The Keiyoushi-ported **Chapter title format**, **Scanlator name separator**, **Default libraries** and **Reload libraries** options are on current `master`. These settings use Keiyoushi Komga's own keys. With [delegated sources](#delegated-sources), values already set in an installed Komga extension apply to the built-in source unchanged.
 
 ## E-Hentai / ExHentai
 

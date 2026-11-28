@@ -323,10 +323,10 @@
 <h3 id="it-falls-back-to-the-standard-viewer"><a class="anchor" href="#it-falls-back-to-the-standard-viewer" aria-label="Link to this section">#</a>It falls back to the standard viewer</h3>
 <p>Check <strong>Settings → Advanced → Use high quality renderer</strong>. If it is on, the log says why:</p>
 <ul>
-<li><code>WebGPU viewer declined:</code> — the health latch or the device.</li>
+<li><code>WebGPU viewer declined:</code> — WebGPU cannot run on this device, or a previously dead device cannot be rebuilt.</li>
 <li><code>WebGPU viewer failed</code> — constructing the viewer threw.</li>
 </ul>
-<p>Turning the switch off and on clears the accumulated strikes. A new app build clears them automatically.</p>
+<p>On current <code>master</code>, there are no accumulated-strike resets. Degraded sessions are diagnostic only and never cause fallback; a recoverable GPU loss rebuilds the device. A device left dead by a previous session is rebuilt before the next reader starts.</p>
 <h3 id="the-screen-is-black-but-pages-are-decoding"><a class="anchor" href="#the-screen-is-black-but-pages-are-decoding" aria-label="Link to this section">#</a>The screen is black, but pages are decoding</h3>
 <p>This is a GPU/driver problem. Try:</p>
 <ol>

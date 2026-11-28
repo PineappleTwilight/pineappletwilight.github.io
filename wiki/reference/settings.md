@@ -257,11 +257,14 @@ This is the map of **More → Settings**. Rows are grouped as they appear; a row
 
 - **Sources** group.
 - **Suggestions** — show, expand, overflow, Home button.
+- **Show scanlator priority** — show the entry-page **Scanlator priority** entry; on by default (on `master`).
+- **Scanlator priority in overflow** — move **Scanlator priority** into the toolbar's ⋮ menu; off by default, requires **Show scanlator priority** (on `master`).
 - **Sequels & prequels**.
 - **Edit categories** / **Filter sources in categories**.
 - **Replace latest button** — custom browse view.
 - **Local source hidden folders**.
 - **Feed** — hide tab, tab position, hide entries already in library.
+- **Feed enhancements** — local Feed categories, filters, duplicate collapsing, failure summary and suggestions; off by default (on `master`); see [Feed](/hyoukan/guide/library/#the-feed).
 - **Extension stores**.
 - **Extensions**.
 - **Allowed content warnings** — Safe, Mixed, NSFW.
@@ -283,7 +286,8 @@ This is the map of **More → Settings**. Rows are grouped as they appear; a row
 - **Delete all downloads**.
 - **Export → Library List (CSV)**.
 - **Export database**.
-- **Library imports → Import a library export** — match entries from a MangaBaka export to sources (on `master`); see [Library imports](/hyoukan/guide/library-imports/).
+- **Library imports → Import a library export** — match entries from a MangaBaka export to sources; with **Library interoperability** on, also import Kototoro, Usagi or Aniyomi exports (on `master`); see [Library imports](/hyoukan/guide/library-imports/).
+- **Library interoperability** — off by default; import Kototoro/Usagi `.bk.zip` backups and Aniyomi `.tachibk` backups through Library imports, and export **Export to Kototoro** / **Export to Usagi** backups (on `master`).
 
 ## Security
 

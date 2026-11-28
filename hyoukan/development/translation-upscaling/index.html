@@ -202,7 +202,7 @@
 <li>union-find + MST grouping;</li>
 <li>Canvas typesetting.</li>
 </ul>
-<p>Removal covers every detected region; translation covers only OCR-readable ones. Inpainting masks glyph strokes, not whole boxes. Render text is capped at the original glyph size unless a fixed colour/size is requested.</p>
+<p><code>BubbleUniformity</code> samples a slightly expanded ring to classify uniform backgrounds. Zero-area quads (a dot or a collapsed line) contribute no ring points, and a region with no usable corners reports &quot;not uniform&quot; instead of treating four copies of one pixel as a perfectly uniform bubble. Removal covers every detected region; translation covers only OCR-readable ones. Inpainting masks glyph strokes, not whole boxes. Render text is capped at the original glyph size unless a fixed colour/size is requested.</p>
 <p>The engine config is rebuilt when a tuning knob changes; render settings are per page.</p>
 <h3 id="local-llm-runtime"><a class="anchor" href="#local-llm-runtime" aria-label="Link to this section">#</a>Local LLM runtime</h3>
 <p><code>llamatik-native</code> builds llama.cpp from the <code>external/llamatik</code> fork:</p>

@@ -389,6 +389,7 @@
 <p>The app resolves <code>apk</code> against the store&#39;s base URL, verifies the download against the store&#39;s signing key, and installs. A store can also provide a legacy repository format with separate extension-list and APK URLs.</p>
 <h2 id="delegated-sources"><a class="anchor" href="#delegated-sources" aria-label="Link to this section">#</a>Delegated sources</h2>
 <p>An installed extension can be <strong>delegated</strong> to an in-app implementation under the same source id. The main case is Komga: the app&#39;s built-in source takes over an installed Komga extension&#39;s id so library entries, settings, URLs and tracker links carry over. Delegation is enabled under Developer tools and read at source-map build time, so it requires a restart.</p>
+<p>The built-in Komga source mirrors Keiyoushi Komga preference keys — <code>Chapter name template</code>, <code>Scanlator seperator</code> (sic), <code>Default libraries</code>, plus the <code>library_list</code> cache filled by <strong>Reload libraries</strong> — so values set in the extension apply unchanged under delegation.</p>
 <p>Delegation is an app-side decision; an extension does not opt in.</p>
 <h2 id="the-local-source"><a class="anchor" href="#the-local-source" aria-label="Link to this section">#</a>The local source</h2>
 <p>The local source is an in-repo implementation of the same interfaces. It reads:</p>

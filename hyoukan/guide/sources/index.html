@@ -223,8 +223,12 @@
 <li><strong>Server address</strong> — for example <code>http://192.168.1.20:25600</code>.</li>
 <li><strong>API key</strong> — optional, for authenticated servers.</li>
 <li><strong>Display name</strong> — how the source appears in Browse.</li>
+<li><strong>Chapter title format</strong> — default <code>{number} - {title}</code>. Placeholders: <code>{title}</code>, <code>{seriesTitle}</code>, <code>{number}</code>, <code>{createdDate}</code>, <code>{releaseDate}</code>, <code>{size}</code>, <code>{sizeBytes}</code>. <code>{title}</code> alone removes the number prefix; unknown placeholders are refused, and <code>${name}</code> renders <code>{name}</code> literally. Stored under Keiyoushi&#39;s <code>Chapter name template</code> key.</li>
+<li><strong>Scanlator name separator</strong> — one character between translator credits. Default <code>,</code> renders <code>&quot;, &quot;</code>; any other separator is surrounded by spaces. Stored under Keiyoushi&#39;s <code>Scanlator seperator</code> key (sic).</li>
+<li><strong>Default libraries</strong> — empty means <strong>All libraries</strong>; choosing libraries narrows browsing to them. <strong>Reload libraries</strong> fetches the server&#39;s library list for the selection. Stored under <code>Default libraries</code>.</li>
 </ul>
 <p>The source browses libraries, series and books; comics read as image pages, EPUBs open in the book reader, and reading progress syncs through the Komga tracker. The app&#39;s HTTP client uses the system DNS on purpose so IP-addressed servers work, and never sends credentials to a host that did not issue the challenge.</p>
+<p>The Keiyoushi-ported <strong>Chapter title format</strong>, <strong>Scanlator name separator</strong>, <strong>Default libraries</strong> and <strong>Reload libraries</strong> options are on current <code>master</code>. These settings use Keiyoushi Komga&#39;s own keys. With <a href="#delegated-sources">delegated sources</a>, values already set in an installed Komga extension apply to the built-in source unchanged.</p>
 <h2 id="e-hentai-exhentai"><a class="anchor" href="#e-hentai-exhentai" aria-label="Link to this section">#</a>E-Hentai / ExHentai</h2>
 <p>The E-Hentai source is a full client:</p>
 <ul>

@@ -77,11 +77,12 @@ This page is the map. Each section links to the guide that covers the feature in
 | **Migration** | Move entries to another source, individually or in bulk, with search and chapter-count comparison. |
 | **Censor lewd content** | Blur thumbnails and redact titles, tags and descriptions across the library, catalogue and details. |
 | **Source filters** | Per-source default filters, including per-sort defaults, and pinned source categories. |
-| **Feed** | A multi-source feed of latest entries and saved searches, with its own tab. |
+| **Feed** | A multi-source feed of latest entries and saved searches, with its own tab; optional **Feed enhancements** add local categories, filters, suggestions and retry summaries (on `master`). |
 | **History** | Reading history with per-entry progress, timestamps and chapter counts. |
 | **Stats** | Library and reading statistics with configurable cover styling. |
 | **Local source** | Folder-per-series reading of images, archives and books (EPUB, FB2, TXT), with hidden-folder support. |
-| **Library imports** | Turn a MangaBaka export into resumable sessions, matching each entry to a source by hand (on `master`). |
+| **Library imports** | Turn a MangaBaka export into resumable sessions, matching each entry to a source by hand; with **Library interoperability** on, also import Kototoro, Usagi or Aniyomi exports (on `master`). |
+| **Library interoperability** | Opt-in Kototoro/Usagi/Aniyomi import and Kototoro/Usagi export; tracker accounts and app settings stay on device (on `master`). |
 | **Comics and books together** | One library holds both; the entry type is detected from the content, not the file extension alone. |
 
 → [Library & categories](/hyoukan/guide/library/) · [Tutorial: library on autopilot](/hyoukan/tutorials/library-autopilot/)
@@ -96,7 +97,7 @@ This page is the map. Each section links to the guide that covers the feature in
 | **Automatic extension updates** | Background updates every 6/12 hours, daily or weekly, through the Private or Shizuku installer. |
 | **Extension diagnostics** | Failed extensions report their icon, version, repository and failing source, with one-tap issue search. |
 | **Content warnings** | Extensions are flagged Safe, Mixed or NSFW; you choose which warnings you allow. |
-| **Built-in Komga** | Browse, search and read from a Komga server without an extension, including EPUB books and progress sync. |
+| **Built-in Komga** | Browse, search and read from a Komga server without an extension, including EPUB books, progress sync, Keiyoushi chapter-title formatting, scanlator separators and default-library selection. |
 | **Delegated sources** | The app's enhanced implementations can take over installed extensions where supported (notably Komga). |
 | **E-Hentai / ExHentai** | Login, favourites sync, watched tags, language filtering, original images, H@H, censorship metadata and enhanced browse. |
 | **Cloudflare handling** | WebView challenge solving, an optional FlareSolverr instance, and a visible Turnstile popup when a challenge needs a human. |

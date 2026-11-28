@@ -181,12 +181,11 @@
 <p>The WebGPU viewer is not a skin over the old viewer; it is a separate render path. It declines in a fixed order:</p>
 <ol>
 <li><strong>Use high quality renderer</strong> is off.</li>
-<li>The build recorded <strong>two degraded sessions</strong> on this device.</li>
-<li>The renderer cannot initialise or lost its GPU device.</li>
+<li>The renderer cannot initialise, or a previously dead device cannot be rebuilt.</li>
 <li>Constructing the viewer threw.</li>
 </ol>
-<p>Every decline writes a line to the in-app log beginning <code>WebGPU viewer declined:</code> or <code>WebGPU viewer failed:</code>. If the reader looks like the old viewer, check <strong>Settings → Advanced → View logs</strong> for those lines before changing colour settings that are not being used.</p>
-<p>To clear the health latch, turn the WebGPU switch off and on again. A new app build clears it automatically; a single recovered device loss does not count as degraded.</p>
+<p>Every decline writes a line to the in-app log beginning <code>WebGPU viewer declined:</code> or <code>WebGPU viewer failed</code>. If the reader looks like the old viewer, check <strong>Settings → Advanced → View logs</strong> for those lines before changing colour settings that are not being used.</p>
+<p>There is no health latch or per-device strike gate. Degraded sessions are recorded in the in-app log with diagnostics but never change which viewer opens; a single recovered device loss is not degraded, and a device left dead by a previous session is rebuilt before the next reader starts.</p>
 <h2 id="step-2-start-from-a-neutral-picture"><a class="anchor" href="#step-2-start-from-a-neutral-picture" aria-label="Link to this section">#</a>Step 2 — Start from a neutral picture</h2>
 <p>Before grading, make the base display correct.</p>
 <ol>
@@ -359,12 +358,12 @@
 </thead>
 <tbody><tr>
 <td>The reader looks like the old viewer</td>
-<td>WebGPU switch off, or the health latch is set</td>
-<td>Turn the switch off and on; check the log lines</td>
+<td>WebGPU switch off, renderer unavailable, or viewer construction failed</td>
+<td>Check <code>WebGPU viewer declined:</code> / <code>WebGPU viewer failed</code>; there is no health-latch reset</td>
 </tr>
 <tr>
 <td>WebGPU still declines after that</td>
-<td>The device cannot initialise the renderer</td>
+<td>The device cannot initialise the renderer or cannot rebuild a dead device</td>
 <td>Update the app; the legacy viewer remains usable</td>
 </tr>
 <tr>

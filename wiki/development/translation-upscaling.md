@@ -79,7 +79,7 @@ The native vision pipeline lives in `external/yakuyomi-engine` (submodule, `li.j
 - union-find + MST grouping;
 - Canvas typesetting.
 
-Removal covers every detected region; translation covers only OCR-readable ones. Inpainting masks glyph strokes, not whole boxes. Render text is capped at the original glyph size unless a fixed colour/size is requested.
+`BubbleUniformity` samples a slightly expanded ring to classify uniform backgrounds. Zero-area quads (a dot or a collapsed line) contribute no ring points, and a region with no usable corners reports "not uniform" instead of treating four copies of one pixel as a perfectly uniform bubble. Removal covers every detected region; translation covers only OCR-readable ones. Inpainting masks glyph strokes, not whole boxes. Render text is capped at the original glyph size unless a fixed colour/size is requested.
 
 The engine config is rebuilt when a tuning knob changes; render settings are per page.
 

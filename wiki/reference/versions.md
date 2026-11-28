@@ -110,7 +110,7 @@ The full history is in [`CHANGELOG.md`](https://github.com/PineappleTwilight/hyo
 - **MangaDex's in-app client was removed.** Install the community extension; existing entries stay readable.
 - **The blacklist storage format changed to JSON.** Old entries keep working; the views read both encodings.
 - **Beta installs need one manual install** to move from the old debug-signed betas to the minified preview builds.
-- **WebGPU fallback strikes are scoped to the build.** A new version gets a fresh try automatically.
+- **WebGPU diagnostic strikes are scoped to the build** (on current `master`). A new version gets a fresh diagnostic record automatically. Strikes never demote the reader to the standard viewer; recoverable GPU loss is recovered in place.
 
 ## Identifying a build
 

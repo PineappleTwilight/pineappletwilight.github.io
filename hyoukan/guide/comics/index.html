@@ -214,12 +214,11 @@
 <p><code>WebGpuProvider</code> declines, in order, when:</p>
 <ol>
 <li><strong>Use high quality renderer</strong> is off.</li>
-<li>This build recorded <strong>two degraded sessions</strong> on the device.</li>
-<li>The renderer <strong>cannot initialise</strong> or lost its GPU device.</li>
+<li>The renderer <strong>cannot initialise</strong>, or a previously dead device cannot be rebuilt.</li>
 <li>Constructing the viewer <strong>threw</strong>.</li>
 </ol>
-<p>Every decline writes a line to the in-app log beginning <code>WebGPU viewer declined:</code> or <code>WebGPU viewer failed</code>. The switch&#39;s summary also says when the health latch is active. Turning the switch off and on clears the latch and gives the device a fresh try; a new app build clears it automatically.</p>
-<p>A session counts as degraded only if it ends with the renderer still dead, or loses the device three times with recoveries in between. A single device loss that recovers — which backgrounding causes on healthy phones — does not count.</p>
+<p>Every decline writes a line to the in-app log beginning <code>WebGPU viewer declined:</code> or <code>WebGPU viewer failed</code>. There is no per-device health latch on current <code>master</code>: degraded sessions are logged with diagnostics but never change which viewer opens, and a device left dead by a previous session is rebuilt before the next reader starts. The high-quality switch remains the preference gate; renderer unavailability or construction failure can still use the standard viewer.</p>
+<p>A session counts as degraded when it ends with the renderer still dead, has a parked swapchain, loses the device three times with recoveries in between, or decodes at least two pages for five seconds without both a presented frame and a page on screen. A single device loss that recovers — which backgrounding causes on healthy phones — does not count. The strike record is diagnostic only.</p>
 <h3 id="memory-and-page-quality"><a class="anchor" href="#memory-and-page-quality" aria-label="Link to this section">#</a>Memory and page quality</h3>
 <p>The renderer sizes itself to the device and to <strong>live</strong> memory pressure:</p>
 <ul>
@@ -326,6 +325,7 @@
 <li>filter by bookmark colour.</li>
 </ul>
 <p><strong>Smart scanlator filtering</strong> can show one chapter per number across groups, preferring the most complete source. It is on by default and configurable with chapter-count ranges, per-scanlator toggles, a coverage view and drag-to-reorder priority. Groups that split the work both keep their chapters.</p>
+<p>The <strong>Scanlator priority</strong> entry can stay on the entry page or move into the toolbar&#39;s ⋮ menu. Under <strong>Settings → Browse</strong>, <strong>Scanlator priority in overflow</strong> is off by default; <strong>Show scanlator priority</strong> controls whether the entry appears at all and is on by default. Hiding <strong>Show scanlator priority</strong> hides it everywhere. These switches are on current <code>master</code>.</p>
 <p><strong>Chapter deduplication</strong> works alongside it: duplicate numbers are merged in the list, but the underlying chapters are preserved.</p>
 <h2 id="translation-and-upscaling-in-the-reader"><a class="anchor" href="#translation-and-upscaling-in-the-reader" aria-label="Link to this section">#</a>Translation and upscaling in the reader</h2>
 <ul>

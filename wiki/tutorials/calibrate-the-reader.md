@@ -29,13 +29,12 @@ The reader decodes pages into GPU textures, tiles them, and draws them through a
 The WebGPU viewer is not a skin over the old viewer; it is a separate render path. It declines in a fixed order:
 
 1. **Use high quality renderer** is off.
-2. The build recorded **two degraded sessions** on this device.
-3. The renderer cannot initialise or lost its GPU device.
-4. Constructing the viewer threw.
+2. The renderer cannot initialise, or a previously dead device cannot be rebuilt.
+3. Constructing the viewer threw.
 
-Every decline writes a line to the in-app log beginning `WebGPU viewer declined:` or `WebGPU viewer failed:`. If the reader looks like the old viewer, check **Settings → Advanced → View logs** for those lines before changing colour settings that are not being used.
+Every decline writes a line to the in-app log beginning `WebGPU viewer declined:` or `WebGPU viewer failed`. If the reader looks like the old viewer, check **Settings → Advanced → View logs** for those lines before changing colour settings that are not being used.
 
-To clear the health latch, turn the WebGPU switch off and on again. A new app build clears it automatically; a single recovered device loss does not count as degraded.
+There is no health latch or per-device strike gate. Degraded sessions are recorded in the in-app log with diagnostics but never change which viewer opens; a single recovered device loss is not degraded, and a device left dead by a previous session is rebuilt before the next reader starts.
 
 ## Step 2 — Start from a neutral picture
 
@@ -151,8 +150,8 @@ The renderer sizes its cache to the device and to live memory pressure. A page l
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| The reader looks like the old viewer | WebGPU switch off, or the health latch is set | Turn the switch off and on; check the log lines |
-| WebGPU still declines after that | The device cannot initialise the renderer | Update the app; the legacy viewer remains usable |
+| The reader looks like the old viewer | WebGPU switch off, renderer unavailable, or viewer construction failed | Check `WebGPU viewer declined:` / `WebGPU viewer failed`; there is no health-latch reset |
+| WebGPU still declines after that | The device cannot initialise the renderer or cannot rebuild a dead device | Update the app; the legacy viewer remains usable |
 | White pages stay bright at night | Dark mode filter off, or grey tolerance too low | Turn on the filter; raise tolerance |
 | Coloured art turns into a negative | Grey tolerance too high | Lower it until colour survives |
 | Art becomes muddy at night | Colour dimming too high | Lower it |

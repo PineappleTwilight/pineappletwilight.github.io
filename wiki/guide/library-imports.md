@@ -11,7 +11,9 @@ description: Turn another service's library export into Hyoukan entries, matched
 
 ## Start an import
 
-**More → Settings → Data and storage → Library imports → Import a library export**, then pick the export file. The only adapter today is **MangaBaka**: a `.json` export downloaded from the site, with a file name containing `mangabaka` or `manga_baka`. Any picked file is attempted as MangaBaka. Both the site's current `schema_version: 2` shape and the older API shape are accepted.
+**More → Settings → Data and storage → Library imports → Import a library export**, then pick the export file. **MangaBaka** is always supported: a `.json` export downloaded from the site, with a file name containing `mangabaka` or `manga_baka`. Both the site's current `schema_version: 2` shape and the older API shape are accepted.
+
+With **Settings → Data and storage → Library interoperability** on, the same flow also offers **Kototoro** (`.bk.zip` Kotatsu-style backups), **Usagi** (`.bk.zip`), and **Aniyomi** (`.tachibk`, gzip-compressed protobuf, including anime entries). Those adapters are hidden while the switch is off, so the picker accepts exactly what it did before. The Kotatsu-compatible archive carries source, URL, cover, author, genres, categories and last-read chapter; tracker accounts and app settings are not transferred. The normal matching rules below still apply. Under **Settings → Data and storage → Library interoperability**, use **Export to Kototoro** or **Export to Usagi** to write a backup that app can restore; exports are named `hyoukan_kototoro.bk.zip` / `hyoukan_usagi.bk.zip`, contain your favourites and categories, and do not include tracker credentials or app settings.
 
 A file that cannot be parsed reports "That file is not a readable library export"; an export with no entries reports "That export has no entries". The screen is titled **Library imports**, and a new import becomes a session named after the file. Picking the same export again continues that session, keeping entries already imported or skipped.
 

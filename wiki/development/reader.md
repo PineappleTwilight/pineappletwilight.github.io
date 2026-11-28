@@ -181,7 +181,9 @@ Loading has a deadline (`STUCK_LOAD_DEADLINE_MS`): a page stranded at `LoadPage`
 3. Rebuild the swapchain from the retained surface.
 4. The app's `deviceLostListener` calls `resetDecodedPagesAfterDeviceLoss()`: every decoded page is destroyed, tile grids clear, and the viewer re-anchors on the current page.
 
-A rebuilt device invalidates everything bound to the old one. `WebGpuViewer` carries a **device generation**: pages decoded before a rebuild are discarded instead of being submitted to the replacement device, and the pipeline caches, bind groups and font atlases are cleared as part of the rebuild. The device-lost check runs **before** `submitAndRelease`, and texture readback checks for loss before mapping, so a dead device is never submitted to or mapped. An uncaptured validation error counts as a failed frame (`errs=`), and the one-shot page-texture readback logs `tex=rgba=…`, which separates a black texture from a black composite.
+A rebuilt device invalidates everything bound to the old one. `WebGpuViewer` carries a **device generation**: pages decoded before a rebuild are discarded instead of being submitted to the replacement device, and the pipeline caches, bind groups and font atlases are cleared as part of the rebuild. The device-lost check runs **before** `submitAndRelease`, and texture readback checks for loss before mapping, so a dead device is never submitted to or mapped. An uncaptured validation error counts as a failed frame (`errs=`).
+
+**A loss the callback never delivers is still a loss.** `DeviceLossSignal.isLostDeviceMessage` recognises native answers such as `4: [Device] is lost.`, a destroyed device and `device is lost`, and `WebGpuRenderer.noteObservedDeviceLoss` promotes them to the same idempotent loss event as the driver callback. The renderer first pumps `instance.processEvents()`, then rebuilds the device and re-decodes pages. The promotion applies to page-texture readback, frame errors and decode-upload errors; a destroyed buffer or lost surface alone is not a device loss. On PowerVR, a Vulkan-shaped device fault (`LOSS_REASON_OBSERVED`, `VK_ERROR_OUT_OF_DEVICE_MEMORY` or `DEVICE_LOST`) moves recovery to Dawn's OpenGLES backend when not already on GLES. The one-shot readback logs `tex=rgba=…` or `tex=map failed …`, stamped with `t=<ms>ms`, separating a black texture from a black composite; on PowerVR it samples the texture's top-left `(0, 0)`, and failed samples re-arm a few times. The session report records `lastLoss=<seconds>s <source>: <message>`.
 
 **Recovery is bounded:**
 
@@ -191,31 +193,31 @@ A rebuilt device invalidates everything bound to the old one. `WebGpuViewer` car
 - A failed recovery self-retries once per cooldown.
 - A recovery that loses its device at birth reports failure rather than returning true.
 
-A wedged display surface has its own ladder: rebuild the surface, restart the GPU stack with a fresh Dawn instance and device, switch the adapter to the OpenGLES backend, and only then give up for the session. The surface uses the driver-reported format, waits a frame before its first image request after a reconfiguration, and is closed in `WebGpuViewer.destroy()` before the activity dies so the next session cannot inherit it. A session that recovers names the step that saved it in the log.
+A wedged display surface has its own ladder: rebuild the surface, restart the GPU stack with a fresh Dawn instance and device, switch the adapter to the OpenGLES backend, and only then give up for the session. The surface uses the driver-reported format, waits a frame before its first image request after a reconfiguration, and is closed in `WebGpuViewer.destroy()` before the activity dies so the next session cannot inherit it. A session that recovers names the step that saved it in the log. A dead device from a previous session is rebuilt at the next reader open: `WebGpuProvider` calls `WebGpuRenderer.reinit()` before deciding the renderer is unavailable.
 
 **Device upgrades itself to core.** If the adapter lists `core-features-and-limits`, the library requests it; Compatibility mode only added restrictions and produced silent black frames when a pipeline exceeded one of them. A driver that lists the feature but rejects the request retries compat-only.
 
 ## Fallback and health
 
-`WebGpuProvider.create` is the only place that can hand the reader to the legacy pager. It stops at the first reason:
+**There is no per-device fallback.** The WebGPU renderer is the reader's standard viewer. `WebGpuProvider.create`, together with `webGpuOfferFor`, is the only place that can hand the reader to the legacy pager. It stops at the first reason:
 
 1. The user's high-quality switch is off.
-2. This build recorded two degraded sessions.
-3. The renderer cannot initialise or lost its device.
-4. Constructing the viewer threw.
+2. WebGPU cannot run on this device at all: the renderer cannot initialise, or a previously dead device cannot be rebuilt after `reinit()`.
+3. Constructing the viewer threw.
 
-Rows 2–4 are logged, both on the `ViewerRegistry` line and in the in-app log.
+Reasons 2–3 are logged, both on the `ViewerRegistry` line and in the in-app log. A bad session history is not a gate: `WebGpuHealth` cannot change which viewer opens. A recoverable GPU loss is answered by rebuilding the device and re-decoding pages, not by demoting the reader; on PowerVR a Vulkan-shaped fault can move recovery to the OpenGLES backend.
 
-A **strike** is a session verdict, not a sample at exit:
+A **strike** is a diagnostic session verdict, not a sample at exit. `sessionVerdict` checks, in order:
 
-- One strike per session that closes with the renderer still dead.
-- Or a session that loses the device three times even with recoveries.
-- A clean close clears the count.
-- Strikes are scoped to the build (`VERSION_NAME` + `BUILD_TIME`), so a fix gets a fresh try.
-- Turning the high-quality switch off and on clears them.
-- A session that lost the device once and recovered is not a strike; backgrounding does that on healthy phones.
+- `DEAD_AT_EXIT` — the renderer was still dead when a deliberate exit closed the session (`activity.isFinishing` gates backgrounding).
+- `PARKED` — the session parked its swapchain after the full recovery ladder.
+- `LOSS_THRASH` — the session lost the device `SESSION_LOSS_STRIKE_THRESHOLD` (3) times, recovered or not.
+- `NEVER_DREW` — at least two pages decoded, the session ran at least five seconds, and not (`anyPageDrawn` and `presentedFrames > 0`).
+- Otherwise `HEALTHY`.
 
-The verdict is computed from facts accumulated over the session, never from the page named at `destroy()` — closing on a chapter transition used to record a false strike. It reads the renderer's own presented-frame count (`frames=`), not the reader's `drawn` flag, which was set before a frame was submitted. A session that decoded pages for more than five seconds without either a presented frame or a page on screen is the black-screen shape and counts as degraded. The report also carries `tiles=`, `filter=` and a `page=` line with the first drawn page's size, scale, position, mip count and tile quality, plus the adapter backend (`gpu=`) and renderer/Dawn log lines from this process.
+The verdict is computed from facts accumulated over the session, never from the page named at `destroy()` — closing on a chapter transition used to record a false strike. It reads the renderer's own presented-frame count (`frames=`), not the reader's `drawn` flag, which was set before a frame was submitted. A single device loss that recovers is not a strike. A crash-surviving marker written when recovery gives up becomes one diagnostic strike on the next reader open. The report also carries `tiles=`, `filter=`, `tex=`, `lastLoss=` and a `page=` line with the first drawn page's size, scale, position, mip count and tile quality, plus the adapter backend (`gpu=`) and renderer/Dawn log lines from this process.
+
+`WebGpuHealth` stores a consecutive, build-scoped strike count (`VERSION_NAME` + `BUILD_TIME`, capped at `DISABLE_STRIKES`, currently 2), writes every strike and discarded old-build count to the in-app log, clears the count on a clean session, and discards counts recorded by another build. **Nothing reads the count to decide which viewer is used.**
 
 ## Memory budget
 

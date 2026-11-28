@@ -294,7 +294,7 @@
 <li><strong>MangaDex&#39;s in-app client was removed.</strong> Install the community extension; existing entries stay readable.</li>
 <li><strong>The blacklist storage format changed to JSON.</strong> Old entries keep working; the views read both encodings.</li>
 <li><strong>Beta installs need one manual install</strong> to move from the old debug-signed betas to the minified preview builds.</li>
-<li><strong>WebGPU fallback strikes are scoped to the build.</strong> A new version gets a fresh try automatically.</li>
+<li><strong>WebGPU diagnostic strikes are scoped to the build</strong> (on current <code>master</code>). A new version gets a fresh diagnostic record automatically. Strikes never demote the reader to the standard viewer; recoverable GPU loss is recovered in place.</li>
 </ul>
 <h2 id="identifying-a-build"><a class="anchor" href="#identifying-a-build" aria-label="Link to this section">#</a>Identifying a build</h2>
 <ul>

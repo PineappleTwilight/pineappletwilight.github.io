@@ -86,7 +86,7 @@ Most extension errors mean the site changed and the extension has not caught up.
 
 ### Why did the reader fall back to the standard viewer?
 
-The WebGPU viewer declines for four reasons, in order: the high-quality switch is off; this build recorded two degraded sessions; the GPU device could not initialise or was lost; or constructing the viewer threw. Each reason is written to the in-app log. Turning the high-quality switch off and on clears the health latch and retries.
+On current `master`, the WebGPU viewer declines for three reasons, in order: the high-quality switch is off; WebGPU cannot run on this device (the renderer cannot initialise, or a previously dead device cannot be rebuilt); or constructing the viewer threw. Each reason is written to the in-app log. There is no per-device health latch: degraded sessions are diagnostic only, and a recoverable GPU loss is answered by rebuilding the device rather than falling back to the standard viewer.
 
 ### Why is my page blank or black?
 

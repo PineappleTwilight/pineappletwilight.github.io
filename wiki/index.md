@@ -68,7 +68,7 @@ Hyoukan keeps the entire Mihon and TachiyomiSY feature set, carries Komikku's ad
 <div class="split">
   <div class="panel">
     <h3>A reader that takes rendering seriously</h3>
-    <p>The <strong>WebGPU reader</strong> is the default on supported devices: HDR pages at full brightness, LUT colour grading, ArtCNN upscaling, dual-page spreads and a memory budget that follows the device rather than a fixed RAM class. When a GPU device genuinely cannot run it, the app falls back to the standard viewer and remembers why.</p>
+    <p>The <strong>WebGPU reader</strong> is the default on supported devices: HDR pages at full brightness, LUT colour grading, ArtCNN upscaling, dual-page spreads and a memory budget that follows the device rather than a fixed RAM class. A recoverable GPU loss rebuilds the device; when WebGPU genuinely cannot run, the app uses the standard viewer and records why — without demoting future sessions.</p>
   </div>
   <div class="panel">
     <h3>Books are first-class, not image strips</h3>

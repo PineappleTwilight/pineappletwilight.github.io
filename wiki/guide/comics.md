@@ -79,13 +79,12 @@ The sharpening slider, filter presets, tile-cache switch and the −70% brightne
 `WebGpuProvider` declines, in order, when:
 
 1. **Use high quality renderer** is off.
-2. This build recorded **two degraded sessions** on the device.
-3. The renderer **cannot initialise** or lost its GPU device.
-4. Constructing the viewer **threw**.
+2. The renderer **cannot initialise**, or a previously dead device cannot be rebuilt.
+3. Constructing the viewer **threw**.
 
-Every decline writes a line to the in-app log beginning `WebGPU viewer declined:` or `WebGPU viewer failed`. The switch's summary also says when the health latch is active. Turning the switch off and on clears the latch and gives the device a fresh try; a new app build clears it automatically.
+Every decline writes a line to the in-app log beginning `WebGPU viewer declined:` or `WebGPU viewer failed`. There is no per-device health latch on current `master`: degraded sessions are logged with diagnostics but never change which viewer opens, and a device left dead by a previous session is rebuilt before the next reader starts. The high-quality switch remains the preference gate; renderer unavailability or construction failure can still use the standard viewer.
 
-A session counts as degraded only if it ends with the renderer still dead, or loses the device three times with recoveries in between. A single device loss that recovers — which backgrounding causes on healthy phones — does not count.
+A session counts as degraded when it ends with the renderer still dead, has a parked swapchain, loses the device three times with recoveries in between, or decodes at least two pages for five seconds without both a presented frame and a page on screen. A single device loss that recovers — which backgrounding causes on healthy phones — does not count. The strike record is diagnostic only.
 
 ### Memory and page quality
 
@@ -148,6 +147,8 @@ The chapter list is the entry's table of contents. From it you can:
 - filter by bookmark colour.
 
 **Smart scanlator filtering** can show one chapter per number across groups, preferring the most complete source. It is on by default and configurable with chapter-count ranges, per-scanlator toggles, a coverage view and drag-to-reorder priority. Groups that split the work both keep their chapters.
+
+The **Scanlator priority** entry can stay on the entry page or move into the toolbar's ⋮ menu. Under **Settings → Browse**, **Scanlator priority in overflow** is off by default; **Show scanlator priority** controls whether the entry appears at all and is on by default. Hiding **Show scanlator priority** hides it everywhere. These switches are on current `master`.
 
 **Chapter deduplication** works alongside it: duplicate numbers are merged in the list, but the underlying chapters are preserved.
 

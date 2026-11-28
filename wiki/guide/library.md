@@ -27,7 +27,7 @@ An entry is identified by its **source + URL**, so the same series from two sour
 
 ### Importing another service's library
 
-**Settings → Data and storage → Library imports → Import a library export** turns a MangaBaka JSON export into library entries. Nothing is added automatically: each export entry is a shell that you match to a source one at a time, carrying over read progress, notes and tracking where applicable. Sessions survive a restart. See [Library imports](/hyoukan/guide/library-imports/) for the flow; this is not the same as restoring a [backup](/hyoukan/guide/backup-sync/).
+**Settings → Data and storage → Library imports → Import a library export** turns an external export into library entries. A MangaBaka JSON export is always supported; with **Library interoperability** on, Kototoro, Usagi and Aniyomi exports are supported too. Nothing is added automatically: each export entry is a shell that you match to a source one at a time, carrying over read progress, notes and tracking where applicable. Sessions survive a restart. See [Library imports](/hyoukan/guide/library-imports/) for the flow; this is not the same as restoring a [backup](/hyoukan/guide/backup-sync/).
 
 ## Finding things
 
@@ -159,6 +159,8 @@ Merged entries are excluded from orphaned-download cleanup so their files are ne
 ## The Feed
 
 The **Feed** tab (Browse → Feed) shows the latest entries and saved searches from several sources in one stream. It can be hidden, moved to the front of Browse, and filtered to hide entries already in the library. Feed sources are saved searches, so a feed is built from searches you already trust.
+
+**Feed enhancements** (**Settings → Browse**, off by default, on `master`) adds local feed categories — long-press a feed row and use **Set category** — plus category chips, **Not in library**, **Unread**, genre filters, duplicate collapsing across feeds, a failed-feed summary with **Retry all**, and a **Suggested for you** strip built locally from your library and reading history. Nothing is fetched again for these features, and nothing is written back; with the switch off the Feed is unchanged.
 
 ## History and statistics
 
